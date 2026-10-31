@@ -1,0 +1,133 @@
+{% comment %}
+  SATOMI NISHIKIGOI · WHEELS FILLING NOW (homepage strip, 2027 site)
+  Theme section file (sections/satomi-home-wheels.liquid), on the homepage under Harvest day.
+  Shows every Wheel in the collection below that still has spots, with a live-looking board,
+  the first names already in, what the jackpot koi is worth, and a "last few spots" nudge.
+  Shows nothing at all when no Wheel is open, so it can sit there all winter.
+  Names come from each spot's "Taken by" box: first names only on this strip.
+  Jackpot worth comes from each Wheel's "Jackpot value" box (or the Jackpot in shop koi's price), same as the Wheels page.
+{% endcomment %}
+{%- assign wheels_collection = 'koi-roulette' -%}
+{%- assign coll = collections[wheels_collection] -%}
+{%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+
+{%- assign open_count = 0 -%}
+{%- capture wheel_cards -%}
+{%- if coll != blank -%}
+{%- for p in coll.products limit: 6 -%}
+  {%- assign total = p.variants.size -%}
+  {%- if total < 2 -%}{%- continue -%}{%- endif -%}
+  {%- assign taken = 0 -%}{%- assign price = 0 -%}{%- assign names = '' -%}{%- assign named = 0 -%}
+  {%- for v in p.variants -%}
+    {%- if v.price > 0 and price == 0 -%}{%- assign price = v.price -%}{%- endif -%}
+    {%- unless v.available -%}
+      {%- assign taken = taken | plus: 1 -%}
+      {%- assign who = v.metafields.custom.taken_by.value | default: '' | split: ',' | first | strip -%}
+      {%- if who != '' -%}
+        {%- assign named = named | plus: 1 -%}
+        {%- if named < 5 -%}{%- capture names -%}{{ names }}{% if named > 1 %}, {% endif %}{{ who | escape }}{%- endcapture -%}{%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- assign left = total | minus: taken -%}
+  {%- if left < 1 -%}{%- continue -%}{%- endif -%}
+  {%- assign open_count = open_count | plus: 1 -%}
+  {%- assign others = taken | minus: named -%}{%- if named > 4 -%}{%- assign others = taken | minus: 4 -%}{%- endif -%}
+  {%- assign worth = '' -%}
+  {%- assign jv = p.metafields.custom.jackpot_value.value -%}
+  {%- assign jpk = p.metafields.custom.jackpot_in_shop.value -%}
+  {%- if jv != blank and jv > 0 -%}{%- assign worth = jv | times: 100 | money_without_trailing_zeros -%}
+  {%- elsif jpk != blank and jpk.price > 0 -%}{%- assign worth = jpk.price | money_without_trailing_zeros -%}{%- endif -%}
+  {%- assign pf = p.metafields.koi.public_from.value -%}{%- assign early = false -%}
+  {%- if pf != blank -%}{%- assign pf_s = pf | date: '%s' | plus: 0 -%}{%- if pf_s > now_s -%}{%- assign early = true -%}{%- endif -%}{%- endif -%}
+  <a class="hw-card{% if left < 4 %} hot{% endif %}" href="{{ p.url }}">
+    <span class="hw-top">
+      <span class="hw-name">{{ p.title }}</span>
+      <span class="hw-price">{{ price | money_without_trailing_zeros }} a spot</span>
+    </span>
+    {%- if early -%}<span class="hw-first"><i>里</i>Supporters first · everyone from {{ pf | date: '%a %-d %b, %-I%P' }}</span>{%- endif -%}
+    {%- if worth != '' -%}<span class="hw-worth">Jackpot koi worth <b>{{ worth }}</b></span>{%- endif -%}
+    <span class="hw-pips" aria-label="{{ taken }} of {{ total }} spots taken">
+      {%- for v in p.variants -%}<i{% unless v.available %} class="t"{% endunless %}></i>{%- endfor -%}
+    </span>
+    <span class="hw-count"><b>{{ taken }}</b> of {{ total }} taken · <b>{{ left }}</b> left</span>
+    {%- if taken > 0 -%}
+      <span class="hw-who">
+        {%- if names != '' -%}{{ names }}{% if others > 0 %} and {{ others }} other{% if others != 1 %}s{% endif %}{% endif %} {% if taken == 1 %}is{% else %}are{% endif %} in
+        {%- else -%}{{ taken }} {% if taken == 1 %}person is{% else %}people are{% endif %} in{%- endif -%}
+      </span>
+    {%- else -%}
+      <span class="hw-who">Be the first in. The first spot locks the jackpot to the Wheel.</span>
+    {%- endif -%}
+    {%- if left < 4 -%}<span class="hw-nudge">{% if left == 1 %}Last spot{% else %}Last {{ left }} spots{% endif %}</span>{%- endif -%}
+    <span class="hw-go">Enter {{ p.title }} →</span>
+  </a>
+{%- endfor -%}
+{%- endif -%}
+{%- endcapture -%}
+
+{%- if open_count > 0 -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  .hw{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);background:#000;color:var(--w);
+    font-family:'EB Garamond',Georgia,serif;padding:44px 16px 48px;box-sizing:border-box}
+  .hw *{box-sizing:border-box}
+  .hw-in{max-width:1100px;margin:0 auto}
+  .hw-kick{display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--glow);margin:0 0 8px}
+  .hw-kick::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--glow);box-shadow:0 0 10px var(--glow);animation:hw-pulse 1.4s ease-in-out infinite}
+  @keyframes hw-pulse{50%{opacity:.25}}
+  .hw h2{font-family:'Cinzel',serif;font-weight:600;font-size:clamp(24px,4.2vw,34px);letter-spacing:.05em;text-align:center;margin:0 0 22px;color:var(--w)}
+  .hw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+  .hw-card{position:relative;display:flex;flex-direction:column;gap:10px;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);
+    border-radius:4px;padding:18px 18px 16px;text-decoration:none;color:var(--w);transition:border-color .2s,transform .2s}
+  .hw-card:hover{border-color:rgba(215,15,15,.7);transform:translateY(-2px);color:var(--w)}
+  .hw-card.hot{border-color:rgba(249,30,17,.7);box-shadow:0 0 24px rgba(215,15,15,.25)}
+  .hw-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .hw-name{font-family:'Cinzel',serif;font-weight:700;font-size:21px;letter-spacing:.04em}
+  .hw-price{font-size:16px;color:var(--g);white-space:nowrap}
+  .hw-worth{align-self:flex-start;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#fff;
+    background:rgba(215,15,15,.14);border:1px solid rgba(249,30,17,.6);border-radius:3px;padding:6px 10px}
+  .hw-worth b{font-size:14px;letter-spacing:.04em;color:#fff;margin-left:4px;text-shadow:0 0 10px rgba(249,30,17,.6)}
+  .hw-first{align-self:flex-start;display:flex;align-items:center;gap:7px;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    color:#fff;border:1px solid rgba(249,30,17,.7);border-radius:3px;padding:6px 9px;background:#000}
+  .hw-first i{font-style:normal;font-family:'Noto Serif JP',serif;color:var(--glow);font-size:14px;letter-spacing:0}
+  .hw-pips{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+  .hw-pips i{display:block;height:12px;border-radius:2px;background:rgba(245,243,239,.1);border:1px solid rgba(245,243,239,.14)}
+  .hw-pips i.t{background:linear-gradient(180deg,var(--glow),#8e0a0a);border-color:transparent;box-shadow:0 0 6px rgba(249,30,17,.45)}
+  .hw-count{font-size:17px;color:var(--g)}
+  .hw-count b{color:var(--w);font-weight:500}
+  .hw-who{font-size:17px;line-height:1.45;color:var(--w)}
+  .hw-nudge{position:absolute;top:-11px;right:14px;font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    background:var(--glow);color:#fff;border-radius:3px;padding:5px 9px;box-shadow:0 0 14px rgba(249,30,17,.6)}
+  .hw-go{margin-top:2px;font-family:'Cinzel',serif;font-weight:600;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--glow)}
+  .hw-more{text-align:center;margin:18px 0 0;font-size:16px;color:var(--g)}
+  .hw-more a{color:var(--w)}
+  @media (max-width:600px){.hw{padding:34px 12px 40px}.hw-grid{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){.hw-kick::before{animation:none}}
+</style>
+<section class="hw" id="snHomeWheels">
+  <div class="hw-in">
+    <span class="hw-kick">Filling now</span>
+    <h2>Koi Roulette</h2>
+    <div class="hw-grid">{{ wheel_cards }}</div>
+    <p class="hw-more">Every spot wins a koi. <a href="/pages/how-koi-roulette-works">How Koi Roulette works</a></p>
+  </div>
+</section>
+<script>
+(function(){
+  var root = document.getElementById('snHomeWheels'); if (!root) return;
+  var sec = root.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Satomi: Wheels filling",
+  "settings": [],
+  "presets": [{ "name": "Satomi: Wheels filling" }]
+}
+{% endschema %}

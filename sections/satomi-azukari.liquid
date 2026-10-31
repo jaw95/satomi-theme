@@ -1,0 +1,285 @@
+{% comment %}
+  SATOMI NISHIKIGOI · AZUKARI KOI & RESULTS (koi growing on with the breeders in Japan)
+  Theme section file (sections/satomi-azukari.liquid), used by the "azukari" page template.
+
+  Every koi is an "Azukari koi" entry: Shopify admin → Content → Metaobjects → Azukari koi → Add entry.
+  Put in the koi, breeder, the photo and size when it went in. Each time the breeder sends an update,
+  add the latest photo and size. The page works out the growth itself.
+  Status "Growing in Japan" or "Harvested" shows under "In Japan now"; anything else shows under "Home at Satomi".
+  The "Results" number counts every koi with a before and after size.
+{% endcomment %}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign wa = section.settings.whatsapp | remove: ' ' | remove: '+' -%}
+{%- assign all = shop.metaobjects.satomi_azukari.values -%}
+{%- assign n_japan = 0 -%}{%- assign n_home = 0 -%}{%- assign n_res = 0 -%}{%- assign breeders = '' -%}
+{%- for k in all -%}
+  {%- if k.status.value == 'Growing in Japan' or k.status.value == 'Harvested' -%}{%- assign n_japan = n_japan | plus: 1 -%}{%- else -%}{%- assign n_home = n_home | plus: 1 -%}{%- endif -%}
+  {%- assign a0 = k.start_size.value | plus: 0 -%}{%- assign a1 = k.latest_size.value | plus: 0 -%}
+  {%- if a0 > 0 and a1 > a0 -%}{%- assign n_res = n_res | plus: 1 -%}{%- endif -%}
+  {%- assign b = k.breeder.value | strip -%}
+  {%- if b != blank -%}{%- unless breeders contains b -%}{%- assign breeders = breeders | append: b | append: '|' -%}{%- endunless -%}{%- endif -%}
+{%- endfor -%}
+{%- assign n_breeders = breeders | split: '|' | size -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<style>
+  .az{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 72px;box-sizing:border-box}
+  .az *{box-sizing:border-box}
+  .az [hidden]{display:none !important}
+  .az-in{max-width:1040px;margin:0 auto}
+  .az-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 12px}
+  .az-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .az h1{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(28px,5.4vw,46px);line-height:1.15;text-align:center;margin:0 0 14px}
+  .az-lede{font-size:20px;line-height:1.55;color:var(--g);text-align:center;max-width:34em;margin:0 auto 26px}
+  .az-lede b{font-family:'Noto Serif JP',serif;color:var(--glow);font-weight:600}
+  .az-stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 0 30px}
+  .az-stat{min-width:120px;text-align:center;padding:12px 14px;background:#0b0b0b;border:1px solid var(--edge);border-radius:4px}
+  .az-stat:first-child{border-top:2px solid var(--r)}
+  .az-stat b{display:block;font-family:'Cinzel',serif;font-size:30px;font-weight:600}
+  .az-stat span{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--g)}
+  .az h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(22px,4vw,30px);text-align:center;margin:46px 0 8px}
+  .az-sub{text-align:center;color:var(--g);font-size:18px;margin:0 0 22px}
+
+  .az-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+  .az-card{background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+  .az-photo{position:relative;aspect-ratio:3/4;background:#111}
+  .az-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;transition:opacity .45s}
+  .az-photo img.then{opacity:0}
+  .az-photo.show-then img.then{opacity:1}
+  .az-photo.show-then img.now{opacity:0}
+  .az-photo .az-nophoto{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--g);font-style:italic;font-size:17px}
+  .az-toggle{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;background:rgba(0,0,0,.78);border:1px solid var(--edge);border-radius:99px;padding:3px}
+  .az-toggle button{all:unset;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:7px 12px;border-radius:99px;color:var(--g)}
+  .az-toggle button[aria-pressed="true"]{background:var(--r);color:#fff}
+  .az-when{position:absolute;left:10px;top:10px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.16em;text-transform:uppercase;background:rgba(0,0,0,.7);padding:5px 8px;border-radius:3px;color:#fff}
+  .az-body{padding:16px 16px 18px;flex:1;display:flex;flex-direction:column}
+  .az-body small{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--r);margin:0 0 4px}
+  .az-body h3{font-family:'Cinzel',serif;font-weight:600;font-size:21px;margin:0 0 8px;color:var(--w)}
+  .az-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+  .az-chips span{font-size:15px;padding:3px 9px;border:1px solid var(--edge);border-radius:99px;color:var(--g)}
+  .az-chips span.st{border-color:rgba(215,15,15,.6);color:#fff}
+  .az-grow{margin:4px 0 10px}
+  .az-grow p{margin:0 0 6px;font-size:18px}
+  .az-grow p b{font-family:'Cinzel',serif;font-weight:600}
+  .az-grow p em{font-style:normal;color:var(--glow);font-family:'Cinzel',serif;font-weight:600;margin-left:6px}
+  .az-bar{height:6px;border-radius:3px;background:rgba(245,243,239,.1);overflow:hidden}
+  .az-bar i{display:block;height:100%;background:linear-gradient(90deg,#8a0b0b,var(--glow));border-radius:3px}
+  .az-dates{font-size:15px;color:var(--g);margin:0 0 8px}
+  .az-price{display:flex;align-items:baseline;gap:8px;margin:2px 0 10px;font-size:16px;color:var(--g)}
+  .az-price b{font-family:'Cinzel',serif;font-weight:600;font-size:22px;color:#fff;letter-spacing:.04em}
+  .az-interest{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:11px 16px;border-radius:3px;background:var(--r);color:#fff;text-decoration:none;
+    font-family:'Cinzel',serif;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 14px rgba(215,15,15,.3)}
+  .az-interest:hover{background:var(--glow)}
+  .az-interest svg{width:16px;height:16px;fill:#fff;display:block !important}
+  .az-notes{font-size:17px;line-height:1.5;color:var(--g);margin:0 0 10px}
+  .az-more{display:flex;gap:8px;padding:10px 16px 0;flex-wrap:wrap}
+  .az-more button{all:unset;cursor:pointer;position:relative;width:64px;height:64px;border-radius:3px;overflow:hidden;border:1px solid var(--edge)}
+  .az-more button:hover{border-color:var(--glow)}
+  .az-more img{width:100%;height:100%;object-fit:cover;display:block}
+  .az-more-label{flex-basis:100%;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--g)}
+  .az-lb{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);display:flex !important;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+  .az-lb[hidden]{display:none !important}
+  .az-lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:3px;display:block}
+  .az-lb span{position:absolute;top:14px;right:18px;color:#fff;font-size:30px;line-height:1}
+  .az-video{margin-top:auto;align-self:flex-start;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:9px 12px;border-radius:3px;border:1px solid var(--edge);color:#fff;text-decoration:none}
+  .az-video:hover{border-color:var(--glow)}
+
+  .az-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:30px 18px;font-size:19px;line-height:1.5;color:var(--g)}
+  .az-empty p{margin:0 auto;max-width:30em}
+  .az-how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;counter-reset:s;margin-top:8px}
+  .az-step{background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;padding:18px 16px;counter-increment:s}
+  .az-step::before{content:counter(s);display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--r);font-family:'Cinzel',serif;font-weight:700;margin-bottom:10px}
+  .az-step b{display:block;font-family:'Cinzel',serif;font-weight:600;font-size:17px;margin-bottom:6px}
+  .az-step p{margin:0;font-size:17px;line-height:1.5;color:var(--g)}
+  .az-foot{text-align:center;margin:40px auto 0;max-width:34em;font-size:18px;line-height:1.55;color:var(--g)}
+  .az-btn{display:inline-block;margin-top:14px;padding:15px 24px;border-radius:3px;text-decoration:none;background:var(--r);color:#fff;font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+  @media (max-width:700px){ .az-how{grid-template-columns:1fr} }
+</style>
+
+<section class="az" id="snAzukari">
+  <div class="az-in">
+    <p class="az-kick">Azukari <b>預かり</b></p>
+    <h1>Growing on in Japan</h1>
+    <p class="az-lede"><b>預かり</b> (azukari) means "kept in trust". These koi stay with the breeders in Japan to grow on in their mud ponds, the way koi grow best. Here's every one: what it looked like when it went in, and how it's turned out.</p>
+
+    {%- if all.size > 0 -%}
+    <div class="az-stats">
+      <div class="az-stat"><b>{{ n_japan }}</b><span>In Japan now</span></div>
+      <div class="az-stat"><b>{{ n_res }}</b><span>Results</span></div>
+      {%- if n_breeders > 0 -%}<div class="az-stat"><b>{{ n_breeders }}</b><span>Breeder{% if n_breeders != 1 %}s{% endif %}</span></div>{%- endif -%}
+    </div>
+    {%- endif -%}
+
+    {%- for pass in (1..2) -%}
+      {%- if pass == 1 -%}
+        <h2>In Japan now</h2>
+        <p class="az-sub">With the breeders right now, growing on or harvested and waiting to ship. Tap Then and Now to see how they've grown.</p>
+        {%- if n_japan == 0 -%}<div class="az-empty"><p>Nothing in Japan at the moment. When koi go in with the breeders they'll be listed here, and you can follow them right through to harvest.</p></div>{%- endif -%}
+      {%- else -%}
+        {%- if n_home == 0 -%}{%- break -%}{%- endif -%}
+        <h2>Home at Satomi</h2>
+        <p class="az-sub">Grown in Japan and on their way home, or already here.</p>
+      {%- endif -%}
+      <div class="az-grid">
+      {%- for k in all -%}
+        {%- assign growing = false -%}{%- if k.status.value == 'Growing in Japan' or k.status.value == 'Harvested' -%}{%- assign growing = true -%}{%- endif -%}
+        {%- if pass == 1 and growing == false -%}{%- continue -%}{%- endif -%}
+        {%- if pass == 2 and growing -%}{%- continue -%}{%- endif -%}
+        {%- assign then_img = k.start_photo.value -%}
+        {%- assign now_img = k.latest_photo.value | default: then_img -%}
+        {%- assign s0 = k.start_size.value | plus: 0 -%}
+        {%- assign s1 = k.latest_size.value | plus: 0 -%}
+        <article class="az-card">
+          <div class="az-photo">
+            {%- if now_img -%}
+              {%- if then_img and k.latest_photo.value -%}
+                <img class="then" src="{{ then_img | image_url: width: 700 }}" alt="{{ k.name.value | escape }} when it went in" loading="lazy">
+              {%- endif -%}
+              <img class="now" src="{{ now_img | image_url: width: 700 }}" alt="{{ k.name.value | escape }}" loading="lazy">
+              {%- if then_img and k.latest_photo.value -%}
+                <span class="az-when">{% if k.latest_date.value %}{{ k.latest_date.value | date: '%b %Y' }}{% else %}Now{% endif %}</span>
+                <div class="az-toggle" role="group" aria-label="Photo">
+                  <button type="button" data-v="then" aria-pressed="false">Then</button>
+                  <button type="button" data-v="now" aria-pressed="true">Now</button>
+                </div>
+              {%- endif -%}
+            {%- else -%}
+              <span class="az-nophoto">Photo coming soon</span>
+            {%- endif -%}
+          </div>
+          {%- if k.gallery.value != blank -%}
+          <div class="az-more">
+            <span class="az-more-label">More photos</span>
+            {%- for g in k.gallery.value -%}
+              <button type="button" data-full="{{ g | image_url: width: 1400 }}" aria-label="Open photo {{ forloop.index }} of {{ k.name.value | escape }}"><img src="{{ g | image_url: width: 160 }}" alt="{{ g.alt | escape }}" loading="lazy"></button>
+            {%- endfor -%}
+          </div>
+          {%- endif -%}
+          <div class="az-body">
+            {%- if k.breeder.value != blank -%}<small>{{ k.breeder.value }}</small>{%- endif -%}
+            <h3>{{ k.name.value }}</h3>
+            <div class="az-chips">
+              <span class="st">{{ k.status.value }}</span>
+              {%- if k.variety.value != blank -%}<span>{{ k.variety.value }}</span>{%- endif -%}
+              {%- if k.age.value != blank -%}<span>{{ k.age.value }}</span>{%- endif -%}
+              {%- if k.sex.value != blank and k.sex.value != 'Unknown' -%}<span>{{ k.sex.value }}</span>{%- endif -%}
+            </div>
+            {%- if k.price.value != blank -%}<p class="az-price">For sale <b>{{ k.price.value }}</b></p>{%- endif -%}
+            {%- if k.price.value != blank and wa != blank and k.status.value != 'Sold' -%}
+              {%- capture msg -%}Hi Josh, I'm interested in the {{ k.name.value }} (azukari) on the Satomi website.{%- endcapture -%}
+              <a class="az-interest" href="https://wa.me/{{ wa }}?text={{ msg | url_encode }}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>Register interest</a>
+            {%- endif -%}
+            {%- if s0 > 0 or s1 > 0 -%}
+            <div class="az-grow">
+              {%- if s0 > 0 and s1 > s0 -%}
+                {%- assign gain = s1 | minus: s0 -%}
+                {%- assign pct = s0 | times: 100 | divided_by: s1 -%}
+                <p><b>{{ s0 }}cm</b> → <b>{{ s1 }}cm</b><em>+{{ gain }}cm</em></p>
+                <div class="az-bar" aria-hidden="true"><i style="width:100%;background:linear-gradient(90deg,#3a3a3a {{ pct }}%,#8a0b0b {{ pct }}%,#f91e11)"></i></div>
+              {%- elsif s1 > 0 -%}
+                <p><b>{{ s1 }}cm</b></p>
+              {%- else -%}
+                <p><b>{{ s0 }}cm</b> when it went in</p>
+              {%- endif -%}
+            </div>
+            {%- endif -%}
+            {%- if k.start_date.value or k.latest_date.value -%}
+              <p class="az-dates">{% if k.start_date.value %}Went in {{ k.start_date.value | date: '%B %Y' }}{% endif %}{% if k.start_date.value and k.latest_date.value %} · {% endif %}{% if k.latest_date.value %}Last update {{ k.latest_date.value | date: '%-d %B %Y' }}{% endif %}</p>
+            {%- endif -%}
+            {%- if k.notes.value != blank -%}<p class="az-notes">{{ k.notes.value | newline_to_br }}</p>{%- endif -%}
+            {%- if k.video.value != blank -%}<a class="az-video" href="{{ k.video.value }}" target="_blank" rel="noopener">Watch the video</a>{%- endif -%}
+          </div>
+        </article>
+      {%- endfor -%}
+      </div>
+    {%- endfor -%}
+
+    <h2>How azukari works</h2>
+    <p class="az-sub">Why koi go back in the mud.</p>
+    <div class="az-how">
+      <div class="az-step"><b>{{ section.settings.step1_title | default: 'Chosen in Japan' }}</b><p>{{ section.settings.step1_text }}</p></div>
+      <div class="az-step"><b>{{ section.settings.step2_title | default: 'Grown in the mud' }}</b><p>{{ section.settings.step2_text }}</p></div>
+      <div class="az-step"><b>{{ section.settings.step3_title | default: 'Harvest and results' }}</b><p>{{ section.settings.step3_text }}</p></div>
+    </div>
+
+    <p class="az-foot">Interested in one of these, or want me to find you a koi to grow on in Japan? Ask me in the WhatsApp group.<br><a class="az-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a></p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('snAzukari'); if (!root || root.__done) return; root.__done = true;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+  var lb = document.createElement('div'); lb.className = 'az-lb'; lb.hidden = true; lb.innerHTML = '<span aria-hidden="true">&times;</span><img alt="">';
+  root.appendChild(lb);
+  lb.addEventListener('click', function(){ lb.hidden = true; });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') lb.hidden = true; });
+  root.querySelectorAll('.az-more button').forEach(function(b){
+    b.addEventListener('click', function(){ var im = lb.querySelector('img'); im.src = b.getAttribute('data-full'); im.alt = b.querySelector('img').alt; lb.hidden = false; });
+  });
+  root.querySelectorAll('.az-photo').forEach(function(ph){
+    var btns = ph.querySelectorAll('.az-toggle button'); if (!btns.length) return;
+    function set(v){ ph.classList.toggle('show-then', v === 'then'); btns.forEach(function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-v') === v ? 'true' : 'false'); });
+      var w = ph.querySelector('.az-when'); if (w){ w.hidden = v === 'then'; } }
+    btns.forEach(function(b){ b.addEventListener('click', function(){ set(b.getAttribute('data-v')); }); });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Azukari koi",
+  "settings": [
+    {
+      "type": "text",
+      "id": "whatsapp",
+      "label": "WhatsApp number for Register interest",
+      "info": "International format with no 0 at the start, e.g. 447700900123. Leave empty to hide the button."
+    },
+    {
+      "type": "header",
+      "content": "How azukari works"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Step 1 heading",
+      "default": "Chosen in Japan"
+    },
+    {
+      "type": "textarea",
+      "id": "step1_text",
+      "label": "Step 1 text",
+      "default": "I pick young koi at the breeders I work with directly. If they think the koi is good enough, it stays with them to grow on for a year, normally in a mud pond, for an extra fee."
+    },
+    {
+      "type": "text",
+      "id": "step2_title",
+      "label": "Step 2 heading",
+      "default": "Grown in the mud"
+    },
+    {
+      "type": "textarea",
+      "id": "step2_text",
+      "label": "Step 2 text",
+      "default": "Through the summer they grow on in the breeders' mud ponds. Big water, natural food and expert hands. Nothing in the UK grows koi like it."
+    },
+    {
+      "type": "text",
+      "id": "step3_title",
+      "label": "Step 3 heading",
+      "default": "Harvest and results"
+    },
+    {
+      "type": "textarea",
+      "id": "step3_text",
+      "label": "Step 3 text",
+      "default": "In autumn the ponds are harvested. Every koi gets photographed and measured again, and you can see the results right here."
+    }
+  ]
+}
+{% endschema %}

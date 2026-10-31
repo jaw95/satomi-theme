@@ -1,0 +1,41 @@
+{% comment %} One event card, used by sections/satomi-events.liquid {% endcomment %}
+  {%- assign type = e.event_type.value | default: 'Koi show' -%}
+  {%- assign is_day = false -%}{%- if type == 'Koi Day at Satomi' -%}{%- assign is_day = true -%}{%- endif -%}
+  {%- assign sd = e.start_date.value | date: '%Y-%m-%d' -%}
+  {%- assign ed = sd -%}
+  {%- if e.end_date.value -%}{%- assign ed = e.end_date.value | date: '%Y-%m-%d' -%}{%- endif -%}
+  {%- if ed < sd -%}{%- assign ed = sd -%}{%- endif -%}
+  {%- assign tbc = false -%}{%- if e.date_tbc.value -%}{%- assign tbc = true -%}{%- endif -%}
+  <article class="ev-item{% unless is_day %} show{% endunless %}{% if e.cancelled.value %} cancelled{% endif %}"
+    data-kind="{% if is_day %}day{% else %}show{% endif %}" data-start="{{ sd }}" data-end="{{ ed }}"
+    data-title="{{ e.title.value | escape }}" data-place="{{ e.place.value | escape }}" data-times="{{ e.times.value | escape }}" data-link="{{ e.link.value | escape }}">
+    <div class="ev-date" aria-hidden="true">
+      {%- if tbc -%}
+      <span>{{ e.start_date.value | date: '%b' }}</span>
+      <b style="font-size:20px;padding:6px 0">TBC</b>
+      <em>Date soon</em>
+      {%- else -%}
+      <span>{{ e.start_date.value | date: '%a' }}</span>
+      <b>{{ e.start_date.value | date: '%-d' }}</b>
+      <em>{{ e.start_date.value | date: '%b' }}</em>{% if ed != sd %}<em>to {{ e.end_date.value | date: '%a %-d' }}</em>{% endif %}
+      {%- endif -%}
+    </div>
+    <div>
+      <span class="ev-tag type">{% if is_day %}Koi Day at Satomi{% else %}Koi show · I'm a vendor{% endif %}</span>
+      {%- if e.cancelled.value -%}<span class="ev-tag off">Cancelled</span>{%- elsif tbc -%}<span class="ev-tag off">Date to be confirmed</span>{%- else -%}<span class="ev-tag soon" hidden>Soon</span>{%- endif -%}
+      <h3>{{ e.title.value }}</h3>
+      {%- if tbc -%}
+      <p class="ev-meta">{{ e.start_date.value | date: '%B %Y' }} <i>· exact date to be confirmed</i></p>
+      {%- else -%}
+      <p class="ev-meta">{{ e.start_date.value | date: '%A %-d %B %Y' }}{% if ed != sd %} to {{ e.end_date.value | date: '%A %-d %B' }}{% endif %}{% if e.times.value != blank %} <i>· {{ e.times.value }}</i>{% endif %}</p>
+      {%- endif -%}
+      {%- if e.place.value != blank -%}<p class="ev-meta"><i>{{ e.place.value }}</i></p>{%- elsif is_day -%}<p class="ev-meta"><i>At Satomi Nishikigoi · address in the WhatsApp group</i></p>{%- endif -%}
+      {%- if e.details.value != blank -%}<div class="ev-details">{{ e.details.value | newline_to_br }}</div>{%- endif -%}
+      {%- unless e.cancelled.value or past -%}
+      <div class="ev-acts">
+        {%- if e.link.value != blank -%}<a class="main" href="{{ e.link.value }}" target="_blank" rel="noopener">{% if is_day %}More info{% else %}Show website{% endif %}</a>{%- endif -%}
+        {%- unless tbc -%}<button type="button" class="ev-ics">Add to my calendar</button>{%- endunless -%}
+      </div>
+      {%- endunless -%}
+    </div>
+  </article>

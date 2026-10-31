@@ -1,0 +1,176 @@
+{% comment %}
+  SATOMI NISHIKIGOI · SUPPORTERS PAGE (/pages/supporters)
+  Theme section file (sections/satomi-supporters.liquid), used by the "supporters" page template.
+  - Logged in as a Supporter: their number, their certificate, their perks (all automatic), and any koi
+    that are in the Supporters' 24-hour head start right now.
+  - Logged in but not a Supporter: says membership is closed, points to the WhatsApp group.
+  - Not logged in: the full list of what Supporters get and how it works from March, plus a Log in button.
+  Reads the customer boxes: Supporter number, Supporter code, Supporter certificate (namespace satomi).
+{% endcomment %}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign is_sup = false -%}
+{%- if customer and customer.tags contains 'supporter' -%}{%- assign is_sup = true -%}{%- endif -%}
+{%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+{%- capture all_perks -%}
+<div class="ssp-grid">
+  <div class="ssp-card"><b>25%</b><h3>Off every koi</h3><p>For as long as Satomi sells koi. It comes off by itself in the basket when you're logged in.</p></div>
+  <div class="ssp-card"><b>25%</b><h3>Off a spot on every Wheel</h3><p>One spot on every Koi Roulette Wheel, every time. Take as many spots as you like; the discount goes on one.</p></div>
+  <div class="ssp-card"><b>24h</b><h3>Everything new, here</h3><p>Anything new spends 24 hours in the Supporters section before anyone else can buy it. Your Supporter price shows on every koi page.</p></div>
+  <div class="ssp-card"><b>24h</b><h3>New Wheels</h3><p>The paid spots on a new Wheel spend 24 hours in the Supporters section. The free spot opens to everyone at the same time, to keep it fair.</p></div>
+  <div class="ssp-card"><b>日本</b><h3>Japan Live</h3><p>Japan Live koi spend 24 hours in the Supporters section, and your 25% applies. Always.</p></div>
+  <div class="ssp-card"><b>収穫</b><h3>Harvest day</h3><p>Every fish out of the pond spends 24 hours in the Supporters section. Next harvest: Tuesday 3 November 2026.</p></div>
+  <div class="ssp-card"><b>No.</b><h3>Your number, for good</h3><p>Your numbered certificate lives on this page, and a numbered Supporter card is coming to you in the post.</p></div>
+  <div class="ssp-card"><b>里</b><h3>Your own group</h3><p>A Supporters-only WhatsApp group where everything new also goes for 24 hours before normal sale, so you don't always have to check the website.</p></div>
+</div>
+<h2>How it works from March</h2>
+<ol class="ssp-how">
+  <li><b>Log in</b>with the email you signed up with. Shopify emails you a 6-digit code. No password to remember.</li>
+  <li><b>This page becomes yours.</b>Your number, your certificate, and everything new while it spends its 24 hours in the Supporters section.</li>
+  <li><b>Shop as normal.</b>Your 25% comes off by itself, on koi and on one spot per Wheel. Nothing to type in.</li>
+</ol>
+<p class="ssp-fine">Supporter benefits are personal to you. I reserve the right to remove Supporter benefits where I see fit, for example if they're used to order fish for friends or family.</p>
+{%- endcapture -%}
+
+<style>
+  .ssp{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 72px;box-sizing:border-box}
+  .ssp *{box-sizing:border-box}
+  .ssp-in{max-width:980px;margin:0 auto}
+  .ssp-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 12px}
+  .ssp-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .ssp h1{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(28px,5.4vw,46px);line-height:1.15;text-align:center;margin:0 0 12px}
+  .ssp h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(22px,4vw,30px);text-align:center;margin:52px 0 20px}
+  .ssp-lede{text-align:center;font-size:20px;line-height:1.55;color:var(--g);max-width:32em;margin:0 auto 30px}
+  .ssp-me{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:26px;align-items:center}
+  .ssp-cert{border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;overflow:hidden;background:#0b0b0b}
+  .ssp-cert img{display:block;width:100%;height:auto}
+  .ssp-cert a{display:block;text-align:center;padding:10px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--w);text-decoration:none;border-top:1px solid var(--edge)}
+  .ssp-no{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(64px,14vw,120px);line-height:1;color:#fff;text-shadow:0 0 30px rgba(249,30,17,.45);margin:0}
+  .ssp-no small{display:block;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--r);margin-bottom:8px;text-shadow:none}
+  .ssp-hi{font-size:20px;color:var(--g);margin:10px 0 18px}
+  .ssp-perks{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .ssp-perks li{display:flex;gap:12px;align-items:flex-start;background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;padding:12px 14px;font-size:17px;line-height:1.45;color:var(--g)}
+  .ssp-perks li b{display:block;color:var(--w);font-family:'Cinzel',serif;font-weight:600;font-size:15px;letter-spacing:.04em;margin-bottom:2px}
+  .ssp-perks li::before{content:'✓';flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--r);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:2px}
+  .ssp-early{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .ssp-early a{display:block;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;overflow:hidden;color:var(--w);text-decoration:none}
+  .ssp-early img{display:block;width:100%;aspect-ratio:3/4;object-fit:contain;background:#0b0b0b}
+  .ssp-early span{display:block;padding:10px 12px;font-family:'Cinzel',serif;font-size:15px}
+  .ssp-early em{display:block;padding:0 12px 12px;font-style:normal;font-size:15px;color:var(--g)}
+  .ssp-none{text-align:center;color:var(--g);font-size:18px}
+  .ssp-box{max-width:620px;margin:0 auto;text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:28px 22px}
+  .ssp-box p{font-size:18px;line-height:1.55;color:var(--g);margin:0 0 14px}
+  .ssp-btn{display:inline-block;margin:6px 4px 0;padding:15px 24px;border-radius:3px;text-decoration:none;background:var(--r);color:#fff;
+    font-family:'Cinzel',serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .ssp-btn.ghost{background:none;border:1px solid rgba(245,243,239,.4);box-shadow:none}
+  .ssp-out{text-align:center;margin:30px 0 0;font-size:16px}
+  .ssp-out a{color:var(--g)}
+  .ssp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin:0 0 10px}
+  .ssp-card{background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:18px 16px}
+  .ssp-card b{display:block;font-family:'Cinzel','Noto Serif JP',serif;font-weight:700;font-size:30px;line-height:1;color:#fff;text-shadow:0 0 16px rgba(249,30,17,.45);margin:0 0 10px}
+  .ssp-card h3{font-family:'Cinzel',serif;font-weight:600;font-size:16px;letter-spacing:.04em;color:var(--w);margin:0 0 6px}
+  .ssp-card p{font-size:17px;line-height:1.45;color:var(--g);margin:0}
+  .ssp-how{list-style:none;counter-reset:h;max-width:640px;margin:0 auto 34px;padding:0}
+  .ssp-how li{counter-increment:h;position:relative;padding:0 0 18px 52px;font-size:18px;line-height:1.5;color:var(--g)}
+  .ssp-how li::before{content:counter(h);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:50%;border:1px solid var(--r);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-weight:700;color:var(--w)}
+  .ssp-how li b{display:block;font-family:'Cinzel',serif;font-weight:600;font-size:17px;color:var(--w);margin-bottom:2px}
+  .ssp-fine{max-width:640px;margin:0 auto 34px;text-align:center;font-size:15px;line-height:1.5;color:var(--g);font-style:italic;border-top:1px solid var(--edge);padding-top:16px}
+  .ssp-closed{text-align:center;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin:0 0 26px}
+  .ssp-closed span{color:var(--glow)}
+  @media (max-width:720px){ .ssp-me{grid-template-columns:1fr} .ssp-no,.ssp-hi{text-align:center} }
+</style>
+
+<section class="ssp" id="snSupPage">
+  <div class="ssp-in">
+    <p class="ssp-kick">Satomi Supporters <b>支援会員</b></p>
+
+    {%- if is_sup -%}
+      {%- assign n = customer.metafields.satomi.supporter_number.value -%}
+      {%- assign cert = customer.metafields.satomi.certificate.value -%}
+      <div class="ssp-me">
+        <div>
+          {%- if cert -%}
+          <div class="ssp-cert">
+            <img src="{{ cert | image_url: width: 900 }}" alt="Your Satomi Supporter certificate" width="900" height="1125">
+            <a href="{{ cert | image_url: width: 1080 }}" download target="_blank" rel="noopener">Save your certificate</a>
+          </div>
+          {%- endif -%}
+        </div>
+        <div>
+          <p class="ssp-no"><small>Supporter number</small>{% if n %}{{ n | prepend: '00' | slice: -3, 3 }}{% else %}–{% endif %}</p>
+          <p class="ssp-hi">{% if customer.first_name != blank %}{{ customer.first_name | capitalize }}, thanks{% else %}Thanks{% endif %} for being one of the first in. Everything below just works while you're logged in.</p>
+
+        </div>
+      </div>
+
+      <h2>What you get</h2>
+      {{ all_perks }}
+
+      <h2>In the Supporters section right now</h2>
+      {%- assign shown = 0 -%}
+      <div class="ssp-early">
+      {%- for p in collections['koi-for-sale'].products -%}
+        {%- assign pf = p.metafields.koi.public_from.value -%}
+        {%- if pf == blank or p.available == false -%}{%- continue -%}{%- endif -%}
+        {%- assign pf_s = pf | date: '%s' | plus: 0 -%}
+        {%- if pf_s <= now_s -%}{%- continue -%}{%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}
+        <a href="{{ p.url }}">
+          {%- if p.featured_image -%}<img src="{{ p.featured_image | image_url: width: 500 }}" alt="{{ p.title | escape }}" loading="lazy">{%- endif -%}
+          <span>{{ p.vendor }} {{ p.metafields.koi.variety.value | default: p.title }}</span>
+          <em>Everyone else from {{ pf | date: '%a %-d %b, %-I%P' }}</em>
+        </a>
+      {%- endfor -%}
+      {%- for p in collections['koi-roulette'].products -%}
+        {%- assign pf = p.metafields.koi.public_from.value -%}
+        {%- if pf == blank or p.available == false -%}{%- continue -%}{%- endif -%}
+        {%- assign pf_s = pf | date: '%s' | plus: 0 -%}
+        {%- if pf_s <= now_s -%}{%- continue -%}{%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}
+        <a href="{{ p.url }}">
+          {%- if p.featured_image -%}<img src="{{ p.featured_image | image_url: width: 500 }}" alt="{{ p.title | escape }}" loading="lazy">{%- endif -%}
+          <span>{{ p.title }} · paid spots</span>
+          <em>Everyone else (and the free spot) from {{ pf | date: '%a %-d %b, %-I%P' }}</em>
+        </a>
+      {%- endfor -%}
+      </div>
+      {%- if shown == 0 -%}<p class="ssp-none">Nothing new in here at the moment. Anything new spends 24 hours here before anyone else can buy it.</p>{%- endif -%}
+
+      <p class="ssp-out"><a href="{{ routes.account_url }}">Your orders</a> · <a href="{{ routes.account_logout_url }}">Log out</a></p>
+
+    {%- elsif customer -%}
+      <h1>Supporters only</h1>
+      <div class="ssp-box">
+        <p>You're logged in, but this email isn't on the Supporters list. If you're a Supporter and signed up with a different email, log out and back in with that one, or message Josh in the WhatsApp group.</p>
+        <p>Supporter membership closed on 18 October 2026 with 34 founding Supporters, never more.</p>
+        <a class="ssp-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Ask in the WhatsApp group</a>
+        <a class="ssp-btn ghost" href="{{ routes.account_logout_url }}">Log out</a>
+      </div>
+
+    {%- else -%}
+      <h1>Satomi Supporters</h1>
+      <p class="ssp-closed"><span>34</span> founding Supporters · closed 18 October 2026 · never reopening</p>
+      {{ all_perks }}
+      <div class="ssp-box">
+        <p>Already a Supporter? Log in with the email you signed up with. Shopify emails you a 6-digit code, no password needed.</p>
+        <a class="ssp-btn" href="{{ routes.account_login_url }}">Log in</a>
+        <p style="margin-top:16px">Not a Supporter? Membership is closed for good, but every koi still comes through the WhatsApp group.</p>
+        <a class="ssp-btn ghost" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+<script>
+(function(){
+  var root = document.getElementById('snSupPage'); if (!root) return;
+  var sec = root.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Supporters page",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,120 @@
+{% comment %}
+  SATOMI NISHIKIGOI · HALL OF FAME (show awards won by koi bought from Satomi)
+  Theme section file (sections/satomi-hall-of-fame.liquid), used by the "hall-of-fame" page template.
+  Every award is a "Hall of Fame award" entry: Shopify admin → Content → Metaobjects → Hall of Fame award.
+  Owners: first names only. Newest year first.
+{% endcomment %}
+{%- assign all = shop.metaobjects.satomi_award.values -%}
+{%- assign years = '' -%}
+{%- for a in all -%}{%- assign y = a.year.value | append: '' -%}{%- unless years contains y -%}{%- assign years = years | append: y | append: ',' -%}{%- endunless -%}{%- endfor -%}
+{%- assign years = years | split: ',' | sort | reverse -%}
+{%- assign n_top = 0 -%}{%- for a in all -%}{%- if a.top.value -%}{%- assign n_top = n_top | plus: 1 -%}{%- endif -%}{%- endfor -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<style>
+  .hf{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--gold:#d8b25a;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 72px;box-sizing:border-box}
+  .hf *{box-sizing:border-box}
+  .hf-in{max-width:1040px;margin:0 auto}
+  .hf-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);text-align:center;margin:0 0 12px}
+  .hf-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .hf h1{font-family:'Cinzel',serif;font-weight:700;letter-spacing:.06em;font-size:clamp(30px,6vw,52px);line-height:1.1;text-align:center;margin:0 0 14px}
+  .hf-lede{font-size:20px;line-height:1.55;color:var(--g);text-align:center;max-width:34em;margin:0 auto 26px}
+  .hf-stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+  .hf-stat{min-width:120px;text-align:center;padding:12px 14px;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--gold);border-radius:4px}
+  .hf-stat b{display:block;font-family:'Cinzel',serif;font-size:30px;font-weight:600}
+  .hf-stat span{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--g)}
+  .hf-year{display:flex;align-items:center;gap:16px;margin:40px 0 16px}
+  .hf-year h2{font-family:'Cinzel',serif;font-weight:700;font-size:36px;margin:0;color:var(--gold)}
+  .hf-year::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(216,178,90,.6),transparent)}
+  .hf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+  .hf-card{background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+  .hf-card.top{border:1px solid rgba(216,178,90,.6);border-top:3px solid var(--gold);box-shadow:0 0 30px rgba(216,178,90,.12)}
+  .hf-photo{position:relative;aspect-ratio:3/4;background:#111}
+  .hf-photo.none{aspect-ratio:auto;height:78px;background:linear-gradient(90deg,#140606,#0b0b0b)}
+  .hf-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+  .hf-rosette{position:absolute;left:10px;top:10px;width:54px;height:54px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ff4a3a,var(--r) 60%,#7a0606);display:flex !important;align-items:center;justify-content:center;font-family:'Noto Serif JP',serif;font-weight:600;font-size:22px;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.6)}
+  .hf-card.top .hf-rosette{background:radial-gradient(circle at 35% 35%,#ffe7a3,var(--gold) 60%,#7a5a14);color:#2a1a00}
+  .hf-body{padding:14px 16px 16px}
+  .hf-award{font-family:'Cinzel',serif;font-weight:700;font-size:20px;line-height:1.2;margin:0 0 4px}
+  .hf-card.top .hf-award{color:var(--gold)}
+  .hf-show{font-size:17px;color:#d6d3ce;margin:0 0 10px}
+  .hf-chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+  .hf-chips span{font-size:15px;padding:3px 9px;border:1px solid var(--edge);border-radius:99px;color:var(--g)}
+  .hf-owner{font-size:16px;color:var(--g);margin:0}
+  .hf-owner b{color:#fff;font-weight:500}
+  .hf-story{font-size:16px;line-height:1.5;color:var(--g);margin:8px 0 0}
+  .hf-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--gold);border-radius:4px;padding:34px 18px;font-size:19px;line-height:1.5;color:var(--g);max-width:640px;margin:20px auto 0}
+  .hf-foot{text-align:center;margin:44px auto 0;max-width:34em;font-size:18px;line-height:1.55;color:var(--g)}
+</style>
+
+<section class="hf" id="snHall">
+  <div class="hf-in">
+    <p class="hf-kick">Hall of Fame <b>殿堂</b></p>
+    <h1>{{ section.settings.heading | default: 'Hall of Fame' }}</h1>
+    <p class="hf-lede">{{ section.settings.lede }}</p>
+
+    {%- if all.size > 0 -%}
+    <div class="hf-stats">
+      <div class="hf-stat"><b>{{ all.size }}</b><span>Award{% if all.size != 1 %}s{% endif %}</span></div>
+      {%- if n_top > 0 -%}<div class="hf-stat"><b>{{ n_top }}</b><span>Major award{% if n_top != 1 %}s{% endif %}</span></div>{%- endif -%}
+    </div>
+    {%- for y in years -%}
+      {%- if y == blank -%}{%- continue -%}{%- endif -%}
+      <div class="hf-year"><h2>{{ y }}</h2></div>
+      <div class="hf-grid">
+        {%- for top in (1..2) -%}
+        {%- for a in all -%}
+          {%- assign ay = a.year.value | append: '' -%}
+          {%- if ay != y -%}{%- continue -%}{%- endif -%}
+          {%- if top == 1 and a.top.value != true -%}{%- continue -%}{%- endif -%}
+          {%- if top == 2 and a.top.value == true -%}{%- continue -%}{%- endif -%}
+          <article class="hf-card{% if a.top.value %} top{% endif %}">
+            <div class="hf-photo{% unless a.photo.value %} none{% endunless %}">
+              {%- if a.photo.value -%}<img src="{{ a.photo.value | image_url: width: 700 }}" alt="{{ a.variety.value | default: 'Koi' | escape }}, {{ a.award.value | escape }}" loading="lazy">{%- endif -%}
+              <span class="hf-rosette" aria-hidden="true">賞</span>
+            </div>
+            <div class="hf-body">
+              <p class="hf-award">{{ a.award.value }}</p>
+              <p class="hf-show">{{ a.show.value }}</p>
+              <div class="hf-chips">
+                {%- if a.variety.value != blank -%}<span>{{ a.variety.value }}</span>{%- endif -%}
+                {%- if a.breeder.value != blank -%}<span>{{ a.breeder.value }}</span>{%- endif -%}
+                {%- if a.size.value != blank -%}<span>{{ a.size.value }}</span>{%- endif -%}
+              </div>
+              {%- if a.owner.value != blank -%}<p class="hf-owner">Owned by <b>{{ a.owner.value }}</b></p>{%- endif -%}
+              {%- if a.story.value != blank -%}<p class="hf-story">{{ a.story.value | newline_to_br }}</p>{%- endif -%}
+            </div>
+          </article>
+        {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    {%- endfor -%}
+    {%- else -%}
+      <div class="hf-empty">{{ section.settings.none_text }}</div>
+    {%- endif -%}
+
+    <p class="hf-foot">{{ section.settings.foot }}</p>
+  </div>
+</section>
+<script>
+(function(){
+  var root = document.getElementById('snHall'); if (!root || root.__done) return; root.__done = true;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Hall of Fame",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Hall of Fame" },
+    { "type": "textarea", "id": "lede", "label": "Intro text", "default": "Koi that started out at Satomi and went on to win at the shows. The credit goes to the people who grew them on." },
+    { "type": "textarea", "id": "none_text", "label": "Text when there's nothing listed", "default": "No trophies up here yet. Won something at a show with a koi from Satomi? Send me a photo on WhatsApp and it'll go up here." },
+    { "type": "textarea", "id": "foot", "label": "Bottom line", "default": "Won with a Satomi koi? Send me a photo on WhatsApp and I'll add it." }
+  ]
+}
+{% endschema %}

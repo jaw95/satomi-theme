@@ -1,0 +1,218 @@
+{% comment %}
+  SATOMI NISHIKIGOI · KOI FOR SALE (2027 site)
+  Theme section file (sections/satomi-koi-for-sale.liquid), used by the "koi-for-sale" page template.
+  Claude updates this file directly through the Shopify connector.
+  It lists every koi in the collection named below, newest first.
+    - Breeder comes from the product's Vendor.
+    - Variety, age, sex and size come from the koi's own boxes (Variety, Age, Sex, Size (cm)).
+      Older listings without those boxes fall back to the description lines "Variety - ...", "Age - ...", "Size - ...".
+    - Koi that are a Koi Roulette jackpot get a red "Also a jackpot" badge. Once the first spot on that
+      Wheel sells, the koi is hidden here (it's locked to the Wheel).
+    - Sold koi are hidden unless someone ticks "Show sold".
+    - Old raffle, auction, grow-on and wheel listings are skipped.
+    - Any koi in the Blind Auction collection is skipped too.
+{% endcomment %}
+{%- assign shop_collection = 'koi-for-sale' -%}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign coll = collections[shop_collection] -%}
+{%- comment -%} Koi in the Blind Auction collection are kept off this page {%- endcomment -%}
+{%- assign ba_list = collections['blind-auction'].products | map: 'handle' | join: ',' | prepend: ',' | append: ',' -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+  .kfs{--w:#f5f3ef;--g:#a3a09b;--dim:#6e6b67;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:radial-gradient(ellipse 60% 22% at 50% 0%,rgba(215,15,15,.16),transparent 70%),#000;
+    color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 80px;box-sizing:border-box}
+  .kfs *{box-sizing:border-box}
+  .kfs [hidden]{display:none !important}
+  .kfs-in{max-width:1200px;margin:0 auto}
+  .kfs-kick{display:block;text-align:center;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);margin:0 0 10px}
+  .kfs h1{font-family:'Cinzel',serif;font-weight:600;font-size:clamp(30px,6vw,50px);letter-spacing:.05em;line-height:1.1;text-align:center;margin:0 0 12px}
+  .kfs-line{height:2px;width:min(360px,70%);margin:0 auto 20px;border:0;background:linear-gradient(90deg,transparent,var(--glow),transparent);box-shadow:0 0 12px rgba(249,30,17,.6)}
+  .kfs-intro{font-size:19px;line-height:1.55;color:var(--g);text-align:center;max-width:36em;margin:0 auto 34px}
+  .kfs-intro a{color:var(--w)}
+
+  .kfs-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:0 0 14px}
+  .kfs-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .kfs-chip{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:#000;color:var(--w);
+    border:1px solid rgba(245,243,239,.28);border-radius:99px;padding:9px 14px;cursor:pointer}
+  .kfs-chip:hover{border-color:var(--r)}
+  .kfs-chip[aria-pressed="true"]{background:var(--r);border-color:var(--r);color:#fff}
+  .kfs-tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .kfs-tools select{font-family:inherit;font-size:16px;background:#000;color:var(--w);border:1px solid rgba(245,243,239,.28);border-radius:3px;padding:9px 10px}
+  .kfs-tools label{font-size:15px;color:var(--g);display:flex;gap:6px;align-items:center;cursor:pointer}
+  .kfs-count{font-size:15px;color:var(--dim);margin:0 0 18px}
+
+  .kfs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+  .kfs-card{position:relative;display:flex;flex-direction:column;background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;overflow:hidden;
+    text-decoration:none;color:inherit;transition:border-color .2s,transform .2s}
+  .kfs-card:hover{border-color:var(--r);transform:translateY(-3px)}
+  .kfs-img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;background:#111}
+  .kfs-noimg{aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;color:var(--dim);font-family:'Cinzel',serif;font-size:12px;letter-spacing:.2em;background:#111}
+  .kfs-body{padding:14px 14px 16px;display:flex;flex-direction:column;gap:4px;flex:1}
+  .kfs-var{font-family:'Cinzel',serif;font-weight:600;font-size:17px;letter-spacing:.03em;line-height:1.25;color:var(--w)}
+  .kfs-meta{font-size:15px;color:var(--g)}
+  .kfs-price{margin-top:auto;padding-top:8px;font-family:'Cinzel',serif;font-weight:600;font-size:18px;color:var(--w)}
+  .kfs-price s{font-weight:500;font-size:14px;color:var(--dim);margin-right:6px}
+  .kfs-badge{position:absolute;top:10px;left:10px;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--r);color:#fff;border-radius:3px;padding:6px 8px;box-shadow:0 0 14px rgba(215,15,15,.5)}
+  .kfs-badge.sold{background:#2a2a2a;box-shadow:none;color:var(--g)}
+  .kfs-card.is-sold{opacity:.55}
+  .kfs-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:34px 20px;margin:10px auto 0;max-width:640px}
+  .kfs-empty h2{font-family:'Cinzel',serif;font-weight:600;font-size:22px;margin:0 0 8px}
+  .kfs-empty p{color:var(--g);font-size:17px;margin:0 0 16px}
+  .kfs-btn{display:inline-block;font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+    background:var(--r);color:#fff;border-radius:3px;padding:14px 22px;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  @media (max-width:600px){.kfs{padding:40px 12px 64px}.kfs-grid{grid-template-columns:repeat(2,1fr);gap:10px}.kfs-var{font-size:15px}.kfs-meta{font-size:14px}.kfs-body{padding:10px}}
+</style>
+
+<section class="kfs" id="kfs">
+  <div class="kfs-in">
+    <span class="kfs-kick">Satomi Nishikigoi</span>
+    <h1>Koi for Sale</h1>
+    <hr class="kfs-line">
+    <p class="kfs-intro">Every koi here is in my ponds and ready to go. If you'd rather try your luck, a koi with a red badge is also the jackpot on a <a href="/collections/koi-roulette">Koi Roulette</a> Wheel.</p>
+
+    {%- assign shown = 0 -%}{%- assign avail = 0 -%}
+    {%- capture cards -%}
+    {%- if coll != blank -%}
+      {%- for p in coll.products limit: 250 -%}
+        {%- assign tl = p.title | downcase -%}
+        {%- if tl contains 'raffle' or tl contains 'auction' or tl contains 'grow on' or tl contains 'wheel' -%}{%- continue -%}{%- endif -%}
+        {%- assign hk = ',' | append: p.handle | append: ',' -%}{%- if ba_list contains hk -%}{%- continue -%}{%- endif -%}
+        {%- assign wheel = p.metafields.custom.jackpot_for_wheel.value -%}
+        {%- assign wt = wheel.title | default: '' -%}
+        {%- assign locked = false -%}
+        {%- if wt != '' -%}
+          {%- for v in wheel.variants -%}{%- unless v.available -%}{%- assign locked = true -%}{%- endunless -%}{%- endfor -%}
+        {%- endif -%}
+        {%- if locked -%}{%- continue -%}{%- endif -%}
+
+        {%- assign d = p.description | replace: '</p>', '|' | replace: '<br>', '|' | replace: '<br/>', '|' | replace: '<br />', '|' | replace: '</li>', '|' | replace: '</div>', '|' | strip_html | replace: '&nbsp;', ' ' -%}
+        {%- assign variety = '' -%}{%- assign age = '' -%}{%- assign size = '' -%}
+        {%- assign parts = d | split: '|' -%}
+        {%- for line in parts -%}
+          {%- assign l = line | strip -%}
+          {%- assign ld = l | downcase -%}
+          {%- assign s7 = ld | slice: 0, 7 -%}{%- assign s4 = ld | slice: 0, 4 -%}{%- assign s3 = ld | slice: 0, 3 -%}
+          {%- if s7 == 'variety' and variety == '' -%}{%- assign variety = l | slice: 7, 200 | strip | remove_first: '-' | remove_first: ':' | strip -%}
+          {%- elsif s4 == 'size' and size == '' -%}{%- assign size = l | slice: 4, 200 | strip | remove_first: '-' | remove_first: ':' | strip -%}
+          {%- elsif s3 == 'age' and age == '' -%}{%- assign age = l | slice: 3, 200 | strip | remove_first: '-' | remove_first: ':' | strip -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- assign mv = p.metafields.koi.variety.value | default: '' | strip -%}{%- if mv != '' -%}{%- assign variety = mv -%}{%- endif -%}
+        {%- assign ma = p.metafields.koi.age.value | default: '' | strip -%}{%- if ma != '' -%}{%- assign age = ma -%}{%- endif -%}
+        {%- assign ms = p.metafields.koi.size_cm.value -%}{%- if ms -%}{%- assign size = ms | append: 'cm' -%}{%- endif -%}
+        {%- assign sex = p.metafields.koi.sex.value | default: '' | strip -%}{%- if sex == 'Unknown' -%}{%- assign sex = '' -%}{%- endif -%}
+        {%- if variety == '' -%}{%- assign variety = p.title | split: ' - ' | last -%}{%- endif -%}
+        {%- assign breeder = p.vendor | default: '' | strip -%}
+        {%- if breeder == shop.name -%}{%- assign breeder = '' -%}{%- endif -%}
+        {%- comment -%} Tidy old spellings so each breeder gets one button {%- endcomment -%}
+        {%- if breeder == 'Dianichi' -%}{%- assign breeder = 'Dainichi' -%}{%- endif -%}
+        {%- if breeder == 'Kase (Koshiji)' -%}{%- assign breeder = 'Kase' -%}{%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}{%- if p.available -%}{%- assign avail = avail | plus: 1 -%}{%- endif -%}
+        <a class="kfs-card{% unless p.available %} is-sold{% endunless %}" href="{{ p.url }}"
+           data-breeder="{{ breeder | escape }}" data-age="{{ age | downcase | escape }}" data-sex="{{ sex | downcase }}" data-price="{{ p.price }}"
+           data-new="{{ forloop.index }}" data-sold="{% if p.available %}0{% else %}1{% endif %}"{% unless p.available %} hidden{% endunless %}>
+          {%- if wt != '' and p.available -%}<span class="kfs-badge">Also a jackpot · {{ wt }}</span>{%- endif -%}
+          {%- unless p.available -%}<span class="kfs-badge sold">Sold</span>{%- endunless -%}
+          {%- if p.featured_image -%}
+            <img class="kfs-img" src="{{ p.featured_image | image_url: width: 600 }}" alt="{{ p.featured_image.alt | default: p.title | escape }}" loading="lazy" width="600" height="800">
+          {%- else -%}
+            <div class="kfs-noimg">Photo coming</div>
+          {%- endif -%}
+          <div class="kfs-body">
+            <span class="kfs-var">{{ variety }}</span>
+            <span class="kfs-meta">{% if breeder != '' %}{{ breeder }}{% endif %}{% if breeder != '' and age != '' %} · {% endif %}{{ age }}{% if sex != '' %} · {{ sex }}{% endif %}{% if size != '' %} · {{ size }}{% endif %}</span>
+            <span class="kfs-price">{% if p.compare_at_price > p.price %}<s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{% endif %}{{ p.price | money_without_trailing_zeros }}</span>
+          </div>
+        </a>
+      {%- endfor -%}
+    {%- endif -%}
+    {%- endcapture -%}
+
+    {%- if avail > 0 -%}
+    <div class="kfs-bar">
+      <div class="kfs-chips" id="kfsBreeders" role="group" aria-label="Breeder"><button type="button" class="kfs-chip" data-b="" aria-pressed="true">All breeders</button></div>
+      <div class="kfs-tools">
+        <select id="kfsAge" aria-label="Age"><option value="">Any age</option><option value="tosai">Tosai</option><option value="nisai">Nisai</option><option value="sansai">Sansai</option><option value="yonsai">Yonsai +</option></select>
+        <select id="kfsSex" aria-label="Sex"><option value="">Any sex</option><option value="female">Female</option><option value="male">Male</option></select>
+        <select id="kfsSort" aria-label="Sort"><option value="new">Newest</option><option value="low">Price: low to high</option><option value="high">Price: high to low</option></select>
+        <label><input type="checkbox" id="kfsSold"> Show sold</label>
+      </div>
+    </div>
+    <p class="kfs-count" id="kfsCount"></p>
+    <div class="kfs-grid" id="kfsGrid">{{ cards }}</div>
+    <div class="kfs-empty" id="kfsNone" hidden>
+      <h2>Nothing matches that</h2>
+      <p>Try another breeder or age, or ask in the group. I'll often have something that isn't listed yet.</p>
+      <a class="kfs-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Ask in the WhatsApp group</a>
+    </div>
+    {%- else -%}
+    <div class="kfs-empty">
+      <h2>New koi land here soon</h2>
+      <p>Koi go back on sale in March. They hit the WhatsApp group first, and supporters get first look.</p>
+      <a class="kfs-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+    </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('kfs'); if (!root) return;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var grid = document.getElementById('kfsGrid'); if (!grid) return;
+  var cards = Array.prototype.slice.call(grid.querySelectorAll('.kfs-card'));
+  var chipsBox = document.getElementById('kfsBreeders');
+  var sexSel = document.getElementById('kfsSex'), ageSel = document.getElementById('kfsAge'), sortSel = document.getElementById('kfsSort'), soldBox = document.getElementById('kfsSold');
+  var count = document.getElementById('kfsCount'), none = document.getElementById('kfsNone');
+  var breeder = '';
+
+  // Build breeder chips from the koi on the page
+  var seen = {};
+  cards.forEach(function(c){ var b = c.getAttribute('data-breeder'); if (b && !seen[b]){ seen[b] = 1; } });
+  Object.keys(seen).sort().forEach(function(b){
+    var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'kfs-chip'; btn.setAttribute('data-b', b); btn.setAttribute('aria-pressed','false'); btn.textContent = b;
+    chipsBox.appendChild(btn);
+  });
+  if (Object.keys(seen).length < 2) chipsBox.hidden = true;
+  chipsBox.addEventListener('click', function(e){
+    var b = e.target.closest('.kfs-chip'); if (!b) return;
+    breeder = b.getAttribute('data-b');
+    chipsBox.querySelectorAll('.kfs-chip').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    apply();
+  });
+  [ageSel, sexSel, sortSel, soldBox].forEach(function(el){ if (el) el.addEventListener('change', apply); });
+
+  function apply(){
+    var age = ageSel.value, sex = sexSel ? sexSel.value : '', showSold = soldBox.checked, sort = sortSel.value, n = 0;
+    var list = cards.slice().sort(function(a,b){
+      if (sort === 'low') return a.dataset.price - b.dataset.price;
+      if (sort === 'high') return b.dataset.price - a.dataset.price;
+      return a.dataset.new - b.dataset.new;
+    });
+    list.forEach(function(c){
+      var ok = (!breeder || c.dataset.breeder === breeder)
+        && (!age || (age === 'yonsai' ? !/tosai|nisai|sansai/.test(c.dataset.age) && c.dataset.age !== '' : c.dataset.age.indexOf(age) > -1))
+        && (!sex || c.dataset.sex === sex)
+        && (showSold || c.dataset.sold === '0');
+      c.hidden = !ok; if (ok) n++;
+      grid.appendChild(c);
+    });
+    count.textContent = n + (n === 1 ? ' koi' : ' koi') + ' showing';
+    none.hidden = n > 0;
+  }
+  apply();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Koi for Sale",
+  "settings": []
+}
+{% endschema %}

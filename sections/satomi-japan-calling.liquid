@@ -1,0 +1,227 @@
+{% comment %}
+  SATOMI NISHIKIGOI · JAPAN CALLING (Josh's Japan trip videos)
+  Theme section file (sections/satomi-japan-calling.liquid), used by the "japan-calling" page template.
+
+  Every video is a "Japan Calling video" entry: Shopify admin → Content → Metaobjects → Japan Calling video.
+  Give it the trip (e.g. "October 2025"), the YouTube link, a type (Episode / Short / Back home) and an order number.
+  Videos with the same trip name are grouped into one chapter. Newest trip shows first.
+{% endcomment %}
+{%- assign all = shop.metaobjects.satomi_japan_video.values -%}
+
+{%- comment %} trips, newest first (by the latest date in each trip) {% endcomment -%}
+{%- assign tripkeys = '' -%}
+{%- for v in all -%}
+  {%- assign t = v.trip.value | strip -%}
+  {%- unless tripkeys contains t -%}
+    {%- assign newest = '0000-00-00' -%}
+    {%- for w in all -%}{%- assign wt = w.trip.value | strip -%}{%- if wt == t -%}{%- assign wd = w.date.value | date: '%Y-%m-%d' -%}{%- if wd > newest -%}{%- assign newest = wd -%}{%- endif -%}{%- endif -%}{%- endfor -%}
+    {%- assign tripkeys = tripkeys | append: newest | append: '~' | append: t | append: '^' -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign trips = tripkeys | split: '^' | sort | reverse -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<style>
+  .jc{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;box-sizing:border-box}
+  .jc *{box-sizing:border-box}
+  .jc [hidden]{display:none !important}
+  .jc-hero{position:relative;height:78vh;min-height:520px;max-height:860px;display:flex;align-items:flex-end;justify-content:center;text-align:center;overflow:hidden}
+  .jc-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75;display:block}
+  .jc-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.75) 75%,#000 100%)}
+  .jc-hero-in{position:relative;z-index:1;max-width:760px;padding:0 16px 46px}
+  .jc-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:#fff;margin:0 0 10px}
+  .jc-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.12em;color:var(--glow);margin-right:8px}
+  .jc h1{font-family:'Cinzel',serif;font-weight:700;letter-spacing:.06em;font-size:clamp(34px,7vw,64px);line-height:1.05;margin:0 0 12px;text-shadow:0 2px 20px #000}
+  .jc-lede{font-size:20px;line-height:1.55;color:#f5f3ef;margin:0 auto;max-width:34em;text-shadow:0 1px 10px #000}
+  .jc-in{max-width:980px;margin:0 auto;padding:10px 16px 72px}
+
+  .jc-trip{margin-top:40px}
+  .jc-trip-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--edge);padding-bottom:14px;margin-bottom:22px}
+  .jc-trip-head small{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--r);margin-bottom:6px}
+  .jc-trip-head h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.04em;font-size:clamp(26px,4.6vw,38px);margin:0}
+  .jc-stats{display:flex;gap:8px;flex-wrap:wrap}
+  .jc-stats span{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--edge);border-radius:99px;color:var(--g)}
+  .jc-stats b{color:#fff}
+
+  .jc-eps{position:relative;padding-left:34px}
+  .jc-eps::before{content:'';position:absolute;left:11px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--r),rgba(215,15,15,.15))}
+  .jc-ep{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start;margin:0 0 26px}
+  .jc-ep::before{content:'';position:absolute;left:-29px;top:14px;width:14px;height:14px;border-radius:50%;background:#000;border:2px solid var(--r);box-shadow:0 0 10px rgba(215,15,15,.5)}
+  .jc-label{display:inline-block;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.2em;text-transform:uppercase;background:var(--r);color:#fff;padding:5px 10px;border-radius:3px;margin:0 0 10px}
+  .jc-ep h3{font-family:'Cinzel',serif;font-weight:600;font-size:22px;letter-spacing:.02em;margin:0 0 6px;color:var(--w)}
+  .jc-meta{font-size:15px;color:var(--g);margin:0 0 8px}
+  .jc-sum{font-size:18px;line-height:1.5;color:#d6d3ce;margin:0 0 10px}
+  .jc-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .jc-tags span{font-size:14px;padding:3px 9px;border:1px solid rgba(215,15,15,.55);border-radius:99px;color:#fff}
+
+  .jc-vid{position:relative;aspect-ratio:16/9;border-radius:4px;overflow:hidden;background:#111;border:1px solid var(--edge)}
+  .jc-vid.tall{aspect-ratio:9/16}
+  .jc-vid button{all:unset;cursor:pointer;position:absolute;inset:0;display:block}
+  .jc-vid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+  .jc-vid button:hover img{transform:scale(1.04)}
+  .jc-vid button::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.55))}
+  .jc-play{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(215,15,15,.92);z-index:1;display:flex !important;align-items:center;justify-content:center;box-shadow:0 0 24px rgba(249,30,17,.5)}
+  .jc-play::before{content:'';margin-left:5px;border-style:solid;border-width:11px 0 11px 18px;border-color:transparent transparent transparent #fff}
+  .jc-len{position:absolute;right:8px;bottom:8px;z-index:1;font-size:13px;background:rgba(0,0,0,.8);padding:2px 7px;border-radius:3px;color:#fff}
+  .jc-vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+
+  .jc-sub{font-family:'Cinzel',serif;font-weight:600;font-size:16px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin:34px 0 14px}
+  .jc-shorts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .jc-short h4{font-family:'Cinzel',serif;font-weight:600;font-size:15px;margin:8px 0 2px;color:var(--w)}
+  .jc-short p{margin:0;font-size:14px;color:var(--g)}
+  .jc-home{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:16px}
+  .jc-home h3{font-family:'Cinzel',serif;font-weight:600;font-size:22px;margin:0 0 6px}
+
+  .jc-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:30px 18px;font-size:19px;color:var(--g);margin-top:30px}
+  .jc-foot{text-align:center;margin:50px auto 0;max-width:34em;font-size:18px;line-height:1.55;color:var(--g)}
+  .jc-btn{display:inline-block;margin-top:14px;padding:15px 24px;border-radius:3px;text-decoration:none;background:var(--r);color:#fff;font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+  @media (max-width:720px){
+    .jc-ep,.jc-home{grid-template-columns:1fr;gap:12px}
+    .jc-ep .jc-vid{order:-1}
+    .jc-eps{padding-left:26px} .jc-eps::before{left:7px} .jc-ep::before{left:-25px}
+    .jc-hero{height:64vh;min-height:440px}
+    .jc-hero-in{padding-bottom:30px}
+  }
+</style>
+
+<section class="jc" id="snJapan">
+  <div class="jc-hero">
+    {%- if section.settings.hero != blank -%}
+      {%- assign fp = section.settings.hero.presentation.focal_point | default: '50% 22%' -%}
+      <img src="{{ section.settings.hero | image_url: width: 2000 }}" alt="{{ section.settings.hero.alt | escape }}" loading="eager" style="object-position:{{ fp }}">
+    {%- endif -%}
+    <div class="jc-hero-in">
+      <p class="jc-kick"><b>日本</b>Japan Calling</p>
+      <h1>{{ section.settings.heading | default: 'Japan Calling' }}</h1>
+      <p class="jc-lede">{{ section.settings.lede }}</p>
+    </div>
+  </div>
+
+  <div class="jc-in">
+  {%- if all.size == 0 -%}
+    <div class="jc-empty">The first trip goes up soon.</div>
+  {%- endif -%}
+
+  {%- for tk in trips -%}
+    {%- if tk == blank -%}{%- continue -%}{%- endif -%}
+    {%- assign trip = tk | split: '~' | last -%}
+    {%- assign n_eps = 0 -%}{%- assign n_sh = 0 -%}{%- assign n_home = 0 -%}{%- assign brs = '' -%}
+    {%- for v in all -%}
+      {%- assign vt = v.trip.value | strip -%}
+      {%- if vt != trip -%}{%- continue -%}{%- endif -%}
+      {%- case v.kind.value -%}
+        {%- when 'Short' -%}{%- assign n_sh = n_sh | plus: 1 -%}
+        {%- when 'Back home' -%}{%- assign n_home = n_home | plus: 1 -%}
+        {%- else -%}{%- assign n_eps = n_eps | plus: 1 -%}
+      {%- endcase -%}
+      {%- assign bl = v.breeders.value | split: ',' -%}
+      {%- for b in bl -%}{%- assign bb = b | strip -%}{%- if bb != blank -%}{%- unless brs contains bb -%}{%- assign brs = brs | append: bb | append: '|' -%}{%- endunless -%}{%- endif -%}{%- endfor -%}
+    {%- endfor -%}
+
+    <div class="jc-trip">
+      <div class="jc-trip-head">
+        <div><small>The trip</small><h2>{{ trip }}</h2></div>
+        <div class="jc-stats">
+          {%- if n_eps > 0 -%}<span><b>{{ n_eps }}</b> episode{% if n_eps != 1 %}s{% endif %}</span>{%- endif -%}
+          {%- if n_sh > 0 -%}<span><b>{{ n_sh }}</b> short{% if n_sh != 1 %}s{% endif %}</span>{%- endif -%}
+        </div>
+      </div>
+
+      {%- if n_eps > 0 -%}
+      <div class="jc-eps">
+        {%- for o in (0..99) -%}
+          {%- for v in all -%}
+            {%- assign vt = v.trip.value | strip -%}
+            {%- assign vo = v.order.value | plus: 0 -%}
+            {%- if vt != trip or vo != o or v.kind.value != 'Episode' -%}{%- continue -%}{%- endif -%}
+            {%- capture yid -%}{%- render 'satomi-jc-id', url: v.youtube.value -%}{%- endcapture -%}
+            <article class="jc-ep">
+              <div>
+                {%- if v.label.value != blank -%}<span class="jc-label">{{ v.label.value }}</span>{%- endif -%}
+                <h3>{{ v.title.value }}</h3>
+                <p class="jc-meta">{% if v.date.value %}{{ v.date.value | date: '%-d %B %Y' }}{% endif %}{% if v.length.value != blank %} · {{ v.length.value }}{% endif %}</p>
+                {%- if v.summary.value != blank -%}<p class="jc-sum">{{ v.summary.value | newline_to_br }}</p>{%- endif -%}
+                {%- if v.breeders.value != blank -%}<div class="jc-tags">{%- assign bl = v.breeders.value | split: ',' -%}{%- for b in bl -%}<span>{{ b | strip }}</span>{%- endfor -%}</div>{%- endif -%}
+              </div>
+              <div class="jc-vid"><button type="button" data-yt="{{ yid | strip }}" aria-label="Play {{ v.title.value | escape }}"><img src="https://i.ytimg.com/vi/{{ yid | strip }}/hqdefault.jpg" alt="" loading="lazy"><span class="jc-play"></span>{% if v.length.value != blank %}<span class="jc-len">{{ v.length.value }}</span>{% endif %}</button></div>
+            </article>
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+
+      {%- if n_sh > 0 -%}
+      <p class="jc-sub">Shorts from the trip</p>
+      <div class="jc-shorts">
+        {%- for o in (0..99) -%}
+          {%- for v in all -%}
+            {%- assign vt = v.trip.value | strip -%}
+            {%- assign vo = v.order.value | plus: 0 -%}
+            {%- if vt != trip or vo != o or v.kind.value != 'Short' -%}{%- continue -%}{%- endif -%}
+            {%- capture yid -%}{%- render 'satomi-jc-id', url: v.youtube.value -%}{%- endcapture -%}
+            <div class="jc-short">
+              <div class="jc-vid tall"><button type="button" data-yt="{{ yid | strip }}" aria-label="Play {{ v.title.value | escape }}"><img src="https://i.ytimg.com/vi/{{ yid | strip }}/hqdefault.jpg" alt="" loading="lazy"><span class="jc-play"></span></button></div>
+              <h4>{{ v.title.value }}</h4>
+              {%- if v.breeders.value != blank -%}<p>{{ v.breeders.value }}</p>{%- endif -%}
+            </div>
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+      {%- endif -%}
+
+      {%- if n_home > 0 -%}
+      <p class="jc-sub">Back home</p>
+        {%- for v in all -%}
+          {%- assign vt = v.trip.value | strip -%}
+          {%- if vt != trip or v.kind.value != 'Back home' -%}{%- continue -%}{%- endif -%}
+          {%- capture yid -%}{%- render 'satomi-jc-id', url: v.youtube.value -%}{%- endcapture -%}
+          <div class="jc-home">
+            <div>
+              {%- if v.label.value != blank -%}<span class="jc-label">{{ v.label.value }}</span>{%- endif -%}
+              <h3>{{ v.title.value }}</h3>
+              <p class="jc-meta">{% if v.date.value %}{{ v.date.value | date: '%-d %B %Y' }}{% endif %}{% if v.length.value != blank %} · {{ v.length.value }}{% endif %}</p>
+              {%- if v.summary.value != blank -%}<p class="jc-sum">{{ v.summary.value }}</p>{%- endif -%}
+            </div>
+            <div class="jc-vid"><button type="button" data-yt="{{ yid | strip }}" aria-label="Play {{ v.title.value | escape }}"><img src="https://i.ytimg.com/vi/{{ yid | strip }}/hqdefault.jpg" alt="" loading="lazy"><span class="jc-play"></span>{% if v.length.value != blank %}<span class="jc-len">{{ v.length.value }}</span>{% endif %}</button></div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+
+    <p class="jc-foot">{{ section.settings.foot }}<br><a class="jc-btn" href="https://www.youtube.com/@SatomiNishikigoi?sub_confirmation=1" target="_blank" rel="noopener">Subscribe on YouTube</a></p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('snJapan'); if (!root || root.__done) return; root.__done = true;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+  root.querySelectorAll('.jc-vid button').forEach(function(b){
+    b.addEventListener('click', function(){
+      var id = b.getAttribute('data-yt'); if (!id) return;
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&playsinline=1';
+      f.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      f.allowFullscreen = true; f.title = b.getAttribute('aria-label') || 'Video';
+      b.replaceWith(f);
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Japan Calling",
+  "settings": [
+    { "type": "image_picker", "id": "hero", "label": "Photo across the top" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Japan Calling" },
+    { "type": "textarea", "id": "lede", "label": "Intro text", "default": "Every trip to Japan, filmed. Come with me to the farms in the mountains of Niigata, from the first day to the koi landing back home." },
+    { "type": "textarea", "id": "foot", "label": "Bottom line", "default": "New trips go up here as they happen." }
+  ]
+}
+{% endschema %}

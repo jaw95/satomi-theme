@@ -1,0 +1,382 @@
+{% comment %}
+  SATOMI NISHIKIGOI · BLIND AUCTION (one koi a month, sealed bids)
+  Theme section file (sections/satomi-blind-auction.liquid), used by the "blind-auction" page template.
+  Claude updates this file directly through the Shopify connector.
+
+  How to run it each month:
+    1. Make the koi a normal product (photos, breeder as Vendor, description).
+    2. Put it in the collection "Blind Auction" (handle blind-auction). Do it at the start of the month.
+    3. Each bid is a free (£0) checkout of the hidden product "Blind Auction – Sealed Bid",
+       so every bid is saved as an order with the bid, koi, name and WhatsApp number on it,
+       and the bidder gets an email receipt. Nothing is paid.
+    4. The page closes itself at 8pm on the last day of the month. A scheduled task then ranks
+       the bids, messages Josh the winner and runner-up, and takes the koi off the page.
+    5. Message the winner, then put next month's koi in.
+
+  The lines below are all you'll ever change:
+{% endcomment %}
+{%- assign collection_handle = 'blind-auction' -%}
+{%- assign close_hour = 20 -%}
+{%- assign delivery_text = "Koi won now are grown on here and shipped when the new season starts, around March 2027, weather depending." -%}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign bid_variant = 59931824849241 -%}
+
+{%- assign coll = collections[collection_handle] -%}
+{%- assign koi = nil -%}
+{%- if coll != blank -%}
+  {%- for p in coll.products -%}{%- if p.available -%}{%- assign koi = p -%}{%- break -%}{%- endif -%}{%- endfor -%}
+{%- endif -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<style>
+  .ba{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 72px;box-sizing:border-box}
+  .ba *{box-sizing:border-box}
+  .ba [hidden]{display:none !important}
+  .ba-in{max-width:960px;margin:0 auto}
+  .ba-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 12px}
+  .ba-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .ba h1{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(28px,5.4vw,46px);line-height:1.15;text-align:center;margin:0 0 14px;color:var(--w)}
+  .ba-lede{font-size:20px;line-height:1.55;color:var(--g);text-align:center;max-width:32em;margin:0 auto 34px}
+  .ba h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(22px,4vw,30px);text-align:center;margin:56px 0 22px;color:var(--w)}
+
+  .ba-count{display:flex;justify-content:center;gap:10px;margin:0 0 8px}
+  .ba-unit{min-width:84px;padding:14px 8px;border:1px solid var(--edge);border-radius:4px;background:#0b0b0b;text-align:center}
+  .ba-unit:first-child{border-top:2px solid var(--r)}
+  .ba-unit b{display:block;font-family:'Cinzel',serif;font-size:34px;font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(249,30,17,.3)}
+  .ba-unit span{display:block;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin-top:4px}
+  .ba-when{font-style:italic;font-size:18px;color:var(--g);text-align:center;margin:0 0 30px}
+
+  .ba-koi{display:grid;grid-template-columns:1.1fr 1fr;gap:26px;align-items:start;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:18px}
+  .ba-photo{position:relative;border-radius:3px;overflow:hidden;background:#111;aspect-ratio:3/4}
+  .ba-photo img{width:100%;height:100%;object-fit:contain;display:block}
+  .ba-thumbs{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .ba-thumbs button{all:unset;cursor:pointer;width:58px;height:58px;border-radius:3px;overflow:hidden;border:1px solid var(--edge)}
+  .ba-thumbs button[aria-current="true"]{border-color:var(--glow)}
+  .ba-thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+  .ba-info small{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--r);margin:4px 0 6px}
+  .ba-info h3{font-family:'Cinzel',serif;font-weight:600;font-size:26px;letter-spacing:.03em;margin:0 0 12px;color:var(--w)}
+  .ba-desc{font-size:18px;line-height:1.55;color:var(--g)}
+  .ba-desc p{margin:0 0 10px}
+  .ba-noreserve{display:inline-block;margin:6px 0 18px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;border:1px solid rgba(249,30,17,.6);color:#fff;padding:6px 10px;border-radius:3px}
+
+  .ba-form{margin-top:6px}
+  .ba-form label{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--g);margin:12px 0 6px}
+  .ba-form input[type=text],.ba-form input[type=email],.ba-form input[type=tel],.ba-form input[type=number]{width:100%;background:#000;border:1px solid rgba(245,243,239,.25);border-radius:3px;color:var(--w);
+    font-family:'EB Garamond',Georgia,serif;font-size:19px;padding:11px 12px}
+  .ba-form input:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 2px rgba(249,30,17,.25)}
+  .ba-bid{position:relative}
+  .ba-bid span{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:22px;color:var(--g)}
+  .ba-form .ba-bid input{padding-left:30px;font-size:26px;font-family:'Cinzel',serif}
+  .ba-agree{display:flex !important;gap:10px;align-items:flex-start;text-transform:none !important;letter-spacing:0 !important;font-family:'EB Garamond',Georgia,serif !important;font-size:17px !important;color:var(--g) !important}
+  .ba-agree input{margin-top:5px;accent-color:#d70f0f}
+  .ba-send{all:unset;box-sizing:border-box;display:block;width:100%;text-align:center;cursor:pointer;margin-top:18px;padding:16px 20px;border-radius:3px;background:var(--r);color:#fff;
+    font-family:'Cinzel',serif;font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .ba-send:hover{background:var(--glow)}
+  .ba-must{margin:14px 0 0;padding:12px 14px;border:1px solid rgba(249,30,17,.6);border-left:3px solid var(--glow);background:rgba(215,15,15,.1);border-radius:3px;font-size:16px;line-height:1.45;color:var(--w)}
+  .ba-must b{color:#fff;font-weight:500}
+  .ba-small{font-size:15px;color:var(--g);margin:10px 0 0;line-height:1.45}
+  .ba-msg{border:1px solid var(--edge);border-left:3px solid var(--glow);background:#0b0b0b;border-radius:3px;padding:14px 16px;font-size:18px;line-height:1.5;margin:6px 0 0}
+  .ba-msg b{font-family:'Cinzel',serif;font-weight:600;display:block;margin-bottom:4px;color:#fff}
+  .ba-err{border-left-color:#e2541b}
+
+  .ba-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:s}
+  .ba-step{background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;padding:18px 16px;counter-increment:s}
+  .ba-step::before{content:counter(s);display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--r);
+    font-family:'Cinzel',serif;font-weight:700;margin-bottom:10px;box-shadow:0 0 12px rgba(215,15,15,.3)}
+  .ba-step b{display:block;font-family:'Cinzel',serif;font-weight:600;font-size:17px;margin-bottom:6px}
+  .ba-step p{margin:0;font-size:17px;line-height:1.5;color:var(--g)}
+  .ba-japan{max-width:38em;margin:40px auto 0;text-align:center;font-size:19px;line-height:1.6;color:var(--g)}
+  .ba-japan b{font-family:'Noto Serif JP',serif;color:var(--glow);font-weight:600}
+  .ba-rules{max-width:40em;margin:0 auto;padding:0 0 0 20px;font-size:17px;line-height:1.6;color:var(--g)}
+  .ba-rules li{margin:0 0 8px}
+  .ba-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:34px 18px;font-size:19px;color:var(--g)}
+  .ba-btn{display:inline-block;margin-top:16px;padding:15px 24px;border-radius:3px;text-decoration:none;background:var(--r);color:#fff;
+    font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+  /* incense stick (senko) */
+  .ba-senko{display:flex;justify-content:center;margin:0 0 6px}
+  .ba-senko svg{display:block !important;overflow:visible}
+  .ba-smoke path{fill:none;stroke:rgba(225,222,215,.42);stroke-width:1.4;stroke-linecap:round;opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:ba-smoke 5.5s ease-out infinite}
+  .ba-smoke path:nth-child(2){animation-delay:1.8s}
+  .ba-smoke path:nth-child(3){animation-delay:3.6s}
+  @keyframes ba-smoke{0%{opacity:0;transform:translateY(0) scaleX(.6)}15%{opacity:.9}100%{opacity:0;transform:translateY(-34px) scaleX(1.6)}}
+  .ba-ember{animation:ba-ember 2.4s ease-in-out infinite}
+  @keyframes ba-ember{50%{opacity:.65}}
+  .ba-senko.out .ba-smoke,.ba-senko.out .ba-ember,.ba-senko.out .ba-glow{display:none}
+
+  /* shoji screen over the photo */
+  .ba-shoji{all:unset;position:absolute;inset:0;z-index:2;display:flex !important;cursor:pointer}
+  .ba-shoji i{flex:1;height:100%;display:block !important;position:relative;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 calc(25% - 3px), #2b1d12 calc(25% - 3px) 25%),
+      repeating-linear-gradient(90deg, transparent 0 calc(33.33% - 3px), #2b1d12 calc(33.33% - 3px) 33.33%),
+      rgba(236,227,208,.86);
+    -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+    border:7px solid #3a2718;box-shadow:inset 0 0 30px rgba(120,90,50,.25);transition:transform 1.15s cubic-bezier(.7,0,.2,1)}
+  .ba-shoji i:first-child{border-right-width:4px}
+  .ba-shoji i:last-child{border-left-width:4px}
+  .ba-shoji i::after{content:'';position:absolute;top:50%;width:8px;height:34px;margin-top:-17px;border-radius:4px;background:#3a2718}
+  .ba-shoji i:first-child::after{right:8px}
+  .ba-shoji i:last-child::after{left:8px}
+  .ba-shoji-tip{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:3;white-space:nowrap;background:rgba(0,0,0,.78);color:#fff;border:1px solid rgba(249,30,17,.6);
+    border-radius:99px;padding:8px 14px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;transition:opacity .4s;pointer-events:none}
+  .ba-shoji-tip b{font-family:'Noto Serif JP',serif;color:var(--glow);margin-right:6px;letter-spacing:0}
+  .ba-photo.open .ba-shoji i:first-child{transform:translateX(-101%)}
+  .ba-photo.open .ba-shoji i:last-child{transform:translateX(101%)}
+  .ba-photo.open .ba-shoji{pointer-events:none}
+  .ba-photo.open .ba-shoji-tip{opacity:0}
+
+  /* sealing the bid: envelope + hanko */
+  .ba-form{position:relative}
+  #baFields{transition:opacity .35s,transform .35s}
+  .ba-form.sending #baFields{opacity:0;transform:scale(.92)}
+  .ba-seal{position:absolute;left:0;right:0;top:40px;display:flex !important;justify-content:center;pointer-events:none;z-index:4}
+  .ba-seal[hidden]{display:none !important}
+  .ba-env{position:relative;width:250px;height:150px;border-radius:3px;opacity:0;transform:translateY(16px);transition:opacity .35s,transform .35s;
+    background:linear-gradient(160deg,#f3ead8,#e2d5ba);box-shadow:0 14px 40px rgba(0,0,0,.6);display:block !important}
+  .ba-env::before{content:'';position:absolute;inset:0;border-radius:3px;display:block;
+    background:linear-gradient(to top right, transparent 49.5%, rgba(120,95,60,.18) 50%, transparent 50.5%) left/50% 100% no-repeat,
+               linear-gradient(to top left, transparent 49.5%, rgba(120,95,60,.18) 50%, transparent 50.5%) right/50% 100% no-repeat}
+  .ba-flap{position:absolute;left:0;right:0;top:0;height:62%;display:block !important;transform-origin:50% 0;transform:rotateX(180deg);transition:transform .45s ease-in;
+    background:linear-gradient(180deg,#e8dcc2,#d9caa9);clip-path:polygon(0 0,100% 0,50% 100%);backface-visibility:visible}
+  .ba-env-txt{position:absolute;left:16px;bottom:14px;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.12em;color:#4a3826;display:block}
+  .ba-env-txt b{font-family:'Noto Serif JP',serif;font-weight:600;margin-right:6px}
+  .ba-hanko{position:absolute;right:18px;bottom:12px;width:70px;height:70px;border-radius:50%;display:flex !important;align-items:center;justify-content:center;
+    border:3px solid #c8102e;color:#c8102e;font-family:'Noto Serif JP',serif;font-weight:600;font-size:34px;line-height:1;
+    background:radial-gradient(circle at 30% 35%, rgba(200,16,46,.10), rgba(200,16,46,.04) 60%, transparent 61%);
+    opacity:0;transform:scale(2.6) rotate(-24deg);transition:transform .22s cubic-bezier(.3,1.6,.6,1),opacity .15s;
+    -webkit-mask-image:radial-gradient(circle at 40% 60%, #000 62%, rgba(0,0,0,.75) 72%, #000 80%);mask-image:radial-gradient(circle at 40% 60%, #000 62%, rgba(0,0,0,.75) 72%, #000 80%)}
+  .ba-seal.s1 .ba-env{opacity:1;transform:none}
+  .ba-seal.s2 .ba-flap{transform:rotateX(0)}
+  .ba-seal.s3 .ba-hanko{opacity:1;transform:scale(1) rotate(-9deg)}
+  .ba-seal.s3 .ba-env{animation:ba-thump .35s ease-out}
+  @keyframes ba-thump{0%{transform:translateY(0)}30%{transform:translateY(5px) scale(.985)}60%{transform:translateY(-2px)}100%{transform:none}}
+  .ba-seal.s4 .ba-env{opacity:0;transform:translateY(60px) scale(.8);transition:opacity .5s .1s,transform .6s ease-in}
+  .ba-sealed{display:flex;gap:16px;align-items:center}
+  .ba-sealed .ba-env{opacity:1;transform:none;width:120px;height:74px;flex:0 0 auto}
+  .ba-sealed .ba-flap{transform:none}
+  .ba-sealed .ba-hanko{opacity:1;transform:rotate(-9deg);width:38px;height:38px;font-size:19px;border-width:2px;right:8px;bottom:6px}
+  .ba-sealed .ba-env-txt{display:none}
+
+  @media (prefers-reduced-motion:reduce){ .ba-smoke path,.ba-ember{animation:none} .ba-shoji i{transition:none} }
+  @media (max-width:760px){ .ba-koi{grid-template-columns:1fr} .ba-steps{grid-template-columns:1fr 1fr} }
+  @media (max-width:460px){ .ba-steps{grid-template-columns:1fr} .ba-unit{min-width:0;flex:1} .ba-unit b{font-size:26px} }
+</style>
+
+<section class="ba" id="snBA" data-pub="{% if koi %}{{ koi.published_at | date: '%s' }}{% endif %}" data-hour="{{ close_hour }}">
+  <div class="ba-in">
+    <p class="ba-kick">Blind Auction <b>入札</b></p>
+    <h1>One koi. One sealed bid.</h1>
+    <p class="ba-lede">Every month one koi goes up. Send me the price you'd pay. Nobody sees your bid, and you can't see theirs. Bids close at 8pm on the last day of the month and the highest offer takes it, just like they do in Japan.</p>
+
+    {%- if koi -%}
+    <div id="baOpen">
+      <div class="ba-senko" id="baSenko" aria-hidden="true">
+        <svg viewBox="0 0 80 150" width="80" height="150">
+          <defs><radialGradient id="baGlowG"><stop offset="0" stop-color="#ff7a2a" stop-opacity=".9"/><stop offset="1" stop-color="#ff3b10" stop-opacity="0"/></radialGradient></defs>
+          <g id="baTop" transform="translate(40,20)">
+            <g class="ba-smoke">
+              <path d="M0 -2 C -6 -10, 6 -16, 0 -24 S -5 -36, 1 -44"/>
+              <path d="M0 -2 C 5 -9, -6 -17, 1 -25 S 6 -37, -1 -46"/>
+              <path d="M0 -2 C -4 -12, 5 -18, -1 -28 S -4 -38, 2 -48"/>
+            </g>
+            <circle class="ba-glow" r="9" fill="url(#baGlowG)"/>
+            <circle class="ba-ember" r="2.6" fill="#ff6a1f"/>
+          </g>
+          <rect id="baStick" x="38.6" y="20" width="2.8" height="112" rx="1.2" fill="#6b3a1e"/>
+          <rect x="38.6" y="128" width="2.8" height="6" fill="#2a1a0f"/>
+          <path d="M14 134 Q40 128 66 134 L60 146 Q40 150 20 146 Z" fill="#1d1712" stroke="rgba(245,243,239,.18)"/>
+          <path d="M20 135 Q40 131 60 135" fill="none" stroke="rgba(190,180,165,.35)" stroke-width="2" stroke-dasharray="1 3"/>
+        </svg>
+      </div>
+      <div class="ba-count">
+        <div class="ba-unit"><b data-u="d">--</b><span>Days</span></div>
+        <div class="ba-unit"><b data-u="h">--</b><span>Hours</span></div>
+        <div class="ba-unit"><b data-u="m">--</b><span>Mins</span></div>
+        <div class="ba-unit"><b data-u="s">--</b><span>Secs</span></div>
+      </div>
+      <p class="ba-when">till bids close · <span id="baWhen">the last day of the month, 8pm</span></p>
+    </div>
+
+    <div class="ba-koi">
+      <div>
+        <div class="ba-photo" id="baPhoto">
+          {%- if koi.featured_image -%}
+            <img id="baMain" src="{{ koi.featured_image | image_url: width: 900 }}" alt="{{ koi.featured_image.alt | default: koi.title | escape }}" width="900" height="1200">
+            <button type="button" class="ba-shoji" id="baShoji" aria-label="Slide the screen open to see this month's koi"><i></i><i></i></button>
+            <span class="ba-shoji-tip"><b>開</b>Tap to open</span>
+          {%- endif -%}
+        </div>
+        {%- if koi.images.size > 1 -%}
+        <div class="ba-thumbs">
+          {%- for img in koi.images limit: 6 -%}
+            <button type="button" data-full="{{ img | image_url: width: 900 }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}" aria-label="Photo {{ forloop.index }}"><img src="{{ img | image_url: width: 140 }}" alt="" loading="lazy"></button>
+          {%- endfor -%}
+        </div>
+        {%- endif -%}
+      </div>
+
+      <div class="ba-info">
+        {%- assign breeder = koi.vendor | default: '' | strip -%}
+        {%- if breeder == shop.name -%}{%- assign breeder = '' -%}{%- endif -%}
+        {%- if breeder != '' -%}<small>{{ breeder }}</small>{%- endif -%}
+        <h3>{{ koi.title }}</h3>
+        <span class="ba-noreserve">No reserve · highest bid wins</span>
+        <div class="ba-desc">{{ koi.description }}</div>
+
+        <form method="post" action="/cart/add" id="baForm" class="ba-form">
+            <div id="baFields">
+              <input type="hidden" name="id" value="{{ bid_variant }}">
+              <input type="hidden" name="quantity" value="1">
+              <input type="hidden" name="properties[Koi]" value="{{ koi.title | escape }} ({{ koi.handle }})">
+              <input type="hidden" name="return_to" value="/checkout">
+              <label for="baBid">Your bid</label>
+              <div class="ba-bid"><span>£</span><input id="baBid" type="number" name="properties[Bid (£)]" min="1" step="1" inputmode="numeric" required placeholder="0"></div>
+              <label for="baName">Your name</label>
+              <input id="baName" type="text" name="properties[Name]" autocomplete="name" required>
+              <label for="baPhone">WhatsApp number</label>
+              <input id="baPhone" type="tel" name="properties[WhatsApp]" autocomplete="tel" required>
+              <label class="ba-agree"><input type="checkbox" name="properties[Agreed to the rules]" value="Yes" required> I've read the rules below. My bid is a real offer and I'll pay it if I win.</label>
+              <button type="submit" class="ba-send">Seal my bid</button>
+              <p class="ba-must"><b>Your bid only counts once you finish the free checkout.</b> After you press Seal my bid, put your email in and press "Complete order" (it's £0). If you close the page before that, your bid isn't in.</p>
+              <p class="ba-small">There's nothing to pay: the checkout just locks your bid in and emails you a receipt. Your number and email are only used to tell you if you've won. One bid each; if you send more than one, your highest counts.</p>
+            </div>
+            <div class="ba-seal" id="baSeal" hidden aria-hidden="true">
+              <span class="ba-env"><span class="ba-flap"></span><span class="ba-env-txt"><b>入札</b>£<span id="baSealAmt"></span></span><span class="ba-hanko">里</span></span>
+            </div>
+        </form>
+        <div class="ba-msg" id="baClosed" hidden><b>Bids are closed.</b>I'm contacting the winner privately. Next month's koi goes up soon, and the WhatsApp group hears first.</div>
+      </div>
+    </div>
+    {%- else -%}
+    <div class="ba-empty">
+      <p>No koi up for blind auction right now. The next one goes up at the start of the month, and the WhatsApp group hears first.</p>
+      <a class="ba-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+    </div>
+    {%- endif -%}
+
+    <h2>How it works</h2>
+    <div class="ba-steps">
+      <div class="ba-step"><b>One koi a month</b><p>A new koi goes up at the start of each month, with photos and my notes on it.</p></div>
+      <div class="ba-step"><b>Send your price</b><p>Fill in the form with what you'd pay. It's sealed: nobody sees it but me.</p></div>
+      <div class="ba-step"><b>Last day, 8pm</b><p>Bids close at 8pm on the last day of the month. No bidding wars, no last-second sniping, just your honest price.</p></div>
+      <div class="ba-step"><b>Highest takes it</b><p>I message the winner privately. Nobody else finds out what anyone bid.</p></div>
+    </div>
+
+    <p class="ba-japan">This is how a lot of koi change hands in Japan: a tender, <b>入札</b> (nyūsatsu). Everyone writes down their best price, the envelopes are opened, and the highest wins. It rewards people who know what a fish is worth to them.</p>
+
+    <h2>The rules</h2>
+    <ol class="ba-rules">
+      <li>Bids close at 8pm UK time on the last day of the month, shown above. Bids after that don't count.</li>
+      <li>A bid only counts once you've finished the free (£0) checkout and had your email receipt. A bid that wasn't checked out doesn't count.</li>
+      <li>There's no reserve. The highest bid wins, whatever it is.</li>
+      <li>If two bids are the same, the one that came in first wins.</li>
+      <li>Your bid is a real offer. If you win, I'll message you on WhatsApp to arrange payment. If it isn't paid within 48 hours, the koi goes to the next highest bid.</li>
+      <li>Bids are private. I never share who bid or how much.</li>
+      <li>{{ delivery_text }}</li>
+      <li>Everything else is as my normal terms of sale.</li>
+    </ol>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('snBA'); if (!root) return;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // shoji screen: tap to slide it open
+  var photo = document.getElementById('baPhoto'), shoji = document.getElementById('baShoji');
+  function openShoji(){ if (photo) photo.classList.add('open'); }
+  if (shoji) shoji.addEventListener('click', openShoji);
+
+  // sealing the bid: envelope folds, hanko stamps, then it's sent
+  var form = document.getElementById('baForm'), seal = document.getElementById('baSeal'), sending = false;
+  if (form && seal && !still){
+    form.addEventListener('submit', function(e){
+      if (sending) return;
+      if (form.checkValidity && !form.checkValidity()) return;
+      e.preventDefault(); sending = true;
+      var amt = form.querySelector('#baBid'); document.getElementById('baSealAmt').textContent = amt ? Number(amt.value).toLocaleString('en-GB') : '';
+      form.classList.add('sending'); seal.hidden = false;
+      var steps = [['s1', 250], ['s2', 750], ['s3', 1250], ['s4', 2050]];
+      steps.forEach(function(st){ setTimeout(function(){ seal.classList.add(st[0]); }, st[1]); });
+      // empty the basket first so the free checkout only holds this bid
+      var cleared = fetch('/cart/clear.js', { method:'POST', headers:{ 'Accept':'application/json' } }).catch(function(){});
+      setTimeout(function(){ Promise.resolve(cleared).then(function(){ HTMLFormElement.prototype.submit.call(form); }); }, 2550);
+    });
+  } else if (form){
+    form.addEventListener('submit', function(e){
+      if (sending || (form.checkValidity && !form.checkValidity())) return;
+      e.preventDefault(); sending = true;
+      fetch('/cart/clear.js', { method:'POST', headers:{ 'Accept':'application/json' } }).catch(function(){}).then(function(){ HTMLFormElement.prototype.submit.call(form); });
+    });
+  }
+
+  // photo thumbnails
+  var main = document.getElementById('baMain');
+  root.querySelectorAll('.ba-thumbs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      openShoji();
+      if (main) main.src = b.getAttribute('data-full');
+      root.querySelectorAll('.ba-thumbs button').forEach(function(x){ x.setAttribute('aria-current', x === b ? 'true' : 'false'); });
+    });
+  });
+
+  if (!root.getAttribute('data-pub')) return;
+  var hour = parseInt(root.getAttribute('data-hour'), 10) || 20;
+
+  // 8pm (UK time) on the last day of this month
+  var fmt = new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', weekday:'short', year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'numeric', hourCycle:'h23' });
+  function uk(ms){ var o = {}; fmt.formatToParts(new Date(ms)).forEach(function(p){ o[p.type] = p.value; }); return { wd:o.weekday, y:+o.year, m:+o.month, d:+o.day, h:+o.hour, mi:+o.minute }; }
+  function ukTime(y, m, d, h){ var g = Date.UTC(y, m - 1, d, h, 0); var p = uk(g); var off = Date.UTC(p.y, p.m - 1, p.d, p.h, p.mi) - g; return g - off; }
+  var nowp = uk(Date.now()), close = 0, start = ukTime(nowp.y, nowp.m, 1, 0);
+  var p0 = uk(start);
+  for (var k = 0; k < 1 && !close; k++){
+    var y = p0.y, m = p0.m + k; if (m > 12){ m -= 12; y++; }
+    var d = new Date(Date.UTC(y, m, 0)).getUTCDate();          // last day of the month
+    var c = ukTime(y, m, d, hour); if (c > start) close = c;
+  }
+  if (!close) return;
+  document.getElementById('baWhen').textContent = new Date(close).toLocaleDateString('en-GB', { timeZone:'Europe/London', weekday:'long', day:'numeric', month:'long' }) + ', ' + (hour % 12 || 12) + (hour < 12 ? 'am' : 'pm');
+
+  // incense stick: burns down from when the koi went up to when bids close
+  var stick = document.getElementById('baStick'), topG = document.getElementById('baTop'), senko = document.getElementById('baSenko');
+  function burn(){
+    var f = Math.max(0, Math.min(1, (close - Date.now()) / (close - start)));
+    var y = 128 - Math.max(.04, f) * 108;
+    if (stick){ stick.setAttribute('y', y.toFixed(1)); stick.setAttribute('height', (128 - y).toFixed(1)); }
+    if (topG) topG.setAttribute('transform', 'translate(40,' + y.toFixed(1) + ')');
+    if (senko && f <= 0) senko.classList.add('out');
+  }
+  burn();
+
+  var el = {}; ['d','h','m','s'].forEach(function(k){ el[k] = root.querySelector('[data-u="' + k + '"]'); });
+  var open = document.getElementById('baOpen'), fields = document.getElementById('baFields'), shut = document.getElementById('baClosed');
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  function tick(){
+    var t = close - Date.now(); burn();
+    if (t <= 0){
+      if (open) open.hidden = true;
+      if (fields) fields.hidden = true;
+      if (shut) shut.hidden = false;
+      return false;
+    }
+    el.d.textContent = Math.floor(t / 864e5); el.h.textContent = pad(Math.floor(t / 36e5) % 24);
+    el.m.textContent = pad(Math.floor(t / 6e4) % 60); el.s.textContent = pad(Math.floor(t / 1e3) % 60);
+    return true;
+  }
+  if (tick()){ var iv = setInterval(function(){ if (!tick()) clearInterval(iv); }, 1000); }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Blind Auction",
+  "settings": []
+}
+{% endschema %}

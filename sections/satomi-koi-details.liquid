@@ -1,0 +1,154 @@
+{% comment %}
+  SATOMI NISHIKIGOI · KOI DETAILS PANEL (koi product pages)
+  Theme section file (sections/satomi-koi-details.liquid), added to the Default product template.
+  Shows only on products with product type "Japanese Koi".
+  Reads the koi's own boxes: Variety, Age, Sex, Size (cm), Bloodline, Breeder certificate, Where it is, Video. Breeder = Vendor.
+  The panel moves itself up to sit just under the price.
+  Buying: each koi is one fish, so the quantity box and Shopify's single quick-pay button are hidden.
+  "Add to cart" becomes "Buy this koi": it adds the fish and goes straight to the basket page,
+  where Shopify shows ALL quick-pay buttons side by side (Apple Pay, PayPal, Google Pay, Shop Pay).
+{% endcomment %}
+{%- if product.type == 'Japanese Koi' -%}
+{%- assign k = product.metafields.koi -%}
+{%- assign breeder = product.vendor | default: '' | strip -%}
+{%- if breeder == shop.name -%}{%- assign breeder = '' -%}{%- endif -%}
+{%- assign variety = k.variety.value | default: '' | strip -%}
+{%- assign age = k.age.value | default: '' | strip -%}
+{%- assign sex = k.sex.value | default: '' | strip -%}
+{%- assign size = k.size_cm.value -%}
+{%- assign where = k.status.value | default: '' | strip -%}
+{%- assign video = k.video.value -%}
+{%- assign bloodline = k.bloodline.value | default: '' | strip -%}
+{%- assign cert = k.certificate.value -%}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- comment -%} Supporters: logged-in customers tagged "supporter". Head start: koi box "Everyone can buy from" (koi.public_from). {%- endcomment -%}
+{%- assign is_sup = false -%}
+{%- if customer and customer.tags contains 'supporter' -%}{%- assign is_sup = true -%}{%- endif -%}
+{%- assign pf = k.public_from.value -%}
+{%- assign early = false -%}{%- assign pf_s = 0 -%}
+{%- if pf != blank -%}
+  {%- assign pf_s = pf | date: '%s' | plus: 0 -%}
+  {%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+  {%- if pf_s > now_s -%}{%- assign early = true -%}{%- endif -%}
+{%- endif -%}
+<style>
+  .skd{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    font-family:'EB Garamond',Georgia,serif;color:var(--w);margin:16px 0 18px;box-sizing:border-box}
+  .skd *{box-sizing:border-box}
+  .skd-grid{display:flex;flex-wrap:wrap;gap:1px;background:var(--edge);border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;overflow:hidden}
+  .skd-cell{flex:1 1 30%;background:#0b0b0b;padding:12px 12px 11px;min-width:0}
+  .skd-cell small{display:block;font-family:'Cinzel',Georgia,serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin:0 0 3px}
+  .skd-cell b{display:block;font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:17px;letter-spacing:.02em;line-height:1.2;color:var(--w);overflow-wrap:anywhere}
+  .skd-cell.wide{flex-basis:100%}
+  .skd-cert{display:inline-flex;align-items:center;gap:8px;margin:10px 0 0;padding:6px 11px;border:1px solid rgba(215,15,15,.55);border-radius:99px;background:rgba(215,15,15,.1);
+    font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+  .skd-cert span{font-family:'Noto Serif JP',serif;color:var(--glow);letter-spacing:0;font-size:13px}
+  .skd-cell b i{font-style:normal;color:var(--g);font-family:'EB Garamond',Georgia,serif;font-size:15px;letter-spacing:0}
+  .skd-where{display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:16px;color:var(--g)}
+  .skd-where::before{content:'';width:8px;height:8px;border-radius:50%;background:#5fbf6a;box-shadow:0 0 8px rgba(95,191,106,.7);flex:0 0 auto}
+  .skd-where.wait::before{background:#e2a33b;box-shadow:0 0 8px rgba(226,163,59,.7)}
+  .skd-btns{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+  .skd-btns a{display:inline-flex;align-items:center;gap:8px;font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    text-decoration:none;color:var(--w);border:1px solid rgba(245,243,239,.35);border-radius:3px;padding:10px 14px}
+  .skd-btns a:hover{border-color:var(--r);color:#fff}
+  .skd-btns a.play{background:var(--r);border-color:var(--r);color:#fff;box-shadow:0 0 14px rgba(215,15,15,.35)}
+  @media (max-width:420px){ .skd-cell{flex-basis:45%} }
+  /* one fish: no quantity box, no single quick-pay button (all of them show in the basket instead) */
+  {%- comment -%} group listings (more than one fish in stock) keep the quantity box {%- endcomment -%}
+  {%- if product.selected_or_first_available_variant.inventory_quantity <= 1 -%}
+  .product__info-container .product-form__quantity, .product__info-container [id^="Quantity-Form"]{display:none !important}
+  {%- endif -%}
+  .product__info-container .shopify-payment-button{display:none !important}
+  .product__info-container .product-form__submit{background:#d70f0f !important;color:#fff !important;border:0 !important;min-height:54px;
+    font-family:'Cinzel',Georgia,serif !important;font-weight:600;font-size:15px !important;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .product__info-container .product-form__submit:hover{background:#f91e11 !important}
+  .product__info-container .product-form__submit::after{display:none !important}
+  .product__info-container .product-form__submit[disabled]{background:#2a2a2a !important;color:#a3a09b !important;box-shadow:none}
+  .skd-pay{margin:8px 0 0;font-family:'EB Garamond',Georgia,serif;font-size:16px;color:#a3a09b}
+  .skd-sup{display:flex;gap:12px;align-items:center;margin:12px 0 0;padding:12px 14px;border:1px solid rgba(249,30,17,.55);border-left:3px solid var(--glow);border-radius:4px;
+    background:radial-gradient(ellipse 80% 120% at 0 50%, rgba(215,15,15,.18), transparent 70%);font-size:16px;line-height:1.45;color:var(--g)}
+  .skd-sup > span{flex:0 0 auto;width:40px;height:40px;border-radius:50%;border:2px solid #c8102e;color:var(--glow);display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif JP',serif;font-weight:600;font-size:19px;transform:rotate(-8deg)}
+  .skd-sup b{display:block;font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:16px;letter-spacing:.04em;color:#fff}
+  .skd-sup a{color:#fff}
+  .skd-sup em{display:block;font-style:normal;color:var(--w);margin-top:3px}
+  {%- if early and is_sup == false -%}
+  .product__info-container product-form, .product__info-container .product-form, .product__info-container .skd-pay{display:none !important}
+  {%- endif -%}
+</style>
+<div class="skd" id="snKoiDetails">
+  <div class="skd-grid">
+    {%- if breeder != '' -%}<div class="skd-cell"><small>Breeder</small><b>{{ breeder }}</b></div>{%- endif -%}
+    {%- if variety != '' -%}<div class="skd-cell"><small>Variety</small><b>{{ variety }}</b></div>{%- endif -%}
+    {%- if age != '' -%}<div class="skd-cell"><small>Age</small><b>{{ age }}</b></div>{%- endif -%}
+    {%- if sex != '' -%}<div class="skd-cell"><small>Sex</small><b>{% if sex == 'Unknown' %}<i>Too young to tell</i>{% else %}{{ sex }}{% endif %}</b></div>{%- endif -%}
+    {%- if size -%}<div class="skd-cell"><small>Size</small><b>{{ size }}cm</b></div>{%- endif -%}
+    {%- if bloodline != '' -%}<div class="skd-cell wide"><small>Bloodline</small><b>{{ bloodline }}</b></div>{%- endif -%}
+    {%- assign ref = product.selected_or_first_available_variant.sku | default: '' | strip -%}
+    {%- if ref != '' -%}<div class="skd-cell"><small>Ref</small><b>{{ ref }}</b></div>{%- endif -%}
+  </div>
+  {%- if cert -%}<div class="skd-cert"><span>証</span>Comes with its breeder certificate</div>{%- endif -%}
+  {%- if where != '' -%}
+    <p class="skd-where{% unless where == 'Ready to go' %} wait{% endunless %}">{{ where }}{% if where == 'Growing on till spring' %}: price includes growing on here until it ships{% endif %}</p>
+  {%- endif -%}
+  {%- if early and is_sup == false -%}
+    <div class="skd-sup skd-early" data-until="{{ pf_s }}"><span>里</span><div><b>Supporters first</b>Satomi Supporters get first go at new koi. Everyone can buy this one from <em>{{ pf | date: '%A %-d %B, %-I:%M%P' }}</em><a href="{{ routes.account_login_url }}">Supporter? Log in</a></div></div>
+  {%- elsif is_sup and product.available -%}
+    {%- assign sup_price = product.selected_or_first_available_variant.price | times: 0.75 | round -%}
+    <div class="skd-sup"><span>里</span><div><b>Your Supporter price {{ sup_price | money }}</b>25% off comes off by itself in the basket.{% if early %}<em>Your head start: everyone else can buy from {{ pf | date: '%A %-d %B, %-I:%M%P' }}.</em>{% endif %}</div></div>
+  {%- endif -%}
+  <div class="skd-btns">
+    {%- if video != blank -%}<a class="play" href="{{ video }}" target="_blank" rel="noopener">▶ Watch it swim</a>{%- endif -%}
+    <a href="{{ whatsapp_link }}" target="_blank" rel="noopener">Ask about this koi</a>
+  </div>
+</div>
+<script>
+(function(){
+  var p = document.getElementById('snKoiDetails'); if (!p) return;
+  var sec = p.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var info = document.querySelector('.product__info-container'); if (!info) return;
+  var anchor = info.querySelector('[id^="price-"]') || info.querySelector('.price') || info.querySelector('.product__title');
+  if (anchor){ var blk = anchor.closest('.product__info-container > *') || anchor; blk.parentNode.insertBefore(p, blk.nextSibling); }
+  else info.prepend(p);
+
+  // Supporters-only head start: when the time's up, reload so the Buy button appears for everyone
+  var early = p.querySelector('.skd-early');
+  if (early){
+    var until = +early.getAttribute('data-until') * 1000;
+    var wait = until - Date.now();
+    if (wait > 0 && wait < 864e5 * 3) setTimeout(function(){ location.reload(); }, wait + 1500);
+    return;
+  }
+
+  // "Buy this koi": add the fish, then go to the basket page where every quick-pay button is shown
+  var btn = info.querySelector('.product-form__submit'); if (!btn) return;
+  var label = btn.querySelector('span') || btn;
+  if (!btn.disabled) label.textContent = 'Buy this koi';
+  var form = btn.form || btn.closest('form');
+  if (form && !btn.disabled && !form.parentNode.querySelector('.skd-pay')){
+    var note = document.createElement('p'); note.className = 'skd-pay';
+    note.textContent = 'Takes you to your basket, with every quick way to pay side by side.';
+    form.parentNode.insertBefore(note, form.nextSibling);
+  }
+  var busy = false;
+  btn.addEventListener('click', function(e){
+    if (btn.disabled || !form) return;
+    e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+    if (busy) return; busy = true;
+    label.textContent = 'Adding…';
+    fetch('/cart/add.js', { method:'POST', headers:{ 'Accept':'application/json' }, body: new FormData(form) })
+      .catch(function(){})
+      .then(function(){ window.location.href = '/cart'; });
+  }, true);
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Satomi: Koi details",
+  "settings": [],
+  "presets": [{ "name": "Satomi: Koi details" }],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

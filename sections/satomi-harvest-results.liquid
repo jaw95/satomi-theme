@@ -1,0 +1,191 @@
+{% comment %}
+  SATOMI NISHIKIGOI · HARVEST RESULTS (every harvested koi, buyable)
+  Theme section file (sections/satomi-harvest-results.liquid).
+  Used twice: on the Harvest page (shows every fish) and on the homepage under Harvest day (shows a few, plus a link).
+
+  How it works: it shows every product in the collection "Harvest 2026" (handle harvest-2026).
+  That collection fills itself: any product tagged harvest-2026 goes in. Claude adds that tag when it lists the harvest fish.
+  Until the first harvest koi is listed, this section shows nothing at all, so it can sit there before harvest day.
+  Sold fish stay on, marked Sold, so people can see what went.
+{% endcomment %}
+{%- assign coll = collections[section.settings.collection_handle] -%}
+{%- if coll != blank and coll.products_count > 0 -%}
+{%- assign show_max = section.settings.max_koi | default: 0 -%}
+{%- assign total = 0 -%}{%- assign left = 0 -%}{%- assign breeders = '' -%}
+{%- for p in coll.products -%}
+  {%- assign total = total | plus: 1 -%}
+  {%- if p.available -%}{%- assign left = left | plus: 1 -%}{%- endif -%}
+  {%- assign b = p.vendor | strip -%}
+  {%- unless breeders contains b -%}{%- assign breeders = breeders | append: b | append: '|' -%}{%- endunless -%}
+{%- endfor -%}
+{%- assign blist = breeders | split: '|' -%}
+{%- assign is_sup = false -%}
+{%- if customer and customer.tags contains 'supporter' -%}{%- assign is_sup = true -%}{%- endif -%}
+{%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+
+<style>
+  .shr{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:8px 16px 64px;box-sizing:border-box}
+  .shr *{box-sizing:border-box}
+  .shr [hidden]{display:none !important}
+  .shr-in{max-width:1100px;margin:0 auto}
+  .shr-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 10px}
+  .shr h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(24px,4.4vw,36px);line-height:1.15;text-align:center;margin:0 0 8px;color:var(--w)}
+  .shr-sum{text-align:center;font-size:19px;color:var(--g);margin:0 0 22px}
+  .shr-sum b{color:var(--w);font-weight:500}
+  .shr-filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 22px}
+  .shr-filters button{all:unset;cursor:pointer;padding:8px 14px;border:1px solid rgba(245,243,239,.25);border-radius:99px;
+    font-family:'Cinzel',serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--w)}
+  .shr-filters button[aria-pressed="true"]{background:var(--r);border-color:var(--r);color:#fff}
+  .shr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .shr-card{position:relative;display:flex;flex-direction:column;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;overflow:hidden}
+  .shr-pic{position:relative;display:block;aspect-ratio:3/4;overflow:hidden;flex:none;background:#0b0b0b}
+  .shr-pic img{width:100%;height:100%;object-fit:contain;display:block}
+  .shr-no{position:absolute;top:10px;left:10px;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.14em;background:rgba(0,0,0,.75);border:1px solid var(--edge);border-radius:3px;padding:4px 7px;color:var(--w)}
+  .shr-body{display:flex;flex-direction:column;gap:6px;padding:12px 14px 14px;flex:1}
+  .shr-body small{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--r)}
+  .shr-body h3{margin:0;font-family:'Cinzel',serif;font-weight:600;font-size:19px;letter-spacing:.03em;line-height:1.2}
+  .shr-body h3 a{color:var(--w);text-decoration:none}
+  .shr-facts{display:flex;flex-wrap:wrap;gap:5px;margin:2px 0 0;padding:0;list-style:none}
+  .shr-facts li{padding:3px 9px;border:1px solid rgba(245,243,239,.2);border-radius:99px;font-size:14px;color:var(--w)}
+  .shr-price{margin-top:auto;padding-top:6px;font-family:'Cinzel',serif;font-weight:600;font-size:20px}
+  .shr-buy{all:unset;box-sizing:border-box;display:block;text-align:center;cursor:pointer;margin-top:6px;padding:12px;border-radius:3px;background:var(--r);color:#fff;
+    font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 0 14px rgba(215,15,15,.3)}
+  .shr-buy:hover{background:var(--glow)}
+  .shr-price small{display:block;font-family:'EB Garamond',Georgia,serif;font-weight:400;font-size:15px;color:#fff;margin-top:2px}
+  .shr-first{margin-top:6px;padding:9px 10px;border:1px solid rgba(249,30,17,.55);border-radius:3px;background:rgba(215,15,15,.1);font-size:14px;line-height:1.35;color:var(--g);text-align:center}
+  .shr-first b{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#fff}
+  .shr-card.sold .shr-pic img{filter:grayscale(.85) brightness(.55)}
+  .shr-sold{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-8deg);padding:8px 16px;border:3px solid #c8102e;border-radius:4px;
+    font-family:'Cinzel',serif;font-weight:700;font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:#fff;background:rgba(200,16,46,.35)}
+  .shr-gone{margin-top:auto;padding-top:6px;font-size:16px;font-style:italic;color:var(--g)}
+  .shr-note{text-align:center;font-size:17px;color:var(--g);margin:20px auto 0;max-width:36em}
+  .shr-more{text-align:center;margin:22px 0 0}
+  .shr-more a{display:inline-block;padding:14px 24px;border:1px solid rgba(245,243,239,.4);border-radius:3px;text-decoration:none;color:var(--w);
+    font-family:'Cinzel',serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+  .shr-more a:hover{border-color:var(--r);color:#fff}
+  @media (max-width:520px){ .shr-grid{grid-template-columns:1fr 1fr;gap:10px} .shr-body{padding:10px} .shr-body h3{font-size:16px} .shr-facts li{font-size:12px;padding:2px 7px} .shr-price{font-size:17px} .shr-buy{font-size:11px;letter-spacing:.1em;padding:10px 6px} }
+</style>
+
+<section class="shr" id="shr-{{ section.id }}">
+  <div class="shr-in">
+    {%- if section.settings.kicker != blank -%}<p class="shr-kick">{{ section.settings.kicker }}</p>{%- endif -%}
+    <h2>{{ section.settings.heading }}</h2>
+    <p class="shr-sum"><b>{{ total }}</b> koi out of the pond · <b>{{ left }}</b> still looking for a home</p>
+
+    {%- if section.settings.show_filters and blist.size > 1 -%}
+    <div class="shr-filters" role="group" aria-label="Show koi from">
+      <button type="button" data-b="" aria-pressed="true">All</button>
+      {%- for b in blist -%}{%- if b == blank -%}{%- continue -%}{%- endif -%}<button type="button" data-b="{{ b | handleize }}" aria-pressed="false">{{ b }}</button>{%- endfor -%}
+      <button type="button" data-avail="1" aria-pressed="false">Still for sale</button>
+    </div>
+    {%- endif -%}
+
+    <div class="shr-grid">
+      {%- assign shown = 0 -%}
+      {%- for pass in (1..2) -%}
+      {%- for p in coll.products -%}
+        {%- if pass == 1 and p.available == false -%}{%- continue -%}{%- endif -%}
+        {%- if pass == 2 and p.available -%}{%- continue -%}{%- endif -%}
+        {%- if show_max > 0 and shown == show_max -%}{%- break -%}{%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}
+        {%- assign k = p.metafields.koi -%}
+        {%- assign v = p.selected_or_first_available_variant -%}
+        {%- assign variety = k.variety.value | default: p.title -%}
+        {%- assign sex = k.sex.value | default: '' -%}
+        {%- assign pf = k.public_from.value -%}{%- assign early = false -%}
+        {%- if pf != blank -%}{%- assign pf_s = pf | date: '%s' | plus: 0 -%}{%- if pf_s > now_s -%}{%- assign early = true -%}{%- endif -%}{%- endif -%}
+        <article class="shr-card{% unless p.available %} sold{% endunless %}" data-b="{{ p.vendor | handleize }}" data-avail="{% if p.available %}1{% else %}0{% endif %}">
+          <a class="shr-pic" href="{{ p.url }}">
+            {%- if p.featured_image -%}<img src="{{ p.featured_image | image_url: width: 600 }}" alt="{{ p.vendor | escape }} {{ variety | escape }}" loading="lazy" width="600" height="800">{%- endif -%}
+            {%- if v.sku != blank -%}<span class="shr-no">{{ v.sku }}</span>{%- endif -%}
+            {%- unless p.available -%}<span class="shr-sold">Sold</span>{%- endunless -%}
+          </a>
+          <div class="shr-body">
+            <small>{{ p.vendor }}</small>
+            <h3><a href="{{ p.url }}">{{ variety }}</a></h3>
+            <ul class="shr-facts">
+              {%- if k.age.value != blank -%}<li>{{ k.age.value }}</li>{%- endif -%}
+              {%- if k.size_cm.value -%}<li>{{ k.size_cm.value }}cm</li>{%- endif -%}
+              {%- if sex != '' and sex != 'Unknown' -%}<li>{{ sex }}</li>{%- endif -%}
+            </ul>
+            {%- if p.available and early and is_sup == false -%}
+              <div class="shr-price">{{ v.price | money_without_trailing_zeros }}</div>
+              <div class="shr-first"><b>Supporters first</b>Everyone from {{ pf | date: '%a %-d %b, %-I%P' }}</div>
+            {%- elsif p.available -%}
+              <div class="shr-price">{{ v.price | money_without_trailing_zeros }}{% if is_sup %}<small>Yours: {{ v.price | times: 0.75 | round | money_without_trailing_zeros }}</small>{% endif %}</div>
+              <form method="post" action="/cart/add" class="shr-form">
+                <input type="hidden" name="id" value="{{ v.id }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="shr-buy">Buy this koi</button>
+              </form>
+            {%- else -%}
+              <div class="shr-gone">Gone to a new home</div>
+            {%- endif -%}
+          </div>
+        </article>
+      {%- endfor -%}
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.note != blank -%}<p class="shr-note">{{ section.settings.note }}</p>{%- endif -%}
+    {%- if show_max > 0 and total > shown and section.settings.more_link != blank -%}
+      <p class="shr-more"><a href="{{ section.settings.more_link }}">See all {{ total }} harvest koi</a></p>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('shr-{{ section.id }}'); if (!root) return;
+  var sec = root.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+
+  // filters: breeder chips + "still for sale"
+  var btns = root.querySelectorAll('.shr-filters button'), want = '', availOnly = false;
+  function apply(){
+    root.querySelectorAll('.shr-card').forEach(function(c){
+      var ok = (!want || c.getAttribute('data-b') === want) && (!availOnly || c.getAttribute('data-avail') === '1');
+      c.hidden = !ok;
+    });
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      if (b.hasAttribute('data-avail')){ availOnly = !availOnly; b.setAttribute('aria-pressed', availOnly ? 'true' : 'false'); }
+      else {
+        want = b.getAttribute('data-b');
+        btns.forEach(function(x){ if (!x.hasAttribute('data-avail')) x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      }
+      apply();
+    });
+  });
+
+  // "Buy this koi": add the fish, then go to the basket where every quick-pay button shows
+  root.querySelectorAll('.shr-form').forEach(function(f){
+    f.addEventListener('submit', function(e){
+      e.preventDefault();
+      var btn = f.querySelector('button'); if (btn.disabled) return;
+      btn.disabled = true; btn.textContent = 'Adding…';
+      fetch('/cart/add.js', { method:'POST', headers:{ 'Accept':'application/json' }, body: new FormData(f) })
+        .catch(function(){}).then(function(){ window.location.href = '/cart'; });
+    });
+  });
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Satomi: Harvest results",
+  "settings": [
+    { "type": "text", "id": "collection_handle", "label": "Collection handle", "default": "harvest-2026" },
+    { "type": "text", "id": "kicker", "label": "Small line above", "default": "Harvest 2026" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Fresh out of the pond" },
+    { "type": "number", "id": "max_koi", "label": "How many to show (0 = all)", "default": 0 },
+    { "type": "checkbox", "id": "show_filters", "label": "Show breeder filters", "default": true },
+    { "type": "text", "id": "note", "label": "Note under the grid", "default": "Every koi is grown on here and shipped when the new season starts, around March 2027, weather depending. The price includes growing on till then." },
+    { "type": "text", "id": "more_link", "label": "See all link", "default": "/pages/harvest" }
+  ],
+  "presets": [{ "name": "Satomi: Harvest results" }]
+}
+{% endschema %}

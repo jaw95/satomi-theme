@@ -1,0 +1,205 @@
+{% comment %}
+  SATOMI NISHIKIGOI · POND SALT CALCULATOR
+  Theme section file (sections/satomi-salt-calc.liquid). On the homepage; can be added to any page.
+  Works out how much salt to add for a target level, from pond volume (litres, gallons or measurements)
+  and the level already in the pond, and splits it into 0.1% steps.
+  Maths: 1% of 1,000 litres = 10 kg, so kg = litres x (target % - current %) / 100.
+  The wording in the settings can be changed in the theme editor.
+{% endcomment %}
+<style>
+  .ssc{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 64px;box-sizing:border-box}
+  .ssc *{box-sizing:border-box}
+  .ssc [hidden]{display:none !important}
+  .ssc-in{max-width:760px;margin:0 auto}
+  .ssc-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 10px}
+  .ssc-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .ssc h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(24px,4.4vw,36px);line-height:1.15;text-align:center;margin:0 0 10px;color:var(--w)}
+  .ssc-lede{text-align:center;font-size:19px;line-height:1.55;color:var(--g);margin:0 auto 26px;max-width:32em}
+  .ssc-box{background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:20px}
+  .ssc-step{margin:0 0 20px}
+  .ssc-step > b{display:block;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin:0 0 10px}
+  .ssc-step > b i{font-style:normal;color:var(--r);margin-right:8px}
+  .ssc-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+  .ssc-tabs button,.ssc-lvls button{all:unset;cursor:pointer;padding:8px 13px;border:1px solid rgba(245,243,239,.25);border-radius:99px;
+    font-family:'Cinzel',serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--w)}
+  .ssc-tabs button[aria-pressed="true"],.ssc-lvls button[aria-pressed="true"]{background:var(--r);border-color:var(--r);color:#fff}
+  .ssc-row{display:flex;flex-wrap:wrap;gap:10px}
+  .ssc-f{flex:1 1 140px;min-width:0}
+  .ssc-f label{display:block;font-size:15px;color:var(--g);margin:0 0 5px}
+  .ssc-f input{width:100%;background:#000;border:1px solid rgba(245,243,239,.25);border-radius:3px;color:var(--w);
+    font-family:'Cinzel',serif;font-size:22px;padding:10px 12px}
+  .ssc-f input:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 2px rgba(249,30,17,.25)}
+  .ssc-vol{margin:10px 0 0;font-size:16px;color:var(--g)}
+  .ssc-vol b{color:var(--w);font-weight:500}
+  .ssc-lvls{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+  .ssc-lvlnote{font-size:16px;color:var(--g);margin:0;min-height:1.4em}
+  .ssc-out{margin:6px 0 0;padding:18px;border:1px solid rgba(249,30,17,.55);border-radius:4px;background:radial-gradient(ellipse 80% 90% at 50% 120%, rgba(215,15,15,.22), transparent 70%)}
+  .ssc-big{display:flex;align-items:baseline;justify-content:center;gap:10px;flex-wrap:wrap;text-align:center}
+  .ssc-big b{font-family:'Cinzel',serif;font-weight:700;font-size:clamp(38px,9vw,56px);line-height:1;text-shadow:0 0 22px rgba(249,30,17,.4)}
+  .ssc-big span{font-size:19px;color:var(--g)}
+  .ssc-plan{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:6px}
+  .ssc-plan li{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:#000;border:1px solid var(--edge);border-radius:3px;font-size:17px}
+  .ssc-plan li span{color:var(--g)}
+  .ssc-msg{text-align:center;font-size:18px;color:var(--g);margin:0}
+  .ssc-tips{margin:22px 0 0;padding:0 0 0 20px;font-size:17px;line-height:1.55;color:var(--g)}
+  .ssc-tips li{margin:0 0 6px}
+  .ssc-tips b{color:var(--w);font-weight:500}
+  .ssc-btn{display:inline-block;margin-top:18px;padding:14px 22px;border-radius:3px;text-decoration:none;background:var(--r);color:#fff;
+    font-family:'Cinzel',serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .ssc-btn:hover{background:var(--glow);color:#fff}
+  .ssc-foot{text-align:center}
+</style>
+
+<section class="ssc" id="ssc-{{ section.id }}">
+  <div class="ssc-in">
+    <p class="ssc-kick">Pond tools <b>塩</b></p>
+    <h2>{{ section.settings.heading }}</h2>
+    <p class="ssc-lede">{{ section.settings.lede }}</p>
+
+    <div class="ssc-box">
+      <div class="ssc-step">
+        <b><i>1</i>How big is your pond?</b>
+        <div class="ssc-tabs" role="group" aria-label="How to enter pond size">
+          <button type="button" data-mode="l" aria-pressed="true">Litres</button>
+          <button type="button" data-mode="g" aria-pressed="false">Gallons</button>
+          <button type="button" data-mode="box" aria-pressed="false">Measure it</button>
+          <button type="button" data-mode="round" aria-pressed="false">Round pond</button>
+        </div>
+        <div class="ssc-row" data-for="l"><div class="ssc-f"><label for="sscL-{{ section.id }}">Litres</label><input id="sscL-{{ section.id }}" data-k="l" type="number" inputmode="decimal" min="0" placeholder="e.g. 20000"></div></div>
+        <div class="ssc-row" data-for="g" hidden><div class="ssc-f"><label for="sscG-{{ section.id }}">UK gallons</label><input id="sscG-{{ section.id }}" data-k="g" type="number" inputmode="decimal" min="0" placeholder="e.g. 4500"></div></div>
+        <div class="ssc-row" data-for="box" hidden>
+          <div class="ssc-f"><label>Length (m)</label><input data-k="len" type="number" inputmode="decimal" min="0" step="0.1" placeholder="4"></div>
+          <div class="ssc-f"><label>Width (m)</label><input data-k="wid" type="number" inputmode="decimal" min="0" step="0.1" placeholder="2.5"></div>
+          <div class="ssc-f"><label>Average depth (m)</label><input data-k="dep" type="number" inputmode="decimal" min="0" step="0.1" placeholder="1.5"></div>
+        </div>
+        <div class="ssc-row" data-for="round" hidden>
+          <div class="ssc-f"><label>Across (m)</label><input data-k="dia" type="number" inputmode="decimal" min="0" step="0.1" placeholder="3"></div>
+          <div class="ssc-f"><label>Average depth (m)</label><input data-k="rdep" type="number" inputmode="decimal" min="0" step="0.1" placeholder="1.2"></div>
+        </div>
+        <p class="ssc-vol" data-vol hidden>That's about <b data-litres></b> litres (<span data-gallons></span> gallons). Don't forget the filter and pipework if they hold a lot.</p>
+      </div>
+
+      <div class="ssc-step">
+        <b><i>2</i>What level do you want?</b>
+        <div class="ssc-lvls" role="group" aria-label="Target salt level">
+          <button type="button" data-t="0.1" aria-pressed="false">0.1%</button>
+          <button type="button" data-t="0.3" aria-pressed="true">0.3%</button>
+          <button type="button" data-t="0.5" aria-pressed="false">0.5%</button>
+        </div>
+        <p class="ssc-lvlnote" data-lvlnote></p>
+      </div>
+
+      <div class="ssc-step">
+        <b><i>3</i>Salt already in the pond?</b>
+        <div class="ssc-row"><div class="ssc-f"><label for="sscC-{{ section.id }}">Your salt meter reading (%), leave at 0 if none</label><input id="sscC-{{ section.id }}" data-k="cur" type="number" inputmode="decimal" min="0" step="0.01" value="0"></div></div>
+      </div>
+
+      <div class="ssc-out" aria-live="polite">
+        <p class="ssc-msg" data-msg>Put your pond size in above.</p>
+        <div data-res hidden>
+          <div class="ssc-big"><b data-kg></b><span>of salt to add</span></div>
+          <ul class="ssc-plan" data-plan></ul>
+        </div>
+      </div>
+    </div>
+
+    <ul class="ssc-tips">
+      <li><b>Use plain pond salt</b> or pure dried vacuum salt, with nothing added. No table salt with anti-caking agent, no road salt.</li>
+      <li><b>Put it in one corner</b> of the pond and let it dissolve naturally. The water movement spreads it round.</li>
+      <li><b>Go up in steps,</b> not all at once. The plan above splits it into 0.1% steps, about 12 hours apart.</li>
+      <li><b>Check with a salt meter</b> as you go. Water changes take salt out; topping up with fresh water doesn't put it back.</li>
+      <li><b>Salt kills most plants,</b> and some treatments shouldn't be mixed with it. If in doubt, ask before you add anything.</li>
+    </ul>
+
+    <p class="ssc-foot"><a class="ssc-btn" href="{{ section.settings.ask_link }}" target="_blank" rel="noopener">Not sure? Ask in the WhatsApp group</a></p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('ssc-{{ section.id }}'); if (!root) return;
+  var sec = root.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+
+  var notes = {
+    '0.1': {{ section.settings.note_01 | json }},
+    '0.3': {{ section.settings.note_03 | json }},
+    '0.5': {{ section.settings.note_05 | json }}
+  };
+  var mode = 'l', target = 0.3, GAL = 4.54609;
+  function val(k){ var el = root.querySelector('[data-k="' + k + '"]'); var n = el ? parseFloat(el.value) : NaN; return isNaN(n) || n < 0 ? 0 : n; }
+  function fmt(n, dp){ return n.toLocaleString('en-GB', { maximumFractionDigits: dp, minimumFractionDigits: 0 }); }
+  function kgText(kg){ return kg < 1 ? fmt(Math.round(kg * 1000), 0) + ' g' : fmt(kg, kg < 10 ? 2 : 1) + ' kg'; }
+
+  function litres(){
+    if (mode === 'l') return val('l');
+    if (mode === 'g') return val('g') * GAL;
+    if (mode === 'box') return val('len') * val('wid') * val('dep') * 1000;
+    if (mode === 'round'){ var r = val('dia') / 2; return Math.PI * r * r * val('rdep') * 1000; }
+    return 0;
+  }
+
+  function calc(){
+    var L = litres(), cur = val('cur');
+    var volP = root.querySelector('[data-vol]'), msg = root.querySelector('[data-msg]'), res = root.querySelector('[data-res]');
+    root.querySelector('[data-lvlnote]').textContent = notes[String(target)] || '';
+    if (mode !== 'l' && L > 0){
+      volP.hidden = false;
+      root.querySelector('[data-litres]').textContent = fmt(Math.round(L / 10) * 10, 0);
+      root.querySelector('[data-gallons]').textContent = fmt(Math.round(L / GAL), 0);
+    } else { volP.hidden = true; }
+    if (!(L > 0)){ res.hidden = true; msg.hidden = false; msg.textContent = 'Put your pond size in above.'; return; }
+    var gap = Math.round((target - cur) * 1000) / 1000;
+    if (gap <= 0){ res.hidden = true; msg.hidden = false; msg.textContent = 'Your pond is already at or above ' + target + '%. Nothing to add.'; return; }
+    var kg = L * gap / 100;
+    msg.hidden = true; res.hidden = false;
+    root.querySelector('[data-kg]').textContent = kgText(kg);
+    var plan = root.querySelector('[data-plan]'); plan.innerHTML = '';
+    var level = cur, step = 0;
+    while (level < target - 0.0001 && step < 10){
+      var next = Math.min(target, Math.round((level + 0.1) * 1000) / 1000);
+      var add = L * (next - level) / 100; step++;
+      var li = document.createElement('li');
+      var when = step === 1 ? 'Now' : 'After ' + ((step - 1) * 12) + ' hours';
+      li.innerHTML = '<span>' + when + ': up to ' + fmt(next, 2) + '%</span><b></b>';
+      li.querySelector('b').textContent = kgText(add);
+      plan.appendChild(li);
+      level = next;
+    }
+  }
+
+  root.querySelectorAll('.ssc-tabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      mode = b.getAttribute('data-mode');
+      root.querySelectorAll('.ssc-tabs button').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      root.querySelectorAll('[data-for]').forEach(function(r){ r.hidden = r.getAttribute('data-for') !== mode; });
+      calc();
+    });
+  });
+  root.querySelectorAll('.ssc-lvls button').forEach(function(b){
+    b.addEventListener('click', function(){
+      target = parseFloat(b.getAttribute('data-t'));
+      root.querySelectorAll('.ssc-lvls button').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      calc();
+    });
+  });
+  root.querySelectorAll('input').forEach(function(i){ i.addEventListener('input', calc); });
+  calc();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Salt calculator",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Pond salt calculator" },
+    { "type": "textarea", "id": "lede", "label": "Intro", "default": "How much salt to put in your pond, and how to put it in safely. Put in your pond size, pick a level, and it does the sums." },
+    { "type": "text", "id": "note_01", "label": "What 0.1% is for", "default": "0.1%: a light everyday level some keepers like to hold, especially in spring and autumn." },
+    { "type": "text", "id": "note_03", "label": "What 0.3% is for", "default": "0.3%: the usual level when fish are stressed, newly arrived or not quite right. Hold it for a couple of weeks, then let water changes bring it down." },
+    { "type": "text", "id": "note_05", "label": "What 0.5% is for", "default": "0.5%: a strong level for short spells only. Don't leave it there, and keep a close eye on the fish." },
+    { "type": "text", "id": "ask_link", "label": "Ask button link", "default": "https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14" }
+  ],
+  "presets": [{ "name": "Satomi: Salt calculator" }]
+}
+{% endschema %}

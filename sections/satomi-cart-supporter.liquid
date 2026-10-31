@@ -1,0 +1,88 @@
+{% comment %}
+  SATOMI NISHIKIGOI · SUPPORTER DISCOUNT IN THE BASKET
+  Theme section file (sections/satomi-cart-supporter.liquid), on the cart page above the basket.
+  - Logged-in Satomi Supporter (customer tagged "supporter"): their 25% goes on by itself.
+      Koi in the basket  -> their personal code (customer box "Supporter code", e.g. SATOMI-027-ANAND)
+      Wheel spots only   -> the Wheel's supporter code, named SUPPORTER-<WHEEL HANDLE>, e.g. SUPPORTER-WHEEL-01
+                            (25% off one spot, once per supporter per Wheel; Claude makes one for each new Wheel)
+  - Not logged in, with koi or Wheel spots in the basket: a small "Supporter? Log in" line.
+  Codes are tied to the supporter in Shopify, so they only ever work for that person.
+{% endcomment %}
+{%- assign is_sup = false -%}
+{%- if customer and customer.tags contains 'supporter' -%}{%- assign is_sup = true -%}{%- endif -%}
+{%- assign has_koi = false -%}{%- assign wheel_code = '' -%}
+{%- for item in cart.items -%}
+  {%- if item.product.type == 'Japanese Koi' -%}{%- assign has_koi = true -%}{%- endif -%}
+  {%- if item.product.handle contains 'wheel-' -%}{%- assign wheel_code = 'SUPPORTER-' | append: item.product.handle | upcase -%}{%- endif -%}
+{%- endfor -%}
+{%- assign want = '' -%}{%- assign what = '' -%}
+{%- if is_sup -%}
+  {%- if has_koi -%}{%- assign want = customer.metafields.satomi.supporter_code.value | default: '' -%}{%- assign what = 'your koi' -%}
+  {%- elsif wheel_code != '' -%}{%- assign want = wheel_code -%}{%- assign what = 'one Wheel spot' -%}{%- endif -%}
+{%- endif -%}
+{%- assign applied = false -%}
+{%- for d in cart.discount_codes -%}{%- if d.code == want and d.applicable -%}{%- assign applied = true -%}{%- endif -%}{%- endfor -%}
+{%- assign sup_no = customer.metafields.satomi.supporter_number.value -%}
+
+{%- assign show = false -%}
+{%- if is_sup or has_koi or wheel_code != '' -%}{%- assign show = true -%}{%- endif -%}
+{%- if cart.item_count == 0 -%}{%- assign show = false -%}{%- endif -%}
+{%- if show -%}
+<style>
+  .scs{background:#000;padding:0 16px;box-sizing:border-box}
+  .scs-in{max-width:var(--page-width,1200px);margin:0 auto;padding-top:18px}
+  .scs-box{display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid rgba(249,30,17,.55);border-left:3px solid #f91e11;border-radius:4px;
+    background:radial-gradient(ellipse 80% 120% at 0 50%, rgba(215,15,15,.18), transparent 70%), #0b0b0b;padding:14px 16px;color:#f5f3ef;font-family:'EB Garamond',Georgia,serif}
+  .scs-seal{flex:0 0 auto;width:46px;height:46px;border-radius:50%;border:2px solid #c8102e;color:#f91e11;display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif JP',serif;font-weight:600;font-size:22px;transform:rotate(-8deg)}
+  .scs-txt{flex:1 1 220px;font-size:17px;line-height:1.45}
+  .scs-txt b{display:block;font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:#fff;margin-bottom:2px}
+  .scs-txt span{color:#a3a09b}
+  .scs a{color:#fff}
+  .scs-btn{flex:0 0 auto;display:inline-block;padding:11px 16px;border-radius:3px;background:#d70f0f;color:#fff !important;text-decoration:none;
+    font-family:'Cinzel',serif;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+</style>
+<div class="scs" id="snCartSup" data-want="{{ want | escape }}" data-applied="{{ applied }}">
+  <div class="scs-in">
+    <div class="scs-box">
+      <span class="scs-seal" aria-hidden="true">里</span>
+      {%- if is_sup and want != '' -%}
+        <p class="scs-txt"><b>Supporter{% if sup_no %} No. {{ sup_no | prepend: '00' | slice: -3, 3 }}{% endif %}</b>
+          {%- if applied -%}Your 25% off {{ what }} is on. <span>You'll see it come off at checkout.</span>
+          {%- else -%}<span data-scs-msg>Putting your 25% off {{ what }} on…</span>{%- endif -%}</p>
+      {%- elsif is_sup -%}
+        <p class="scs-txt"><b>Supporter{% if sup_no %} No. {{ sup_no | prepend: '00' | slice: -3, 3 }}{% endif %}</b><span>Your 25% comes off koi, and one spot on every Wheel, by itself while you're logged in.</span></p>
+      {%- else -%}
+        <p class="scs-txt"><b>Satomi Supporter?</b><span>Log in with the email you signed up with and your 25% comes off by itself.</span></p>
+        <a class="scs-btn" href="{{ routes.account_login_url }}">Log in</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var el = document.getElementById('snCartSup'); if (!el) return;
+  var sec = el.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var want = el.getAttribute('data-want'), applied = el.getAttribute('data-applied') === 'true';
+  if (!want || applied) return;
+  var key = 'sn-sup-try-' + want, tries = 0;
+  try { tries = +sessionStorage.getItem(key) || 0; sessionStorage.setItem(key, tries + 1); } catch(e){}
+  var msg = el.querySelector('[data-scs-msg]');
+  if (tries >= 2){ if (msg) msg.textContent = 'Your 25% will come off at checkout. If it doesn\'t, message Josh before you pay.'; return; }
+  // 1) remember the code for checkout, 2) put it on the basket, then show the basket again
+  fetch('/discount/' + encodeURIComponent(want) + '?redirect=/cart', { credentials:'same-origin' })
+    .catch(function(){})
+    .then(function(){ return fetch('/cart/update.js', { method:'POST', credentials:'same-origin', headers:{ 'Content-Type':'application/json', 'Accept':'application/json' }, body: JSON.stringify({ discount: want }) }); })
+    .catch(function(){})
+    .then(function(){ location.reload(); });
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Satomi: Supporter basket",
+  "settings": [],
+  "enabled_on": { "templates": ["cart"] }
+}
+{% endschema %}

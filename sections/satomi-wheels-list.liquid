@@ -1,0 +1,227 @@
+{% comment %}
+  SATOMI NISHIKIGOI · WHEELS PAGE (2027 site)
+  Theme section file (sections/satomi-wheels-list.liquid), used by the page template "wheels".
+  Wheels in a Supporters' head start (their "Everyone can buy from" box is in the future) get a "Supporters first" badge.
+  Three parts, all automatic:
+    - Open wheels:      every Wheel in the collection below that still has spots.
+    - Spin coming up:   Wheels whose board is full.
+    - Spun:             posts in the "winners" blog (one post per finished Wheel, with the replay link).
+  Names are first names only, from each spot's "Taken by" box.
+  The jackpot's worth comes from each Wheel's "Jackpot value" box (or the Jackpot in shop koi's price).
+  When a Wheel has been spun, take it out of the koi-roulette collection (or set it to Draft) and add a winners post.
+{% endcomment %}
+{%- assign wheels_collection = 'koi-roulette' -%}
+{%- assign winners_blog = 'winners' -%}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign twitch_link = 'https://www.twitch.tv/satominishikigoi' -%}
+{%- assign coll = collections[wheels_collection] -%}
+{%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+{%- assign winners = blogs[winners_blog] -%}
+{%- assign winners_count = winners.articles_count | plus: 0 -%}
+
+{%- assign open_count = 0 -%}{%- assign full_count = 0 -%}
+{%- capture open_cards -%}{%- endcapture -%}
+{%- capture full_cards -%}{%- endcapture -%}
+{%- if coll != blank -%}
+{%- for p in coll.products limit: 12 -%}
+  {%- assign total = p.variants.size -%}
+  {%- if total < 2 -%}{%- continue -%}{%- endif -%}
+  {%- assign taken = 0 -%}{%- assign price = 0 -%}{%- assign names = '' -%}{%- assign named = 0 -%}
+  {%- for v in p.variants -%}
+    {%- if v.price > 0 and price == 0 -%}{%- assign price = v.price -%}{%- endif -%}
+    {%- unless v.available -%}
+      {%- assign taken = taken | plus: 1 -%}
+      {%- assign who = v.metafields.custom.taken_by.value | default: '' | split: ',' | first | strip -%}
+      {%- if who != '' -%}
+        {%- assign named = named | plus: 1 -%}
+        {%- if named < 7 -%}{%- capture names -%}{{ names }}{% if named > 1 %}, {% endif %}{{ who | escape }}{%- endcapture -%}{%- endif -%}
+      {%- endif -%}
+    {%- endunless -%}
+  {%- endfor -%}
+  {%- assign left = total | minus: taken -%}
+  {%- assign shown_names = named -%}{%- if named > 6 -%}{%- assign shown_names = 6 -%}{%- endif -%}
+  {%- assign others = taken | minus: shown_names -%}
+  {%- assign worth = '' -%}
+  {%- assign jv = p.metafields.custom.jackpot_value.value -%}
+  {%- assign jpk = p.metafields.custom.jackpot_in_shop.value -%}
+  {%- if jv != blank and jv > 0 -%}{%- assign worth = jv | times: 100 | money_without_trailing_zeros -%}
+  {%- elsif jpk != blank and jpk.price > 0 -%}{%- assign worth = jpk.price | money_without_trailing_zeros -%}{%- endif -%}
+  {%- assign pf = p.metafields.koi.public_from.value -%}{%- assign early = false -%}
+  {%- if pf != blank -%}{%- assign pf_s = pf | date: '%s' | plus: 0 -%}{%- if pf_s > now_s -%}{%- assign early = true -%}{%- endif -%}{%- endif -%}
+  {%- capture card -%}
+  <a class="wh-card{% if left > 0 and left < 4 %} hot{% endif %}{% if left < 1 %} full{% endif %}" href="{{ p.url }}">
+    <span class="wh-img"{% if p.featured_image %} style="background-image:url('{{ p.featured_image | image_url: width: 900 }}')"{% endif %}>
+      <span class="wh-jp">The jackpot koi{% if worth != '' %}<b>Worth {{ worth }}</b>{% endif %}</span>
+      {%- if early and left > 0 -%}<span class="wh-first"><i>里</i>Supporters first · everyone from {{ pf | date: '%a %-d %b, %-I%P' }}</span>{%- endif -%}
+      {%- if left > 0 and left < 4 -%}<span class="wh-nudge">{% if left == 1 %}Last spot{% else %}Last {{ left }} spots{% endif %}</span>{%- endif -%}
+    </span>
+    <span class="wh-body">
+      <span class="wh-top"><span class="wh-name">{{ p.title }}</span><span class="wh-price">{{ price | money_without_trailing_zeros }} a spot</span></span>
+      <span class="wh-pips" aria-label="{{ taken }} of {{ total }} spots taken">{%- for v in p.variants -%}<i{% unless v.available %} class="t"{% endunless %}></i>{%- endfor -%}</span>
+      {%- if left > 0 -%}
+        <span class="wh-count"><b>{{ taken }}</b> of {{ total }} taken · <b>{{ left }}</b> left · 1 in {{ total }} jackpot odds</span>
+      {%- else -%}
+        <span class="wh-count"><b>Board full.</b> The spin date goes out in the WhatsApp group.</span>
+      {%- endif -%}
+      <span class="wh-who">
+        {%- if taken == 0 -%}Be the first in. The first spot locks the jackpot to the Wheel.
+        {%- elsif names != '' -%}{{ names }}{% if others > 0 %} and {{ others }} other{% if others != 1 %}s{% endif %}{% endif %} {% if taken == 1 %}is{% else %}are{% endif %} in
+        {%- else -%}{{ taken }} {% if taken == 1 %}person is{% else %}people are{% endif %} in{%- endif -%}
+      </span>
+      <span class="wh-go">{% if left > 0 %}Enter {{ p.title }} →{% else %}See the board →{% endif %}</span>
+    </span>
+  </a>
+  {%- endcapture -%}
+  {%- if left > 0 -%}
+    {%- assign open_count = open_count | plus: 1 -%}{%- capture open_cards -%}{{ open_cards }}{{ card }}{%- endcapture -%}
+  {%- else -%}
+    {%- assign full_count = full_count | plus: 1 -%}{%- capture full_cards -%}{{ full_cards }}{{ card }}{%- endcapture -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  .wh{--w:#f5f3ef;--g:#a3a09b;--dim:#6e6b67;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:radial-gradient(ellipse 60% 22% at 50% 0%,rgba(215,15,15,.2),transparent 70%),#000;
+    color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 80px;box-sizing:border-box}
+  .wh *{box-sizing:border-box}
+  .wh-in{max-width:1160px;margin:0 auto}
+  .wh-kick{display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--glow);margin:0 0 10px}
+  .wh-kick.live::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--glow);box-shadow:0 0 10px var(--glow);animation:wh-pulse 1.4s ease-in-out infinite}
+  @keyframes wh-pulse{50%{opacity:.25}}
+  .wh h1,.wh h2{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;line-height:1.15;text-align:center;color:var(--w)}
+  .wh h1{font-size:clamp(32px,6vw,52px);margin:0 0 12px}
+  .wh h2{font-size:clamp(22px,3.8vw,32px);margin:0 0 8px}
+  .wh-line{height:2px;width:min(360px,70%);margin:0 auto 20px;border:0;background:linear-gradient(90deg,transparent,var(--glow),transparent);box-shadow:0 0 12px rgba(249,30,17,.6)}
+  .wh-lead{font-size:19px;line-height:1.55;color:var(--g);text-align:center;max-width:34em;margin:0 auto 14px}
+  .wh-lead a,.wh-sub a{color:var(--w)}
+  .wh-sub{font-size:18px;line-height:1.5;color:var(--g);text-align:center;max-width:34em;margin:0 auto 24px}
+  .wh-sec{margin:44px 0 0}
+  .wh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+  .wh-grid.one{max-width:560px;margin:0 auto;grid-template-columns:1fr}
+
+  .wh-card{position:relative;display:flex;flex-direction:column;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;
+    overflow:hidden;text-decoration:none;color:var(--w);transition:border-color .2s,transform .2s}
+  .wh-card:hover{border-color:rgba(215,15,15,.7);transform:translateY(-3px);color:var(--w)}
+  .wh-card.hot{border-color:rgba(249,30,17,.75);box-shadow:0 0 26px rgba(215,15,15,.28)}
+  .wh-card.full{border-top-color:var(--dim)}
+  .wh-img{position:relative;display:block;aspect-ratio:4/3;background:radial-gradient(circle at 50% 42%,#b30c0c 0,#6a0808 22%,#140606 46%,#000 70%);background-size:cover;background-position:center}
+  .wh-jp{position:absolute;left:12px;bottom:12px;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+    background:rgba(0,0,0,.72);color:var(--w);border:1px solid rgba(245,243,239,.25);border-radius:3px;padding:6px 9px;display:flex;align-items:center;gap:9px}
+  .wh-jp b{font-weight:700;font-size:13px;letter-spacing:.12em;background:var(--r);color:#fff;border-radius:2px;margin:-3px -6px -3px 0;padding:4px 8px;box-shadow:0 0 14px rgba(249,30,17,.55)}
+  .wh-nudge{position:absolute;top:12px;right:12px;font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    background:var(--glow);color:#fff;border-radius:3px;padding:6px 10px;box-shadow:0 0 16px rgba(249,30,17,.7)}
+  .wh-first{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:7px;font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+    background:rgba(0,0,0,.8);color:#fff;border:1px solid rgba(249,30,17,.7);border-radius:3px;padding:6px 9px}
+  .wh-first i{font-style:normal;font-family:'Noto Serif JP',serif;color:var(--glow);font-size:14px;letter-spacing:0}
+  .wh-body{display:flex;flex-direction:column;gap:10px;padding:18px 18px 18px;flex:1}
+  .wh-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .wh-name{font-family:'Cinzel',serif;font-weight:700;font-size:23px;letter-spacing:.04em}
+  .wh-price{font-size:17px;color:var(--g);white-space:nowrap}
+  .wh-pips{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}
+  .wh-pips i{display:block;height:13px;border-radius:2px;background:rgba(245,243,239,.1);border:1px solid rgba(245,243,239,.14)}
+  .wh-pips i.t{background:linear-gradient(180deg,var(--glow),#8e0a0a);border-color:transparent;box-shadow:0 0 6px rgba(249,30,17,.45)}
+  .wh-card.full .wh-pips i.t{background:linear-gradient(180deg,#9a9a9a,#4a4a4a);box-shadow:none}
+  .wh-count{font-size:17px;color:var(--g)}
+  .wh-count b{color:var(--w);font-weight:500}
+  .wh-who{font-size:17px;line-height:1.45;color:var(--w)}
+  .wh-go{margin-top:auto;padding-top:4px;font-family:'Cinzel',serif;font-weight:600;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--glow)}
+  .wh-card.full .wh-go{color:var(--w)}
+
+  .wh-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:32px 20px;max-width:640px;margin:0 auto}
+  .wh-empty h3{font-family:'Cinzel',serif;font-weight:600;font-size:22px;margin:0 0 8px}
+  .wh-empty p{color:var(--g);font-size:17px;margin:0 0 16px}
+  .wh-btn{display:inline-block;font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+    background:var(--r);color:#fff;border-radius:3px;padding:14px 22px;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .wh-btn:hover{background:var(--glow);color:#fff}
+  .wh-btn.line{background:transparent;border:1px solid rgba(245,243,239,.4);color:var(--w);box-shadow:none}
+  .wh-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:18px 0 0}
+
+  .wh-win{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+  .wh-wcard{display:flex;flex-direction:column;background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;overflow:hidden;text-decoration:none;color:var(--w);transition:border-color .2s}
+  .wh-wcard:hover{border-color:rgba(215,15,15,.6);color:var(--w)}
+  .wh-wimg{display:block;aspect-ratio:4/3;background:#111;background-size:cover;background-position:center}
+  .wh-wbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px}
+  .wh-wbody small{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--glow)}
+  .wh-wbody b{font-family:'Cinzel',serif;font-weight:600;font-size:18px}
+  .wh-wbody span{font-size:16px;color:var(--g);line-height:1.45}
+  .wh-wbody i{font-style:normal;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--w);margin-top:4px}
+  @media (max-width:640px){.wh{padding:40px 12px 64px}.wh-grid{grid-template-columns:1fr}.wh-name{font-size:21px}}
+  @media (prefers-reduced-motion:reduce){.wh-kick.live::before{animation:none}}
+</style>
+
+<section class="wh" id="snWheels">
+  <div class="wh-in">
+    <span class="wh-kick{% if open_count > 0 %} live{% endif %}">{% if open_count > 0 %}Filling now{% else %}Koi Roulette{% endif %}</span>
+    <h1>The Wheels</h1>
+    <hr class="wh-line">
+    <p class="wh-lead">Twenty spots, one jackpot koi, and every spot wins a koi. New to it? <a href="/pages/how-koi-roulette-works">How Koi Roulette works</a></p>
+
+    <div class="wh-sec" style="margin-top:28px">
+      {%- if open_count > 0 -%}
+        <div class="wh-grid{% if open_count == 1 %} one{% endif %}">{{ open_cards }}</div>
+      {%- else -%}
+        <div class="wh-empty">
+          <h3>No wheels open right now</h3>
+          <p>The next wheel goes up in the WhatsApp group first, so that's the place to be.</p>
+          <a class="wh-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if full_count > 0 -%}
+    <div class="wh-sec">
+      <span class="wh-kick">Spin coming up</span>
+      <h2>Board full</h2>
+      <p class="wh-sub">These are spinning soon, live on <a href="/pages/live">Satomi Live</a>. The time goes out in the WhatsApp group.</p>
+      <div class="wh-grid{% if full_count == 1 %} one{% endif %}">{{ full_cards }}</div>
+    </div>
+    {%- endif -%}
+
+    <div class="wh-sec" id="spun">
+      <span class="wh-kick">Spun</span>
+      <h2>Every wheel, every winner</h2>
+      <p class="wh-sub">Every spin is recorded start to finish, so you can watch any of them back.</p>
+      {%- if winners_count > 0 -%}
+        <div class="wh-win">
+          {%- for a in winners.articles limit: 12 -%}
+            <a class="wh-wcard" href="{{ a.url }}">
+              <span class="wh-wimg"{% if a.image %} style="background-image:url('{{ a.image | image_url: width: 600 }}')"{% endif %}></span>
+              <span class="wh-wbody">
+                <small>{{ a.published_at | date: '%-d %B %Y' }}</small>
+                <b>{{ a.title }}</b>
+                <span>{{ a.excerpt_or_content | strip_html | truncatewords: 18 }}</span>
+                <i>Winners &amp; replay →</i>
+              </span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p class="wh-sub" style="margin-bottom:0">The first winners go up here after Wheel 01 spins.</p>
+      {%- endif -%}
+    </div>
+
+    <div class="wh-btns">
+      <a class="wh-btn" href="/pages/live">Watch Satomi Live</a>
+      <a class="wh-btn line" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Get spin alerts on WhatsApp</a>
+    </div>
+  </div>
+</section>
+<script>
+(function(){
+  var root = document.getElementById('snWheels'); if (!root) return;
+  var sec = root.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Wheels page",
+  "settings": []
+}
+{% endschema %}

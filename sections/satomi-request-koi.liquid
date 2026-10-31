@@ -1,0 +1,190 @@
+{% comment %}
+  SATOMI NISHIKIGOI · REQUEST A KOI
+  Theme section file (sections/satomi-request-koi.liquid), used by the "request-a-koi" page template.
+  The form doesn't send or store anything: it writes a WhatsApp message to Josh with everything filled in,
+  and the customer just presses send. The number lives in the section settings (Customize).
+{% endcomment %}
+{%- assign wa = section.settings.whatsapp | default: '447575737037' | remove: ' ' | remove: '+' -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<style>
+  .rk{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 72px;box-sizing:border-box;overflow:hidden}
+  .rk *{box-sizing:border-box}
+  .rk-in{max-width:980px;margin:0 auto}
+  .rk-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 12px}
+  .rk-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .rk h1{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(28px,5.4vw,46px);line-height:1.15;text-align:center;margin:0 0 14px}
+  .rk-lede{font-size:20px;line-height:1.55;color:var(--g);text-align:center;max-width:34em;margin:0 auto 34px}
+  .rk-now{font-size:20px;line-height:1.55;color:var(--w);text-align:center;max-width:34em;margin:-18px auto 34px;padding:14px 18px;border:1px solid rgba(215,15,15,.55);border-radius:4px;background:rgba(215,15,15,.1)}
+  .rk-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;counter-reset:s;margin:0 0 40px}
+  .rk-step{background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;padding:18px 16px;counter-increment:s}
+  .rk-step::before{content:counter(s);display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;border:1px solid var(--r);font-family:'Cinzel',serif;font-weight:700;margin-bottom:10px;box-shadow:0 0 12px rgba(215,15,15,.3)}
+  .rk-step b{display:block;font-family:'Cinzel',serif;font-weight:600;font-size:17px;margin-bottom:6px}
+  .rk-step p{margin:0;font-size:17px;line-height:1.5;color:var(--g)}
+  .rk-form{max-width:640px;margin:0 auto;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:24px 20px}
+  .rk-form h2{font-family:'Cinzel',serif;font-weight:600;font-size:24px;text-align:center;margin:0 0 6px}
+  .rk-form .sub{text-align:center;color:var(--g);font-size:17px;margin:0 0 16px}
+  .rk-form label{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--g);margin:16px 0 6px}
+  .rk-form select,.rk-form input,.rk-form textarea{width:100%;background:#000;border:1px solid rgba(245,243,239,.25);border-radius:3px;color:var(--w);font-family:'EB Garamond',Georgia,serif;font-size:19px;padding:11px 12px}
+  .rk-form textarea{min-height:96px;resize:vertical}
+  .rk-form select:focus,.rk-form input:focus,.rk-form textarea:focus{outline:none;border-color:var(--glow);box-shadow:0 0 0 2px rgba(249,30,17,.25)}
+  .rk-row{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  .rk-chips{display:flex;flex-wrap:wrap;gap:8px}
+  .rk-chips label{all:unset;cursor:pointer;position:relative;display:inline-block}
+  .rk-chips input{position:absolute;left:0;top:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}
+  .rk-chips span{display:inline-block;padding:8px 13px;border:1px solid var(--edge);border-radius:99px;font-size:16px;color:var(--g)}
+  .rk-chips input:checked + span{border-color:var(--glow);background:rgba(215,15,15,.18);color:#fff}
+  .rk-chips input:focus-visible + span{outline:2px solid var(--glow)}
+  .rk-send{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;cursor:pointer;margin-top:22px;padding:16px 20px;border-radius:3px;background:var(--r);color:#fff;
+    font-family:'Cinzel',serif;font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .rk-send:hover{background:var(--glow)}
+  .rk-send svg{width:20px;height:20px;fill:#fff;display:block !important}
+  .rk-small{font-size:15px;color:var(--g);margin:12px 0 0;text-align:center;line-height:1.45}
+  .rk-preview{margin-top:16px;padding:12px 14px;border:1px dashed var(--edge);border-radius:3px;font-size:16px;color:#d6d3ce;white-space:pre-wrap;line-height:1.45}
+  .rk-preview b{display:block;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);margin-bottom:6px;font-weight:600}
+  .rk-err{color:#ff8b7a;font-size:16px;margin:10px 0 0;text-align:center}
+  @media (max-width:760px){ .rk-steps{grid-template-columns:1fr 1fr} }
+  @media (max-width:480px){ .rk-steps{grid-template-columns:1fr} .rk-row{grid-template-columns:1fr} }
+</style>
+
+<section class="rk" id="snRequest">
+  <div class="rk-in">
+    <p class="rk-kick">Request a koi <b>注文</b></p>
+    <h1>{{ section.settings.heading | default: 'Tell me what you’re looking for' }}</h1>
+    <p class="rk-lede">{{ section.settings.lede }}</p>
+    {%- if template.name == 'password' -%}
+    <p class="rk-now">I have contacts on the floor in Japan right now for the Autumn Harvests. Request a koi below and if I can source it, I'll contact you!</p>
+    {%- endif -%}
+
+    <div class="rk-steps">
+      <div class="rk-step"><b>Tell me</b><p>Variety, size, budget, breeder if you've got one in mind.</p></div>
+      <div class="rk-step"><b>I hunt</b><p>With the breeders I work with directly, and on my trips to Japan.</p></div>
+      <div class="rk-step"><b>You see it first</b><p>Photos and video of anything that fits go to you on WhatsApp.</p></div>
+      <div class="rk-step"><b>You decide</b><p>{{ section.settings.decide | default: "Nothing's bought until you say yes." }}</p></div>
+    </div>
+
+    <form class="rk-form" id="rkForm" novalidate>
+      <h2>Your request</h2>
+      <p class="sub">Fill in what you know. Leave the rest and we'll talk it through.</p>
+
+      <label>Variety</label>
+      <div class="rk-chips" data-name="Variety" data-multi="1">
+        {%- assign vars = 'Kohaku,Sanke,Showa,Shiro Utsuri,Tancho,Goshiki,Asagi,Shusui,Chagoi,Ochiba,Kujaku,Gin Rin,Doitsu,Something different' | split: ',' -%}
+        {%- for v in vars -%}<label><input type="checkbox" value="{{ v }}"><span>{{ v }}</span></label>{%- endfor -%}
+      </div>
+
+      <div class="rk-row">
+        <div>
+          <label for="rkSize">Size</label>
+          <select id="rkSize" data-name="Size">
+            <option value="">Not sure</option>
+            <option>Tosai (up to about 30cm)</option>
+            <option>Nisai (about 30 to 45cm)</option>
+            <option>Sansai (about 45 to 60cm)</option>
+            <option>Jumbo (60cm and up)</option>
+          </select>
+        </div>
+        <div>
+          <label for="rkBudget">Budget</label>
+          <select id="rkBudget" data-name="Budget">
+            <option value="">Rather discuss it</option>
+            <option>Up to £500</option>
+            <option>£500 to £1,000</option>
+            <option>£1,000 to £2,500</option>
+            <option>£2,500 to £5,000</option>
+            <option>£5,000 and up</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Breeder</label>
+      <div class="rk-chips" data-name="Breeder" data-multi="1">
+        {%- assign brs = section.settings.breeders | default: 'Any,Dainichi,Momotaro,Omosako,Sakamaki,Odakan,Izumiya,Marudo' | split: ',' -%}
+        {%- for b in brs -%}<label><input type="checkbox" value="{{ b | strip }}"><span>{{ b | strip }}</span></label>{%- endfor -%}
+      </div>
+
+      <div class="rk-row">
+        <div>
+          <label>Sex</label>
+          <div class="rk-chips" data-name="Sex">
+            <label><input type="radio" name="rkSex" value="Female"><span>Female</span></label>
+            <label><input type="radio" name="rkSex" value="Male"><span>Male</span></label>
+            <label><input type="radio" name="rkSex" value="Either"><span>Either</span></label>
+          </div>
+        </div>
+        <div>
+          <label for="rkWhen">When for</label>
+          <select id="rkWhen" data-name="When">
+            <option value="">No rush</option>
+            <option>This season</option>
+            <option>Next harvest</option>
+            <option>Happy to grow it on in Japan first</option>
+          </select>
+        </div>
+      </div>
+
+      <label for="rkNotes">Anything else</label>
+      <textarea id="rkNotes" data-name="Notes" placeholder="e.g. a Showa with strong motoguro, for a 12,000 litre pond"></textarea>
+
+      <label for="rkName">Your first name</label>
+      <input id="rkName" data-name="Name" autocomplete="given-name">
+
+      <div class="rk-preview" id="rkPreview" hidden><b>Your message</b><span></span></div>
+      <p class="rk-err" id="rkErr" hidden>Pick at least a variety or tell me a bit in "Anything else" first.</p>
+
+      {%- if wa != blank -%}
+      <button type="submit" class="rk-send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>Send my request on WhatsApp</button>
+      {%- endif -%}
+      <p class="rk-small">{{ section.settings.small | default: "This opens WhatsApp with your request written out. Nothing is sent until you press send there." }}</p>
+    </form>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('snRequest'); if (!root || root.__done) return; root.__done = true;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+  // On the lock screen, sit straight under the coming-soon intro
+  var soon = document.getElementById('snSoon'), mine = root.closest('.shopify-section');
+  if (soon && mine){ var after = soon.closest('.shopify-section'); if (after && after !== mine) after.after(mine); }
+  var form = document.getElementById('rkForm'), prev = document.getElementById('rkPreview'), err = document.getElementById('rkErr');
+  var wa = {{ wa | json }};
+  function val(name){
+    var box = form.querySelector('[data-name="' + name + '"]'); if (!box) return '';
+    if (box.classList.contains('rk-chips')) return [].map.call(box.querySelectorAll('input:checked'), function(i){ return i.value; }).join(', ');
+    return (box.value || '').trim();
+  }
+  function build(){
+    var lines = ['Hi Josh, I\'d like to request a koi.'];
+    [['Variety','Variety'],['Size','Size'],['Budget','Budget'],['Breeder','Breeder'],['Sex','Sex'],['When','When for']].forEach(function(p){ var v = val(p[0]); if (v) lines.push(p[1] + ': ' + v); });
+    var n = val('Notes'); if (n) lines.push('', n);
+    var nm = val('Name'); if (nm) lines.push('', nm);
+    return lines.join('\n');
+  }
+  function refresh(){ var t = build(); prev.hidden = t.split('\n').length < 2; prev.querySelector('span').textContent = t; }
+  form.addEventListener('input', refresh); form.addEventListener('change', refresh);
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if (!val('Variety') && !val('Notes')){ err.hidden = false; return; }
+    err.hidden = true;
+    window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(build()), '_blank', 'noopener');
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Request a koi",
+  "settings": [
+    { "type": "text", "id": "whatsapp", "label": "WhatsApp number", "info": "International format with no 0 at the start, e.g. 447700900123." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Tell me what you’re looking for" },
+    { "type": "textarea", "id": "lede", "label": "Intro text", "default": "Got a koi in mind that isn't on the site? Tell me what you're after and I'll find it through the breeders I deal with directly." },
+    { "type": "text", "id": "decide", "label": "Step 4 text", "default": "Nothing's bought until you say yes." },
+    { "type": "text", "id": "breeders", "label": "Breeders to offer (comma separated)", "default": "Any,Dainichi,Momotaro,Omosako,Sakamaki,Odakan,Izumiya,Marudo" },
+    { "type": "text", "id": "small", "label": "Small print under the button", "default": "This opens WhatsApp with your request written out. Nothing is sent until you press send there." }
+  ]
+}
+{% endschema %}

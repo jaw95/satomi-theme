@@ -1,0 +1,68 @@
+{% comment %}
+  SATOMI NISHIKIGOI · PREVIEW MODE ("look, don't buy")
+  Theme section file (sections/satomi-preview-mode.liquid), in the header group of Satomi 2027.
+  While "Preview mode on" is ticked:
+    - a slim red banner sits across the top of every page
+    - every Buy / Add to basket / Take a spot / Seal my bid / Checkout button is hidden
+    - and, as a backstop, anything that tries to add to the basket or go to checkout is stopped
+  Untick it (or ask Claude) to switch the shop back to normal.
+{% endcomment %}
+{%- if section.settings.on -%}
+<style>
+  .sn-pv{position:relative;z-index:50;background:#d70f0f;color:#fff;text-align:center;padding:9px 14px;
+    font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase;line-height:1.35}
+  .sn-pv span{display:block;font-family:'EB Garamond',Georgia,serif;font-weight:400;font-size:15px;letter-spacing:0;text-transform:none;opacity:.92}
+  /* hide every way to buy */
+  form[action*="/cart/add"] button[type="submit"], form[action*="/cart/add"] [type="submit"],
+  .product-form__buttons, .shopify-payment-button, .product-form__submit,
+  #snForm, .shr-buy, .shr-form button, .ba-form button[type="submit"],
+  .cart__ctas, .cart__dynamic-checkout-buttons, button[name="checkout"], [name="checkout"],
+  .cart-drawer .cart__checkout-button, a[href*="/checkout"], quick-add-modal, .quick-add{display:none !important}
+  .sn-pv-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:9999;background:#0b0b0b;color:#f5f3ef;
+    border:1px solid #d70f0f;border-radius:4px;padding:12px 16px;font-family:'EB Garamond',Georgia,serif;font-size:17px;box-shadow:0 0 20px rgba(215,15,15,.4);max-width:90vw}
+</style>
+<div class="sn-pv" role="note">{{ section.settings.heading }}<span>{{ section.settings.text }}</span></div>
+<script>
+(function(){
+  if (window.__snPreview) return; window.__snPreview = true;
+  var msg = {{ section.settings.toast | json }};
+  function toast(){
+    var t = document.querySelector('.sn-pv-toast');
+    if (!t){ t = document.createElement('div'); t.className = 'sn-pv-toast'; document.body.appendChild(t); }
+    t.textContent = msg; t.style.display = 'block';
+    clearTimeout(t._h); t._h = setTimeout(function(){ t.style.display = 'none'; }, 4000);
+  }
+  function blocked(u){ u = String(u || ''); return /\/cart\/(add|update|change)|\/checkout|\/discount\//.test(u); }
+  // stop forms
+  document.addEventListener('submit', function(e){
+    var f = e.target; if (f && blocked(f.getAttribute('action'))){ e.preventDefault(); e.stopImmediatePropagation(); toast(); }
+  }, true);
+  // stop links to checkout
+  document.addEventListener('click', function(e){
+    var a = e.target.closest && e.target.closest('a[href]'); if (a && /\/checkout/.test(a.getAttribute('href'))){ e.preventDefault(); toast(); }
+    var b = e.target.closest && e.target.closest('button[name="checkout"],[name="add"]'); if (b){ e.preventDefault(); e.stopImmediatePropagation(); toast(); }
+  }, true);
+  // stop the theme's own add-to-basket calls
+  var f0 = window.fetch;
+  if (f0) window.fetch = function(u, o){
+    var url = (u && u.url) ? u.url : u;
+    if (blocked(url)) { toast(); return Promise.reject(new Error('Preview mode')); }
+    return f0.apply(this, arguments);
+  };
+  var sub = HTMLFormElement.prototype.submit;
+  HTMLFormElement.prototype.submit = function(){ if (blocked(this.getAttribute('action'))){ toast(); return; } return sub.apply(this, arguments); };
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Satomi: Preview mode",
+  "settings": [
+    { "type": "checkbox", "id": "on", "label": "Preview mode on (nothing can be bought)", "default": true },
+    { "type": "text", "id": "heading", "label": "Banner heading", "default": "Preview · nothing's for sale yet" },
+    { "type": "text", "id": "text", "label": "Banner line", "default": "Have a proper nose around and tell me what you think in the Supporters group." },
+    { "type": "text", "id": "toast", "label": "Message when someone tries to buy", "default": "Preview only, so nothing can be bought tonight. The shop opens properly in March." }
+  ]
+}
+{% endschema %}

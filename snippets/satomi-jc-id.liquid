@@ -1,0 +1,7 @@
+{%- comment -%} Turns any YouTube link (or a bare ID) into the 11-character video ID. Used by sections/satomi-japan-calling.liquid {%- endcomment -%}
+{%- assign u = url | strip -%}
+{%- if u contains 'v=' -%}{%- assign u = u | split: 'v=' | last | split: '&' | first -%}
+{%- elsif u contains 'youtu.be/' -%}{%- assign u = u | split: 'youtu.be/' | last | split: '?' | first -%}
+{%- elsif u contains '/shorts/' -%}{%- assign u = u | split: '/shorts/' | last | split: '?' | first -%}
+{%- elsif u contains '/live/' -%}{%- assign u = u | split: '/live/' | last | split: '?' | first -%}
+{%- endif -%}{{ u }}

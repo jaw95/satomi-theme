@@ -1,0 +1,490 @@
+<!-- Shopify page: French Carp Fishing Analysis | handle: french-carp-fishing-analysis | template: page -->
+
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#10160f"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<title>Carp Fishing Analysis · Read the water</title><style>html,body{margin:0;background:#10160f;color:#e9e4d6;font-family:"Manrope","Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}</style>
+<div id="cb" style="max-width:420px;margin:0 auto;padding:24px 20px 40px;background:#10160f;color:#e9e4d6;font-family:'Manrope','Helvetica Neue',Arial,sans-serif;border-radius:16px;">
+<style>
+#cb { --bg:#10160f; --ink:#e9e4d6; --dim:#8c948c; --line:#243029; --amber:#e6a33a; --water:#4f9cc2; --green:#7fb069; --fern:#7fb069; --red:#d9694f; --bg:#10160f; }
+#cb * { box-sizing:border-box; }
+#cb .brand { display:flex; align-items:center; gap:12px; padding:0 0 16px; margin:0 0 18px; border-bottom:1px solid var(--line); }
+#cb .brand-name { font-size:17px; font-weight:400; color:var(--ink); letter-spacing:-0.2px; }
+#cb .brand-tag { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--fern); margin-top:2px; }
+#cb .brand-short { margin-left:auto; font-size:15px; color:var(--dim); letter-spacing:1px; }
+#cb .camo { height:6px; background: linear-gradient(90deg,#1d2a1a 0 12%,#3b5a2f 12% 27%,#2f4a2a 27% 41%,#5a6b3a 41% 49%,#1d2a1a 49% 63%,#3b5a2f 63% 78%,#2f4a2a 78% 91%,#5a6b3a 91%); border-radius:3px; margin:-8px -4px 18px; }
+
+#cb h1 { font-size:16px; font-weight:400; color:var(--dim); margin:0 0 14px; }
+#cb h2 { font-size:14px; font-weight:400; color:var(--dim); margin:34px 0 10px; letter-spacing:0; }
+#cb .pick { position:relative; }
+#cb .pick input { width:100%; background:#151f14; border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:14px 16px; font-size:17px; outline:none; }
+#cb .pick input:focus { border-color:var(--water); }
+#cb .list { position:absolute; left:0; right:0; top:100%; margin-top:6px; background:#151f14; border:1px solid var(--line); border-radius:12px; max-height:260px; overflow:auto; z-index:5; display:none; }
+#cb .list div { padding:12px 16px; border-bottom:1px solid var(--line); font-size:16px; }
+#cb .list div small { display:block; color:var(--dim); font-size:13px; }
+#cb .list div:active { background:var(--line); }
+#cb .locrow { display:flex; gap:10px; margin:10px 0 0; }
+#cb .locrow button { flex:1; }
+#cb .browse { display:none; margin-top:10px; background:#151f14; border:1px solid var(--line); border-radius:12px; max-height:340px; overflow:auto; }
+#cb .browse.open { display:block; }
+#cb .browse div .lp { float:right; font-variant-numeric:tabular-nums; color:var(--dim); font-size:14px; }
+#cb .browse div .lp.f { color:var(--fern); } #cb .browse div .lp.r { color:var(--amber); }
+#cb .browse .sortrow { position:sticky; top:0; z-index:2; display:flex; gap:8px; padding:8px 12px; background:#10160f; border-bottom:1px solid var(--line); }
+#cb .browse .sortrow button { flex:1; padding:7px 10px; font-size:13px; }
+#cb .browse .sortrow button.on { border-color:var(--fern); color:var(--fern); }
+#cb .browse h3 { position:sticky; top:0; margin:0; padding:8px 16px; font-size:13px; font-weight:400; color:var(--dim); background:#10160f; border-bottom:1px solid var(--line); }
+#cb .browse div { padding:11px 16px; border-bottom:1px solid var(--line); font-size:16px; }
+#cb .browse div small { display:block; color:var(--dim); font-size:13px; }
+#cb .browse div:active { background:var(--line); }
+#cb .place { font-size:15px; margin:26px 0 6px; }
+#cb .place small { color:var(--dim); }
+#cb .now { display:flex; align-items:flex-end; gap:14px; margin:0; }
+#cb .now b { font-size:92px; font-weight:300; font-family:'Manrope','Helvetica Neue',Arial,sans-serif; letter-spacing:-3px; line-height:0.9; font-variant-numeric:tabular-nums; color:var(--ink); }
+#cb .now small { font-size:15px; color:var(--dim); padding-bottom:10px; line-height:1.3; }
+#cb .trend { display:flex; align-items:center; gap:10px; margin:18px 0 0; font-size:18px; }
+#cb .arrow { width:34px; height:34px; border-radius:50%; display:grid; place-items:center; font-size:20px; background:var(--line); }
+#cb .trend.falling .arrow { background:#2b4a3a; color:var(--green); }
+#cb .trend.rising .arrow { background:#4a3a1e; color:var(--amber); }
+#cb .verdict { margin:22px 0 0; padding:16px 18px; border-left:3px solid var(--amber); font-size:17px; line-height:1.45; }
+#cb .verdict.go { border-color:var(--green); }
+#cb .rig { margin:12px 0 0; padding:14px 18px; background:#151f14; border-radius:12px; font-size:15px; line-height:1.5; }
+#cb .rig b { font-weight:500; color:var(--water); }
+#cb svg.chart { width:100%; height:150px; margin-top:26px; display:block; overflow:visible; }
+#cb .cond { display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin-top:22px; font-size:15px; }
+#cb .cond span { color:var(--dim); }
+#cb .cond .v { color:var(--ink); }
+#cb .windrow { display:flex; gap:18px; align-items:center; margin-top:8px; }
+#cb .windrow svg { width:120px; height:120px; flex:none; }
+#cb .windrow p { margin:0; font-size:15px; line-height:1.5; }
+#cb .plan { margin-top:8px; }
+#cb .plan .dates { display:flex; gap:10px; margin-bottom:12px; }
+#cb .plan input { flex:1; background:#151f14; border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:10px 12px; font-size:15px; color-scheme:dark; }
+#cb .blk { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--line); font-size:15px; }
+#cb .blk .when { flex:none; width:92px; color:var(--dim); }
+#cb .blk .tag { flex:none; width:8px; border-radius:4px; }
+#cb .blk .why { color:var(--dim); font-size:13px; display:block; margin-top:2px; }
+#cb .foot { display:flex; justify-content:space-between; align-items:center; margin-top:28px; font-size:13px; color:var(--dim); }
+#cb button { background:none; border:1px solid var(--line); color:var(--ink); border-radius:999px; padding:10px 18px; font-size:15px; }
+#cb button:active { background:var(--line); }
+#cb .panel { margin-top:10px; padding:14px 16px; background:#151f14; border-radius:12px; font-size:15px; line-height:1.55; white-space:pre-line; }
+#cb .row { display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+#cb .row button { flex:1; min-width:120px; }
+#cb .row input, #cb .row select { flex:1; min-width:90px; background:#151f14; border:1px solid var(--line); color:var(--ink); border-radius:12px; padding:10px 12px; font-size:15px; color-scheme:dark; }
+#cb .nudge { display:flex; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-size:15px; }
+#cb .nudge .t { flex:none; width:64px; color:var(--amber); font-variant-numeric:tabular-nums; }
+#cb .catch { display:flex; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); font-size:15px; }
+#cb .catch small { display:block; color:var(--dim); font-size:13px; margin-top:2px; }
+#cb .catch b { font-weight:500; color:var(--green); }
+#cb .catch .del { color:var(--dim); font-size:13px; border:none; padding:0 4px; }
+#cb .err { color:var(--amber); font-size:14px; margin-top:14px; }
+</style>
+<div class="camo"></div>
+<div class="brand">
+<svg viewbox="0 0 64 64" width="44" height="44" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#10160f"></circle><g fill="none" stroke-width="5"><path d="M32 4 A28 28 0 0 1 56.2 18" stroke="#3b5a2f"></path><path d="M56.2 18 A28 28 0 0 1 56.2 46" stroke="#1d2a1a"></path><path d="M56.2 46 A28 28 0 0 1 32 60" stroke="#5a6b3a"></path><path d="M32 60 A28 28 0 0 1 7.8 46" stroke="#2f4a2a"></path><path d="M7.8 46 A28 28 0 0 1 7.8 18" stroke="#3b5a2f"></path><path d="M7.8 18 A28 28 0 0 1 32 4" stroke="#1d2a1a"></path></g><g stroke="#8c948c" stroke-width="1.5" stroke-linecap="round"><line x1="32" y1="12" x2="32" y2="16"></line><line x1="52" y1="32" x2="48" y2="32"></line><line x1="32" y1="52" x2="32" y2="48"></line><line x1="12" y1="32" x2="16" y2="32"></line></g><path d="M14 24 C 20 24 24 27 28 31 C 32 35 36 41 42 45 C 45 47 48 48 50 48" fill="none" stroke="#7fb069" stroke-width="3" stroke-linecap="round"></path><circle cx="32" cy="34" r="3" fill="#e6a33a"></circle></svg><div>
+<div class="brand-name">Carp Fishing Analysis</div>
+<div class="brand-tag">Read the water</div>
+</div>
+<div class="brand-short">CFA</div>
+</div>
+
+<div class="pick">
+<input id="q" placeholder="Search a fishery, lac, étang or town" autocomplete="off"><div class="list" id="list"></div>
+</div>
+<div class="locrow">
+<button id="geo" type="button">Use my location</button><button id="browsebtn" type="button">Browse all waters</button>
+</div>
+<div class="browse" id="browse"></div>
+<p class="place" id="place">Pick a water to start<br><small></small></p>
+<p class="now"><b id="p">—</b><small>hPa<br>sea level</small></p>
+<div class="trend" id="trend">
+<div class="arrow" id="arrow">–</div>
+<div id="trendtext">Waiting for a water</div>
+</div>
+<div class="verdict" id="verdict"></div>
+<div class="rig" id="rig"></div>
+<svg class="chart" id="chart" viewbox="0 0 380 150"></svg>
+<div class="cond">
+<div>
+<span>Air</span><br><span class="v" id="temp">—</span>
+</div>
+<div>
+<span>Water (est.)</span><br><span class="v" id="wtemp">—</span>
+</div>
+<div>
+<span>Cloud</span><br><span class="v" id="cloud">—</span>
+</div>
+<div>
+<span>Rain next 12 h</span><br><span class="v" id="rain">—</span>
+</div>
+<div>
+<span>Sunrise / sunset</span><br><span class="v" id="sun">—</span>
+</div>
+<div>
+<span>Moon</span><br><span class="v" id="moon">—</span>
+</div>
+</div>
+<h2>Wind on the lake</h2>
+<div class="windrow">
+<svg id="rose" viewbox="0 0 120 120"></svg><p id="windtext">—</p>
+</div>
+<h2>Session planner</h2>
+<div class="plan">
+<div class="dates">
+<input type="date" id="d1"><input type="date" id="d2">
+</div>
+<div id="blocks"></div>
+</div>
+<h2>What should I do now?</h2>
+<div class="row"><button id="advbtn" type="button">Tell me</button></div>
+<div class="panel" id="advice" style="display:none"></div>
+<h2>Session nudges</h2>
+<div id="nudges"></div>
+<div class="row"><button id="alarmbtn" type="button">Set alarms on this phone</button></div>
+<h2>Bait calculator</h2>
+<div class="row">
+<input type="number" id="bnights" min="1" max="14" value="2" placeholder="Nights"><input type="number" id="brods" min="1" max="4" value="2" placeholder="Rods"><select id="bstyle"><option value="boilie">Boilies</option>
+<option value="mix">Boilies + particle</option>
+<option value="particle">Particle</option></select>
+</div>
+<div class="panel" id="bait"></div>
+<h2>Catch log</h2>
+<div class="row">
+<input type="number" id="cweight" step="0.25" placeholder="Weight (lb)"><input type="text" id="cnote" placeholder="Bait, spot, notes"><button id="cadd" type="button">Log a fish</button>
+</div>
+<div id="catches"></div>
+<div class="row"><button id="cexport" type="button">Copy log as text</button></div>
+<h2>This water, your pattern</h2>
+<div class="panel" id="pattern">Log a few fish here and the pattern builds itself.</div>
+<div class="err" id="err"></div>
+<div class="foot">
+<span id="stamp">Updates every 15 min</span><button id="btn" type="button">Refresh</button>
+</div>
+</div>
+<script>
+(function(){
+const LAKES_UK = [["Aldercar Lane Fishery","Amber Valley, Derbyshire",53.033,-1.337],["Alderwood Ponds","Horsham, West Sussex",50.903,-0.337],["Aldin Grange Lakes","Durham, County Durham",54.78,-1.621],["Alvechurch Fisheries","Bromsgrove, Worcestershire",52.365,-1.971],["Amwell Magna Fishery","East Hertfordshire, Hertfordshire",51.804,-0.014],["Andy's Fishery","Mid Sussex, West Sussex",51.025,-0.198],["Anemone Pool","Moray",57.314,-3.416],["Anglers Paradise","Halwill Junction, Devon",50.778,-4.209],["Ardgowan Fishery","Inverclyde",55.911,-4.805],["Arrow Meadow Fishery","Bromsgrove, Worcestershire",52.34,-1.957],["Ashmire Fishery","Huntingdonshire, Cambridgeshire",52.367,0.044],["Aspen Lake","Wiltshire",51.648,-1.918],["Atherstone Lakes","Stratford-on-Avon, Warwickshire",52.154,-1.715],["Avon Springs Fishery","Wiltshire",51.2,-1.767],["Baden Hall Fisheries","Eccleshall, Staffordshire",52.858,-2.251],["Baker’s Pond","Rotherham, South Yorkshire",53.475,-1.305],["Balscatcher Pool","Moray",57.313,-3.419],["Bangour Reservoir","West Lothian",55.929,-3.583],["Banister House Farm Fishery","West Lancashire, Lancashire",53.649,-2.88],["Barford Lakes","South Norfolk, Norfolk",52.626,1.154],["Barlborough Springs Fishery","Bolsover, Derbyshire",53.299,-1.289],["Barnburgh Lakes","Doncaster, South Yorkshire",53.517,-1.258],["Barnes Lane Pool","Walsall, West Midlands",52.613,-1.948],["Barston Lakes","Barston, Solihull",52.401,-1.697],["Bawburgh Lakes","Bawburgh, Norfolk",52.632,1.184],["Beechwood Park","South Derbyshire, Derbyshire",52.89,-1.386],["Belvoir Lower Lake","Melton, Leicestershire",52.89,-0.766],["Berwick Pond","Greater London, England",51.53,0.219],["Billington Lakes","Blaby, Leicestershire",52.557,-1.322],["Birkdale Farm Fishery","North Yorkshire",54.111,-0.949],["Birkin Fisheries","North Yorkshire",53.735,-1.19],["Bishops Bowl Fishery","Stratford-on-Avon, Warwickshire",52.227,-1.438],["BK Fisheries, Bill's Pool","Cornwall",50.162,-5.432],["Blackthorn Fishery","Shropshire",52.825,-3.118],["Blakewell Fisheries","North Devon, Devon",51.103,-4.051],["Bluebell Lakes","Tansor, Northamptonshire",52.506,-0.447],["Bodie Pool","Moray",57.303,-3.425],["Borwick Lake","Lancaster, Lancashire",54.146,-2.733],["Bowes Lake","Gateshead, Tyne and Wear",54.907,-1.563],["Bradleys Fishing Ponds","North East Derbyshire, Derbyshire",53.318,-1.412],["Brasenose","Stanton Harcourt, Oxfordshire",51.751,-1.392],["Brasholme Fishing Lake","Hull, Kingston upon Hull",53.798,-0.316],["Brick Farm Lakes","Wealden, East Sussex",50.892,0.338],["Brick Ponds","North Lincolnshire",53.65,-0.695],["Brick Yard Fishery","North Yorkshire",54.166,-1.481],["Brickhill Farm Fishery","West Northamptonshire",52.156,-1.213],["Brittens Pond","Guildford, Surrey",51.268,-0.582],["Broad Acres Fishery","Wychavon, Worcestershire",52.274,-2.03],["Broadlands Lakes Coarse Fishery","Test Valley, Hampshire",50.945,-1.506],["Brookhall Lake","Maldon, Essex",51.806,0.774],["Brookland Lake","Tonbridge and Malling, Kent",51.325,0.453],["Brusselton Reservoir","County Durham",54.624,-1.669],["Brynhenllys Fishery","Powys",51.8,-3.792],["Bugley Pools","Dorset",51.023,-2.299],["Bullington Fisheries","West Lindsey, Lincolnshire",53.289,-0.37],["Bullock Farm (Fishing & Camping)","North Somerset",51.407,-2.859],["Bulmers Angling Club Pond","Herefordshire",52.011,-2.777],["Bulwell Hall Park Lakes","Ashfield, Nottinghamshire",53.017,-1.199],["Burghfield","Burghfield, Berkshire",51.415,-1.034],["Burton Mill Pond","Chichester, West Sussex",50.951,-0.611],["Bury Hill Fisheries","Mole Valley, Surrey",51.222,-0.354],["Bury St Austen's Lakes","Horsham, West Sussex",51.103,-0.414],["Butetown Reservoir","Caerphilly",51.773,-3.305],["Cackle Hill Lakes","Ashford, Kent",51.13,0.642],["Candy Corner Fisheries","Doncaster, South Yorkshire",53.518,-0.952],["Carpenders Park Angling Club","Three Rivers, Hertfordshire",51.637,-0.426],["Carron Valley Fishery","Stirling",56.032,-4.062],["Catchpenny Pool","Cheshire East",53.239,-2.28],["Cefn Mably Lakes","Caerphilly",51.557,-3.114],["Century Ponds","Bath and North East Somerset",51.414,-2.518],["Chart Hill Lakes","Maidstone, Kent",51.211,0.568],["Cherry Lakes","Cotswold, Gloucestershire",51.673,-1.916],["Cheshire Lakes","Nantwich, Cheshire",53.067,-2.522],["Chigboro Fisheries","Heybridge, Essex",51.733,0.775],["Chigborough Carp Syndicate","Maldon, Essex",51.743,0.704],["Chilham Lake","Ashford, Kent",51.245,0.98],["Chorley Water","Chorley, Lancashire",53.653,-2.629],["Christchurch Lakes","Christchurch, Dorset",50.765,-1.815],["Church Langley Fishery","Harlow, Essex",51.767,0.136],["Church Paddock Fishery","Winchester, Hampshire",51.087,-1.306],["Claydon Lake","Buckinghamshire",51.925,-0.962],["Clear Water Fisheries","Lancaster, Lancashire",54.144,-2.736],["Cleverley Mere","Whixall, Shropshire",52.908,-2.742],["Clovelly Lakes","Torridge, Devon",50.98,-4.403],["Coarse Fishing Lake","Cornwall",50.254,-5.286],["Coarse Fishing Lakes","Herefordshire",51.898,-2.729],["Coking Farm Fishery","Dorset",50.992,-2.334],["Coombewood Fishery","Ashford, Kent",51.1,0.739],["Cooper's Lake","South Derbyshire, Derbyshire",52.85,-1.403],["Coppice Pond","Bradford, West Yorkshire",53.846,-1.866],["Coppull Mill Fishery","Chorley, Lancashire",53.626,-2.662],["Cotswold Water Park","South Cerney, Gloucestershire",51.673,-1.921],["Cottington Lakes","Sholden, Kent",51.225,1.375],["Cow Gap Farm Fishery","Sheffield, South Yorkshire",53.399,-1.584],["Creeting Lakes","Mid Suffolk, Suffolk",52.186,1.032],["Crompton's Pond","Wigan, Greater Manchester",53.485,-2.646],["Cromwell Lake","Huntingdonshire, Cambridgeshire",52.321,-0.198],["Croxley Hall Fisheries","Three Rivers, Hertfordshire",51.638,-0.457],["Cuttle Mill Carp Fishery","North Warwickshire, Warwickshire",52.554,-1.72],["Dandy's Ford Fishery","Test Valley, Hampshire",50.995,-1.58],["Dani's Lake","Central Bedfordshire",52.057,-0.495],["Decoy Pond","Babergh, Suffolk",51.959,1.071],["Derwent Valley Fishery","Derby, Derbyshire",52.947,-1.471],["Diggerlakes","Mid Devon, Devon",50.875,-3.377],["Dingle Lake - Peggy's Pool","Cheshire East",53.145,-2.357],["Dinton Pastures","Hurst, Berkshire",51.445,-0.876],["Docklow Pools","Herefordshire",52.216,-2.652],["Drumbad Lake Fishing Area","County Leitrim",53.882,-7.832],["Duck Pond (Upper Pool)","Sandwell, West Midlands",52.52,-1.981],["Dunham Fisheries","Trafford, Greater Manchester",53.387,-2.41],["Dunlichity Fishery","Inverness, Highland",57.37,-4.22],["Eagle Pond","Greater London, England",51.456,-0.145],["Earith Lakes Fishery","Huntingdonshire, Cambridgeshire",52.369,0.037],["Eden Grange Fishery","County Durham",54.621,-1.622],["Eisteddfa Fisheries","Gwynedd",52.931,-4.205],["Elinor Fisheries","North Northamptonshire",52.416,-0.528],["Ellerbeck Fisheries","Cumberland",54.656,-3.411],["Elsecar Reservoir","Barnsley, South Yorkshire",53.49,-1.425],["Elstow Pits","Elstow, Bedfordshire",52.115,-0.468],["Emperor Lakes","South Hams, Devon",50.348,-3.812],["Eureka Fisheries","Ashford, Kent",51.17,0.863],["Exmoor Fisheries","Somerset",51.053,-3.488],["Farletonview Fishery","Westmorland and Furness",54.235,-2.726],["Farlows Lake","Iver, Buckinghamshire",51.519,-0.506],["Farnley Fish Pond","Leeds, West Yorkshire",53.788,-1.623],["Farview Fishing Lakes","Bradford, West Yorkshire",53.825,-1.835],["Fiddle Neck Pond","Rotherham, South Yorkshire",53.356,-1.294],["Field Farm Fisheries","East Suffolk, Suffolk",52.381,1.65],["Field Lake","Rother, East Sussex",50.9,0.464],["Filham Lake","South Hams, Devon",50.38,-3.908],["Firswood Fisheries","West Lancashire, Lancashire",53.557,-2.816],["Fishermans Landing area","Bournemouth, Christchurch and Poole",50.712,-1.983],["Fisherwick Lakes","Lichfield, Staffordshire",52.683,-1.746],["Fishing Lake","Herefordshire",52.057,-2.836],["Five Ways Lakes Fishery","Rugby, Warwickshire",52.474,-1.373],["Flaxlands Fishery","Wiltshire",51.56,-1.908],["FLE fishery","Test Valley, Hampshire",50.997,-1.443],["Float Fish Farm","Huntingdonshire, Cambridgeshire",52.537,-0.192],["Fochriw Feeder Pond","Caerphilly",51.741,-3.306],["Forgue Fish Farm","Aberdeenshire",57.5,-2.634],["Fortway Farm Leisure & Fishert","Blaby, Leicestershire",52.543,-1.266],["Four Seasons Fishery","Fylde, Lancashire",53.825,-2.998],["Foxhills Fishery","Walsall, West Midlands",52.567,-1.919],["Frimley Pits","Frimley Green, Surrey",51.303,-0.728],["Frog Hall Fisheries Archies Lake","East Lindsey, Lincolnshire",53.343,0.058],["Furnace Lakes","Horsham, West Sussex",51.089,-0.421],["Furzton Lake","Milton Keynes, City of Milton Keynes",52.016,-0.768],["Gang Warily Fishing Lake","New Forest, Hampshire",50.825,-1.37],["Gaywoods Fishery","Dacorum, Hertfordshire",51.708,-0.443],["Gedges Lakes","Tunbridge Wells, Kent",51.164,0.381],["Gimingham Lakes","North Norfolk, Norfolk",52.881,1.394],["Glebe Lakes","Cherwell, Oxfordshire",51.941,-1.141],["Gold Valley Springlakes","Rushmoor, Hampshire",51.257,-0.734],["Goodwin's Pool","Cheshire East",53.17,-2.255],["Grafham Water Fishing Lodge","Huntingdonshire, Cambridgeshire",52.291,-0.324],["Grange Pond","Erewash, Derbyshire",52.897,-1.251],["Greenacres Farm","Ashford, Kent",51.119,0.631],["Grey Mist","Warrington, Cheshire",53.28,-2.601],["Grey Mist Mere","Warrington",53.395,-2.541],["Grove Farm Fisheries","Tonbridge and Malling, Kent",51.24,0.365],["Hall Farm Lake","Great Yarmouth, Norfolk",52.578,1.678],["Hallcroft Fishery & Holiday Park","Bassetlaw, Nottinghamshire",53.338,-0.952],["Harley Coarse Fishery","Shropshire",52.609,-2.614],["Harpsdale Fishery Park","Highland",58.49,-3.48],["Hartley Lands Fishery","Tunbridge Wells, Kent",51.085,0.52],["Hastingford Fishery","Wealden, East Sussex",51.016,0.17],["Hawkesbury Farm Fishery","Nuneaton and Bedworth, Warwickshire",52.467,-1.464],["Hayton Lakes Fishery","Bassetlaw, Nottinghamshire",53.354,-0.933],["Headlands Fishery","Test Valley, Hampshire",50.978,-1.573],["Henfold Lakes Fishing","Mole Valley, Surrey",51.182,-0.299],["Henleypark Lake","Guildford, Surrey",51.274,-0.662],["Hepworth Pond","Rotherham, South Yorkshire",53.354,-1.298],["Heronbrook Fisheries","Stafford, Staffordshire",52.898,-2.259],["Heskin Old Hall Farm Fishery","Chorley, Lancashire",53.635,-2.736],["High Heys Fishery","Chorley, Lancashire",53.64,-2.712],["Highfield Fisheries","South Norfolk, Norfolk",52.372,1.216],["Hinderclay Lakes","Mid Suffolk, Suffolk",52.351,0.989],["Holly Farm Lakes","Broadland, Norfolk",52.666,1.524],["Hollybush Pits","Rushmoor, Hampshire",51.273,-0.732],["Hollyhurst lakes","Nuneaton and Bedworth, Warwickshire",52.463,-1.449],["Holt Pool Fishing","Malvern Hills, Worcestershire",52.245,-2.256],["Hook Lake","Welwyn Hatfield, Hertfordshire",51.701,-0.149],["Horseshoe Lake","Lechlade, Gloucestershire",51.694,-1.692],["Horton Church Lake","Horton, Berkshire",51.509,-0.536],["Hough Pool Fishing Club","Shropshire",52.874,-2.659],["House Lake","Rother, East Sussex",50.898,0.464],["Howbrook Pond","Barnsley, South Yorkshire",53.477,-1.516],["Howe End Fisheries","Central Bedfordshire",52.057,-0.495],["Howietoun Fishery","Stirling",56.073,-3.954],["Hudson Farm Fishery","Wyre, Lancashire",53.866,-2.845],["Ingelby Pond","North Yorkshire",54.455,-1.144],["Intermediate Lake","Greater London, England",51.423,-0.067],["Isaak Walton Fishery","Stafford, Staffordshire",52.856,-2.203],["Itters Pit","Buckinghamshire",51.915,-1.006],["Ivy House Lakes","Wiltshire",51.544,-1.943],["Jacklands Fishing Lakes","North Somerset",51.441,-2.762],["Janson Fishery","Rushcliffe, Nottinghamshire",52.938,-0.875],["John O Gaunt's Fishery","Test Valley, Hampshire",51.086,-1.502],["John's Lane Pool","Sandwell, West Midlands",52.523,-2.04],["Junior Lake","Rother, East Sussex",50.898,0.461],["Kell Lake","Rother, East Sussex",50.899,0.468],["Killamarsh Pond","North East Derbyshire, Derbyshire",53.323,-1.292],["Kingfisher Lake","Breckland, Norfolk",52.419,0.722],["Kingfisher Lakes","Maidstone, Kent",51.191,0.634],["Kingfisher Pool","Warwick, Warwickshire",52.282,-1.571],["Kingsland Reservoir Coarse Fishery","Fenland, Cambridgeshire",52.557,-0.046],["Lagg Fishery","Highland",58.226,-5.262],["Lake Beulah","Bicester, Oxfordshire",51.899,-1.152],["Lake Superior","West Oxfordshire, Oxfordshire",51.854,-1.494],["Lake View Fishery","Melton, Leicestershire",52.82,-0.903],["Lakeside Fishery","Wixoe, Suffolk",52.06,0.504],["Lakeview Fishery","Mid Devon, Devon",50.833,-3.779],["Langdale Lakes","West Lindsey, Lincolnshire",53.272,-0.421],["Lavender farm","Swale, Kent",51.317,0.972],["Lawn Farm Fishery","South Cambridgeshire, Cambridgeshire",52.231,-0.076],["Leighton Pools","South Staffordshire, Staffordshire",52.64,-2.212],["Lenton Lakes","Huntingdonshire, Cambridgeshire",52.316,-0.243],["Limbrick Fishery","Chorley, Lancashire",53.637,-2.6],["Linear Fisheries","West Oxfordshire, Oxfordshire",51.745,-1.434],["Lion Gorge Lake","Essex",51.484,0.302],["Little John Lakes","Newark and Sherwood, Nottinghamshire",53.205,-1.019],["Lizard Fishery","Greater London, England",51.516,-0.483],["Llandegla Fishery","Denbighshire",53.062,-3.15],["Lloyds Meadow Fishery","Cheshire West and Chester",53.229,-2.73],["Llyn Blodyn Fishery","Ynys Môn / Isle of Anglesey",53.359,-4.268],["Loch Glow Reservoir","Fife",56.146,-3.469],["Lochy Pool","Moray",57.307,-3.425],["Loganlea Reservoir","Midlothian",55.848,-3.288],["Long Island Lake Caravan Site","Huntingdonshire, Cambridgeshire",52.361,0.038],["Long Pond","North Hertfordshire, Hertfordshire",51.927,-0.342],["Longford Fishery","Derbyshire Dales, Derbyshire",52.937,-1.7],["Longshaw Fishery","Canterbury, Kent",51.32,1.122],["Lough Fadden Fishery","Northern Ireland / Tuaisceart Éireann",55.211,-6.135],["Lower Earlswood Lake","Reigate and Banstead, Surrey",51.221,-0.184],["Lower Park Fishery","Bromsgrove, Worcestershire",52.331,-1.929],["Loxley Fishery","Sheffield, South Yorkshire",53.408,-1.567],["Luccombes Coarse Fishery","Teignbridge, Devon",50.67,-3.51],["Lucks Lake","Tunbridge Wells, Kent",51.183,0.408],["Magiscroft Fishery","North Lanarkshire",55.925,-4.006],["Maisie's Lake","Rother, East Sussex",50.896,0.467],["Majors Lakes","Maidstone, Kent",51.268,0.582],["Mallard Lake","Cornwall",50.528,-4.63],["Manley Springs Coarse Fishery","Cheshire West and Chester",53.24,-2.727],["Manor Farm Lakes","Biggleswade, Bedfordshire",52.088,-0.259],["Manor Fisheries","Maidstone, Kent",51.168,0.648],["Manor Lake","Cherwell, Oxfordshire",51.869,-1.254],["Marlpit Fishing Lake","North Norfolk, Norfolk",52.904,1.161],["Marsh Farm","East Suffolk, Suffolk",52.195,1.489],["Marton Pool","Shropshire",52.805,-2.821],["Mendip Fishery","Somerset",51.233,-2.601],["Mere Lane Fishery","West Lancashire, Lancashire",53.65,-2.882],["Meridian Canal Fishery","Cheshire East",53.046,-2.395],["Merrington Carp Fishery","Shropshire",52.789,-2.807],["Micklem Mere","Chelmsford, Essex",51.784,0.442],["Middle Lake","Rother, East Sussex",50.899,0.466],["Milemead Fisheries Coarse Fishing","West Devon, Devon",50.555,-4.182],["Milking Brook Pool","Cannock Chase, Staffordshire",52.696,-2.0],["Mill Lane Lake","Hart, Hampshire",51.348,-0.824],["Mill on the Soar Fishery","Harborough, Leicestershire",52.538,-1.25],["Mill Pond","Leeds, West Yorkshire",53.829,-1.571],["Moathouse Fisheries","St Helens, Liverpool City Region",53.423,-2.674],["Monkhall Fishery","Shropshire",52.546,-2.552],["Moss Side Fishery","Warrington",53.403,-2.513],["Mount Pond","Greater London, England",51.457,-0.15],["Murphy's Pond Coarse Fishing","North Yorkshire",53.876,-0.959],["Nance Lakes (Bottom Lake)","Cornwall",50.184,-5.481],["Nash Lakes","Bream, Gloucestershire",51.75,-2.574],["Nether Mill Coarse Fishery","Barnsley, South Yorkshire",53.533,-1.632],["New Pool","Cheshire West and Chester",53.222,-2.56],["New Specimen Lake","Rother, East Sussex",50.895,0.47],["Newbiggin Pond","Barnsley, South Yorkshire",53.481,-1.477],["Newbridge Pool","Cheshire West and Chester",53.214,-2.521],["Newman Drive Fishing Lake","Swale, Kent",51.358,0.746],["North Pool","Sandwell, West Midlands",52.525,-2.036],["Norton Fishery","Epping Forest, Essex",51.662,0.154],["Norwood Cottage Lakes","North East Derbyshire, Derbyshire",53.323,-1.296],["Oak Royal Fishery","Chorley, Lancashire",53.706,-2.555],["Oak Spring Lake","Maidstone, Kent",51.289,0.55],["Oakfield Fishery","South Ribble, Lancashire",53.717,-2.706],["Oham Lakes","East Lindsey, Lincolnshire",53.317,0.203],["Old Specimen Lake","Rother, East Sussex",50.895,0.468],["Oldmoor Pond","Broxtowe, Nottinghamshire",52.971,-1.257],["Orchard Place Farm Fishing","Tunbridge Wells, Kent",51.167,0.411],["Orcheton House Farm Fishery","Chorley, Lancashire",53.638,-2.71],["Orchid Lakes","Dorchester-on-Thames, Oxfordshire",51.644,-1.166],["Owl Barn Fisheries","Wakefield, West Yorkshire",53.594,-1.333],["Park Hall Fishing Lake","Mansfield, Nottinghamshire",53.18,-1.18],["Parklands Lake","North Yorkshire",54.346,-1.465],["Parkview Fishery","Fife",56.297,-3.151],["Partridge Lakes","Culcheth, Cheshire",53.452,-2.523],["Pea Lane Fishery","Essex",51.531,0.276],["Pilsworth Fishery","Bury, Greater Manchester",53.572,-2.261],["Pitsford Reservoir","Pitsford, Northamptonshire",52.315,-0.872],["Pittlands","Tunbridge Wells, Kent",51.161,0.439],["Pond Dipping","King's Lynn and West Norfolk, Norfolk",52.527,0.276],["Pool One","Rushcliffe, Nottinghamshire",52.938,-0.874],["Portland Fishing Lakes","Rushcliffe, Nottinghamshire",52.992,-0.86],["Powdermills Fishery","Guildford, Surrey",51.218,-0.532],["Press Manor Fishery","North East Derbyshire, Derbyshire",53.187,-1.472],["Puddledock Fishery","Greater London, England",51.56,0.296],["Pump Pond","North Hertfordshire, Hertfordshire",51.927,-0.34],["Raker Lakes","York",53.908,-0.963],["Raleigh Pond","City of Nottingham, Nottinghamshire",52.958,-1.211],["Redbridge Lakes","Greater London, England",51.598,0.051],["Redhill Fishery","Monmouthshire",51.8,-2.745],["Rhyl Cut Community Fishery","St Asaph, Denbighshire",53.31,-3.491],["Rib Valley","Ware, Hertfordshire",51.811,-0.031],["River ValleyLake","Hart, Hampshire",51.34,-0.808],["Riverside Fisheries","Mid Suffolk, Suffolk",52.188,0.97],["Rixton Claypits","Rixton, Cheshire",53.403,-2.476],["Robin Wood Lakes","South Derbyshire, Derbyshire",52.832,-1.473],["Rockfield Weir Pool","Northern Ireland / Tuaisceart Éireann",54.878,-6.679],["Rockford Lake","New Forest, Hampshire",50.871,-1.777],["Rolf's Lake Fishery","South Oxfordshire, Oxfordshire",51.75,-1.107],["Roman Lakes","Stockport, Greater Manchester",53.388,-2.048],["Rookery Waters","Huntingdonshire, Cambridgeshire",52.405,-0.03],["Rookley Country Park","Rookley, Isle of Wight",50.655,-1.281],["Rosie's Lake","Rother, East Sussex",50.896,0.463],["Rothiemurchus Fishery","Highland",57.182,-3.824],["Rushmoor Coarse Fishing Lake","Waverley, Surrey",51.153,-0.754],["Rycroft Fisheries","North West Leicestershire, Leicestershire",52.858,-1.317],["Saddington Reservoir","Harborough, Leicestershire",52.513,-1.024],["Saltfleetby Fisheries","East Lindsey, Lincolnshire",53.378,0.138],["Sandhurst Lake","Yateley, Hampshire",51.337,-0.817],["Seighford Lakes","Stafford, Staffordshire",52.822,-2.157],["Shawfields Lake","Guildford, Surrey",51.25,-0.733],["Shelford Fishery","Rushcliffe, Nottinghamshire",52.98,-1.013],["Sherwood Forest Fishery","Newark and Sherwood, Nottinghamshire",53.175,-1.13],["Shirkoak Farm Fishery","Ashford, Kent",51.092,0.773],["Shotton Pond","County Durham",54.754,-1.381],["Silsden Reservoir","Bradford, West Yorkshire",53.926,-1.931],["Silver End Back Pit","Braintree, Essex",51.841,0.634],["Silver Springs Fishing Lake","North Somerset",51.363,-2.82],["Sivyers Lake","Spelthorne, Surrey",51.407,-0.425],["Skylark Lakes","Fenland, Cambridgeshire",52.493,0.115],["Smallford Fishery","St Albans, Hertfordshire",51.75,-0.268],["Smithies Reservoir","Barnsley, South Yorkshire",53.568,-1.478],["Snake Match Lake","Rother, East Sussex",50.895,0.464],["South Gare Fishermans' Association","Redcar and Cleveland",54.639,-1.139],["Southend Farm Fishing Lakes","Epping Forest, Essex",51.684,0.037],["Sowbrook Lake","Erewash, Derbyshire",52.952,-1.316],["Springwater Lake","Sir Gaerfyrddin / Carmarthenshire",52.065,-3.981],["Stamford Way Fisheries & Camping","Flintshire",53.197,-3.074],["Stanwick Lakes","Stanwick, Northamptonshire",52.328,-0.558],["Stephenson Lake","Sunderland, North East",54.818,-1.438],["Stones Fishing Lakes","Swale, Kent",51.431,0.773],["Storehouse Lake Angling Club","Havant, Hampshire",50.844,-1.006],["Strawberry Field Fishing Lake","West Lindsey, Lincolnshire",53.272,-0.411],["Stretton Lakes","Rutland",52.739,-0.579],["Styal Moss Pool","Cheshire East",53.355,-2.261],["Summerhayes Fisheries","Somerset",51.114,-2.983],["Sumners Ponds","Horsham, West Sussex",51.029,-0.399],["Sunset Lakes","German, Glenfaba",54.224,-4.669],["Sutton-at-Hone Lakes","Dartford, Kent",51.407,0.243],["Swan Lake","Canterbury, Kent",51.267,1.041],["Swan Pool","Redditch, Worcestershire",52.285,-1.993],["Swan ValleyLake","Hart, Hampshire",51.34,-0.804],["Syon Park Fishery","Greater London, England",51.477,-0.319],["Sywell Reservoir","Sywell, Northamptonshire",52.297,-0.798],["Taylor's Fishery (Home to Tadpole AC)","Vale of White Horse, Oxfordshire",51.701,-1.517],["Teal Lake","Cornwall",50.529,-4.632],["Teglan Fishery","Ceredigion",52.208,-4.184],["Temple Springs Fishery","Northern Ireland / Tuaisceart Éireann",54.97,-6.721],["Testside Lakes","Test Valley, Hampshire",51.14,-1.469],["The Alps Fishery","Cornwall",50.534,-4.983],["The Cake Shack Cafe - Cudmore Fisheries","Newcastle-under-Lyme, Staffordshire",52.977,-2.283],["The Delves Fishery","Doncaster, South Yorkshire",53.614,-0.974],["The Islands Carp Fishery","Wiltshire",51.072,-2.226],["The Meadow Fishery","Test Valley, Hampshire",51.029,-1.523],["The Mets Lake","Buckinghamshire",51.513,-0.492],["The New Celtic Lakes","Ceredigion",52.158,-4.129],["The Old Quarry Fisheries","Mole Valley, Surrey",51.243,-0.282],["The Quarry","Whitchurch, Shropshire",52.969,-2.684],["The Reservoir","East Cambridgeshire, Cambridgeshire",52.473,0.231],["The Rising Fishery","Pendle, Lancashire",53.831,-2.283],["The Yateley Lakes","Bracknell Forest",51.343,-0.812],["Thimblemill Pool","Sandwell, West Midlands",52.482,-1.978],["Thorney Weir Fishing Club Lake","Greater London, England",51.513,-0.486],["Thorpe Lea Fishery","Runnymede, Surrey",51.418,-0.537],["Tinkers Pond","Barnsley, South Yorkshire",53.568,-1.49],["Tinnehinch Fishery","County Wicklow",53.184,-6.169],["Todber Manor","Todber, Dorset",50.98,-2.284],["Tom's Pond","Leeds, West Yorkshire",53.905,-1.668],["Tomo's Pool","Rushcliffe, Nottinghamshire",52.938,-0.875],["Torworth Lakes","Bassetlaw, Nottinghamshire",53.367,-1.01],["Town Parks Fishing","Torbay",50.432,-3.622],["Tricklebrook Fishery","Tunbridge Wells, Kent",51.174,0.363],["Trilakes Fishery and Country Park","Bracknell Forest",51.344,-0.812],["Trinity Waters Fishery","Somerset",51.151,-3.003],["Trow Pool","Cherwell, Oxfordshire",51.921,-1.206],["Twin Lakes Fishery","Chorley, Lancashire",53.665,-2.785],["Twynersh Fishery","Runnymede, Surrey",51.397,-0.517],["Tyersal Hall Farm Fishery","Leeds, West Yorkshire",53.788,-1.691],["Upper Coarse Lake","Ceredigion",52.274,-4.016],["Upper Farm Fishery","South Oxfordshire, Oxfordshire",51.715,-0.892],["Upper Pond","Northern Ireland / Tuaisceart Éireann",54.621,-5.944],["Viking Fishery","East Riding of Yorkshire",53.663,-1.047],["Villa Farm Fishing","Shropshire",52.969,-2.644],["Walkers Lake","Rushcliffe, Nottinghamshire",52.859,-1.252],["Wall Pool","County Durham",54.674,-1.754],["Walnut Tree Farm Fishery","Cheshire East",53.08,-2.346],["Waltons Walk Fishery","Epping Forest, Essex",51.687,-0.011],["Warwick Wold Waters","Tandridge, Surrey",51.264,-0.12],["Watergate Fishing Lake","County Durham",54.825,-1.395],["Waterloo Farm","West Northamptonshire",52.452,-0.909],["Watmore Farm Fisheries","Hart, Hampshire",51.347,-0.851],["Waveney Valley Lakes","Wortwell, Norfolk",52.416,1.346],["Wellfield Lake","County Durham",54.73,-1.371],["Westerly Lake","York",53.896,-0.976],["Weston Fishery","Guildford, Surrey",51.222,-0.492],["Weston Moat Fishery","South Derbyshire, Derbyshire",52.852,-1.401],["Weston Pools Village","Shropshire",52.842,-3.048],["White House Farm","North Kesteven, Lincolnshire",53.066,-0.298],["Whitebridge Farm Fishing Lake","King's Lynn and West Norfolk, Norfolk",52.485,0.494],["Whitehall Road Fishing Lake","Leeds, West Yorkshire",53.777,-1.617],["Willinghurst Fisheries","Waverley, Surrey",51.169,-0.497],["Willow Lakes","North Norfolk, Norfolk",52.908,1.16],["Willow Park","Ash, Surrey",51.259,-0.719],["Wilowcroft Fish Farm and Fisheries","Fenland, Cambridgeshire",52.649,0.061],["Windsorview Lakes","Windsor and Maidenhead",51.477,-0.564],["Wingham Fisheries","Wingham, Kent",51.273,1.215],["Witherington Farm Fishery","Wiltshire",51.025,-1.743],["Woodland Waters","South Kesteven, Lincolnshire",52.983,-0.55],["Woodlands Fisheries","West Lindsey, Lincolnshire",53.476,-0.696],["Woodpecker Lake","Feckenham, Worcestershire",52.251,-1.989],["Woodside Fishing Lakes","Wiltshire",51.331,-1.885],["Woolpack Fisheries","Huntingdonshire, Cambridgeshire",52.33,-0.145],["Workshop Pond","Leeds, West Yorkshire",53.742,-1.348],["Worsbrough Reservoir","Barnsley, South Yorkshire",53.526,-1.479],["Wraysbury 1","Wraysbury, Berkshire",51.47,-0.51],["Wyreside Lakes","Dolphinholme, Lancashire",53.976,-2.736],["Wyton Lakes Holiday Park","Huntingdonshire, Cambridgeshire",52.336,-0.139],["Yasi's Lake","Central Bedfordshire",52.056,-0.494],["Yateley Complex","Yateley, Hampshire",51.337,-0.817]];
+const LAKES_FR = [["AAPPMA Annecy Lac Pêche","Annecy, Haute-Savoie",45.886,6.143],["Abbey Lakes","Crécy-la-Chapelle, Seine-et-Marne",48.858,2.909],["Amicale de Pêche Les Percots","Faches-Thumesnil, Nord",50.585,3.068],["Association de pêche (AAPPMA) de Lauterbourg","Lauterbourg, Bas-Rhin",48.977,8.179],["Au Domaine de la Koï","Crochte, Nord",50.928,2.405],["Bassin de Morsang","Morsang-sur-Orge, Essonne",48.668,2.347],["Bassin de retenue pluviale","Aurillac, Cantal",44.909,2.45],["Bassin du Breuil","Sainte-Geneviève-des-Bois, Essonne",48.665,2.317],["Bassin Jean-Michel","Lons-le-Saunier, Jura",46.667,5.552],["Bel Étang","Le Nouvion-en-Thiérache, Aisne",50.019,3.809],["Blue Lake","Saint-Étienne-de-Fougères, Lot-et-Garonne",44.419,0.556],["Bounty Lakes","Villebaudon, Manche",48.96,-1.166],["Cap Pêche Loisirs","Capbreton, Landes",43.653,-1.439],["Carpodrome","Saint-Félix, Oise",49.345,2.283],["Carpodrome de Galiax","Galiax, Gers",43.616,0.008],["Carpodrome du Touret","Saint-Laurent, Lot-et-Garonne",44.232,0.403],["Centre AquaPêche","Pouzols, Hérault",43.625,3.511],["Chantegrelle, Site de Pêche","Saint-Martial-le-Mont, Creuse",46.07,2.07],["Chateau Lake","Gouex, Vienne",46.366,0.69],["Clem'émotions Pêche","Villelongue, Hautes-Pyrénées",42.954,-0.061],["Club de Pêche sportive Hyères","Hyères, Var",43.083,6.157],["coin de peche a coté du banc sous le noyer","Lizac, Tarn-et-Garonne",44.1,1.195],["Compiegne Carpe Passion","Choisy-au-Bac, Oise",49.433,2.866],["Domaine Chassagny","Pompaire, Deux-Sèvres",46.599,-0.242],["Domaine de pêche de Pimprez","Pimprez, Oise",49.527,2.956],["Domaine de pêche des Landes","La Remaudière, Loire-Atlantique",47.224,-1.244],["Domaine du Moulin d'Eguebaude","Estissac, Aube",48.268,3.794],["Domaine du Pont Prieur","Rebreuve-Ranchicourt, Pas-de-Calais",50.432,2.561],["Dream Lakes","Saint-Nicolas-de-la-Grave, Tarn-et-Garonne",44.065,1.023],["Etang de Brigueuil","Brigueuil, Charente",45.954,0.86],["Etang de la Breittmat","Gundershoffen, Bas-Rhin",48.908,7.654],["Etang de la Horre","Lentilles, Aube",48.483,4.611],["Etang de la Mine","Chastreix, Puy-de-Dôme",45.512,2.734],["Etang de la Saussaie","Ceaulmont, Indre",46.523,1.58],["Etang de Lissac","Lissac-sur-Couze, Corrèze",45.103,1.461],["Etang de Massy","Gaillères, Landes",43.936,-0.366],["Etang de Planchon","Chapelle-Viviers, Vienne",46.484,0.726],["Etang de pêche de Bergheim","Bergheim, Haut-Rhin",48.212,7.374],["Etang de Reugny","Reugny, Allier",46.464,2.615],["Etang du Ferme","Périers, Manche",49.187,-1.41],["Etangs de pêche de Ribeauvillé","Ribeauvillé, Haut-Rhin",48.194,7.348],["Etangs de Saint-Martin","Saint-Martin-la-Pallu, Vienne",46.776,0.209],["Etangs du Dochon","Gonneville-sur-Mer, Calvados",49.295,-0.024],["Fabulac","Desnes, Jura",46.76,5.486],["Flo chasse pêche","Grane, Drôme",44.745,4.889],["Fédération de la Dordogne pour la Pêche et la Protection du Milieu Aquatique","Périgueux, Dordogne",45.186,0.728],["Fédération de la Haute-Vienne pour la Pêche et la Protection du Milieu Aquatique","Limoges, Haute-Vienne",45.816,1.29],["Gigantica Main Lake","Villedieu-sur-Indre, Indre",46.847,1.538],["Gigantica Road Lake","Villedieu-sur-Indre, Indre",46.847,1.538],["Grand Étang","Aubigny-sur-Nère, Cher",47.483,2.456],["Grande étang René Boury","Moncel-lès-Lunéville, Meurthe-et-Moselle",48.555,6.55],["Gravière n°1","Vinon-sur-Verdon, Var",43.747,5.779],["GSPM du Lac de l'Ouillette","Val-d'Isère, Savoie",45.429,6.995],["L'oasis du pêcheur","Lure, Haute-Saône",47.68,6.515],["L'Étang des Loisirs","Ollioules, Var",43.122,5.858],["L'Étang des Sirènes","Aimargues, Gard",43.688,4.222],["La Bletiere","Chenu, Sarthe",47.613,0.338],["La Carpe de l'étang de Saint-Quentin (AAPPMA)","Montigny-le-Bretonneux, Yvelines",48.787,2.032],["La Carpe Royale","Pringy, Seine-et-Marne",48.518,2.553],["La Carpière","Pont-à-Marcq, Nord",50.519,3.111],["La Fonte","Bourgueil, Indre-et-Loire",47.283,0.179],["La Pêche Lorraine","Nancy, Meurthe-et-Moselle",48.672,6.173],["La pêcherie de la Tour","La Tour-d'Auvergne, Puy-de-Dôme",45.529,2.693],["Lac Amance","Dienville, Aube",48.349,4.533],["Lac Baricle","Abriès-Ristolas, Hautes-Alpes",44.723,6.984],["Lac Belledonne","Le Versoud, Isère",45.225,5.845],["Lac d'Arjuzanx","Morcenx-la-Nouvelle, Landes",44.022,-0.856],["Lac d'Orient","Mesnil-Saint-Père, Aube",48.249,4.334],["Lac de Barbazan","Barbazan, Haute-Garonne",43.037,0.617],["Lac de Bort-les-Orgues","Bort-les-Orgues, Corrèze",45.401,2.499],["Lac de Bourdon","Saint-Fargeau, Yonne",47.64,3.072],["Lac de Castillon","Tarnos, Landes",43.529,-1.454],["Lac de Chalain","Marigny, Jura",46.684,5.783],["Lac de Charmes","Charmes, Haute-Marne",47.92,5.351],["Lac de Curton","Curton, Gironde",44.81,-0.247],["Lac de Damazan","Damazan, Lot-et-Garonne",44.282,0.277],["Lac de Grand-Lieu","Saint-Philbert-de-Grand-Lieu, Loire-Atlantique",47.036,-1.641],["Lac de Gravelle","Paris, Île-de-France",48.82,2.45],["Lac de Guerlédan","Mûr-de-Bretagne, Côtes-d'Armor",48.196,-2.983],["Lac de Jugon","Jugon-les-Lacs, Côtes-d'Armor",48.409,-2.322],["Lac de Kir","Dijon, Côte-d'Or",47.322,5.041],["Lac de la Baucherie","Orelle, Savoie",45.145,6.559],["Lac de la Gravière","Pernes-les-Fontaines, Vaucluse",44.02,5.084],["Lac de la Mouche","Saint-Ciergues, Haute-Marne",47.884,5.255],["Lac de Lambronne","Lamontjoie, Lot-et-Garonne",44.073,0.511],["Lac de Liez","Peigney, Haute-Marne",47.88,5.362],["Lac de Madine","Nonsard-Lamarche, Meuse",48.936,5.759],["Lac de Pannecière","Montsauche-les-Settons, Nièvre",47.215,4.025],["Lac de Picarel","Saissac, Aude",43.377,2.164],["Lac de Pont","Pont-et-Massène, Côte-d'Or",47.47,4.357],["Lac de Pramol","Montricher-Albanne, Savoie",45.216,6.416],["Lac de Rabodanges","Putanges-le-Lac, Orne",48.771,-0.271],["Lac de Ribou","Cholet, Maine-et-Loire",47.062,-0.88],["Lac de Rillé","Rillé, Indre-et-Loire",47.451,0.249],["Lac de Saint-Cassien","Montauroux, Var",43.618,6.765],["Lac de Saint-Michel-de-Jaunay","Jaunay-Marigny, Vienne",46.746,0.377],["Lac de Saint-Pardoux","Saint-Pardoux-le-Lac, Haute-Vienne",46.056,1.244],["Lac de Sainte-Croix","Bauduen, Var",43.733,6.176],["Lac de Salagou","Clermont-l'Hérault, Hérault",43.626,3.43],["Lac de Sillé","Sillé-le-Guillaume, Sarthe",48.184,-0.128],["Lac de Vassivière","Royère-de-Vassivière, Creuse",45.841,1.911],["Lac de Vaux","Vieux-Moulin, Haute-Marne",47.708,5.498],["Lac de Villedon","Sainte-Sévère, Charente",45.753,-0.239],["Lac de Villeneuve de Mézin","Lannes, Lot-et-Garonne",44.016,0.243],["Lac de Vouglans","Orgelet, Jura",46.521,5.611],["Lac de Vézins","Isigny-le-Buat, Manche",48.62,-1.172],["Lac des Amis","Maslacq, Pyrénées-Atlantiques",43.446,-0.693],["Lac des Corbeaux","La Bresse, Vosges",47.991,6.904],["Lac des Graoussettes","Ségalas, Lot-et-Garonne",44.607,0.509],["Lac des Graves","Lascelle, Cantal",45.015,2.562],["Lac des Marais","Montesquieu, Lot-et-Garonne",44.227,0.422],["Lac des Moines","Le Mayet-de-Montagne, Allier",46.061,3.67],["Lac des Picades","Saint-Chély-d'Aubrac, Aveyron",44.576,2.992],["Lac des pêcheurs","La Flèche, Sarthe",47.694,-0.051],["Lac des Récollets","Bulgnéville, Vosges",48.207,5.841],["Lac des Settons","Montsauche-les-Settons, Nièvre",47.215,4.025],["Lac des Trois Chênes","Francescas, Lot-et-Garonne",44.062,0.415],["Lac des Vallées","Vieillevigne, Loire-Atlantique",46.962,-1.432],["Lac du Biac","Lézat-sur-Lèze, Ariège",43.271,1.352],["Lac du Der","Giffaumont-Champaubert, Marne",48.554,4.752],["Lac du Temple","Radonvilliers, Aube",48.359,4.506],["Lac du Val Joly","Eppe-Sauvage, Nord",50.12,4.178],["Lac du Vivier","Saint-Gervais-les-Bains, Haute-Savoie",45.862,6.727],["Lac Foréant","Abriès-Ristolas, Hautes-Alpes",44.706,6.984],["Lac Mousseau","Avoine, Indre-et-Loire",47.216,0.175],["Lac Serreire","Mérinchal, Creuse",45.917,2.489],["Lacs Lacroix","Abriès-Ristolas, Hautes-Alpes",44.729,6.955],["Le Grand Etang","Champagne-Mouton, Charente",45.991,0.41],["Le Grand Étang","Saint-Jeanvrin, Cher",46.593,2.245],["Le Moulin du Mée","Le Mée, Sarthe",47.921,-0.032],["Le plan d’eau de la chaume","Jaligny-sur-Besbre, Allier",46.383,3.594],["Le plan d’eau des Percières","Dompierre-sur-Besbre, Allier",46.512,3.679],["Les Burons","Saint-Gervais-d'Auvergne, Puy-de-Dôme",46.029,2.821],["Les Etangs de Mandre","Châtillon-sous-les-Côtes, Meuse",49.15,5.533],["Les Etangs du Bord de Loire","Saint-Vincent, Haute-Loire",45.144,3.926],["Les Etangs du Petit Feu","Osmanville, Calvados",49.33,-1.113],["Les Pins","Saint-Hilaire-des-Landes, Ille-et-Vilaine",48.352,-1.357],["Les Pêcheurs d'Andaure","Labatie-d'Andaure, Ardèche",45.042,4.501],["Les Quis","Bussière-Poitevine, Haute-Vienne",46.235,0.906],["Les Teillatts","Saint-Aigny, Indre",46.645,1.026],["Les Étangs Avesnellois","Avesnelles, Nord",50.115,3.949],["Les Étangs de Cergy","Neuville-sur-Oise, Val-d'Oise",49.027,2.045],["Les Étangs de Planquery","Planquery, Calvados",49.162,-0.85],["Les Étangs du Bolher","Plaudren, Morbihan",47.778,-2.685],["Les étangs du Val d'Aure","Caumont-sur-Aure, Calvados",49.098,-0.787],["Les Étangs du Val de Passey","Choloy-Ménillot, Meurthe-et-Moselle",48.639,5.809],["Location d'étangs pour pêche","Saint-Sauveur-Villages, Manche",49.153,-1.403],["L’étang du Moulin de la Presle","Boucé, Allier",46.317,3.483],["L’étang du Moulin à Saint-Gérand-de-Vaux","Saint-Gérand-de-Vaux, Allier",46.383,3.399],["Mare de Gouillons","Gouillons, Eure-et-Loir",48.342,1.842],["Mare de Sainville","Sainville, Eure-et-Loir",48.414,1.877],["Molyneux Lake","Menoux, Haute-Saône",47.809,6.103],["Moniteur de pêche","Aunac-sur-Charente, Charente",45.926,0.252],["Objectif Pêche","Dieppe, Seine-Maritime",49.93,1.085],["Parc des Etangs des Sources","Masnières, Nord",50.114,3.198],["Parcours APMRT des étangs","Tournan-en-Brie, Seine-et-Marne",48.745,2.777],["Parcours Carpe de Nuit","Tournon-sur-Rhône, Ardèche",45.066,4.788],["Parcours de Pêche","Étrechet, Indre",46.787,1.756],["Parcours de pêche de la carpe de nuit","Availles-Limouzine, Vienne",46.142,0.67],["Parcours de pêche labellisé","Saint-Jean-d'Assé, Sarthe",48.179,0.173],["Parcours du lutin pêcheur","Lau-Balagnas, Hautes-Pyrénées",43.0,-0.082],["Parcours Pêche \"Sans - Tuer\"","Dunières, Haute-Loire",45.22,4.33],["Passion Pêche 89","Joigny, Yonne",47.979,3.386],["Petit Étang du Chapitre","Soings-en-Sologne, Loir-et-Cher",47.402,1.555],["Pich Peche","Saint-Léger-sur-Vouzance, Allier",46.414,3.921],["Plan d'eau B","Lure, Haute-Saône",47.662,6.5],["Plan d'Eau d'Eygliers","Eygliers, Hautes-Alpes",44.676,6.61],["Plan d'eau d'Ous Pins","Carcen-Ponson, Landes",43.844,-0.821],["Plan d'eau de Chamalan","Quincieux, Métropole de Lyon",45.934,4.766],["Plan d'eau de l'Epine","Le Donjon, Allier",46.352,3.807],["Plan d'eau de la Grange du Pin","Val-Revermont, Ain",46.303,5.356],["Plan d'eau de la Rougeraie","La Chartre-sur-le-Loir, Sarthe",47.733,0.584],["Plan d'eau de Pinoche","Cestas, Gironde",44.747,-0.699],["Plan d'eau de Sagnes","Fourmagnac, Lot",44.681,1.983],["Plan d'eau des Bordes","Courbouzon, Loir-et-Cher",47.681,1.536],["Plan d'eau des Monteaux","Vivy, Maine-et-Loire",47.329,-0.098],["Plan d'Eau des Monts","Vigeville, Creuse",46.159,2.089],["Plan d'eau des Pêchettes","Chaux-des-Crotenay, Jura",46.68,5.944],["Plan d'eau des Trois Fontaines","Villefagnan, Charente",45.998,0.07],["Plan d'eau du Chemin Vert","Changé, Mayenne",48.101,-0.801],["Plan d'Eau le Petit Arcachon","La Ferté-Imbault, Loir-et-Cher",47.4,1.955],["Plan d’eau le Vernay","Pierrefitte-sur-Loire, Allier",46.507,3.807],["Planète Carpe","Miremont, Haute-Garonne",43.396,1.423],["Plateforme de pêche PMR","Mont-de-Marsan, Landes",43.889,-0.506],["Poste de Pêche de la Ribière","Saint-Pardoux-le-Lac, Haute-Vienne",46.043,1.304],["Poste de pêche PMR","Vandenesse-en-Auxois, Côte-d'Or",47.212,4.631],["Poste handi pêche","Mimizan, Landes",44.218,-1.224],["Poste Handipêche","Saint-Vincent-de-Paul, Landes",43.766,-0.988],["Pêche au Coup en Eau Douce","Pellevoisin, Indre",46.979,1.413],["Pêche Club d'Osthoffen","Osthoffen, Bas-Rhin",48.6,7.549],["Pêche UFR","Labourse, Pas-de-Calais",50.499,2.676],["Pêche à Pieds","",46.231,-1.413],["Pêcherie des Fontaines","Hondouville, Eure",49.144,1.125],["Pêcherie la Maillard","",48.975,-1.585],["Pêcherie municipale","Saint-Nazaire, Loire-Atlantique",47.282,-2.065],["pêcheries","",47.25,-2.256],["Rainbow Lake","Hostens, Gironde",44.493,-0.638],["Site de pêche","Coudes, Puy-de-Dôme",45.612,3.222],["Site de pêche : plan d'eau du Bibrou","Les Achards, Vendée",46.615,-1.653],["Site de pêche d'Ecomard","Remouillé, Loire-Atlantique",47.044,-1.37],["Site de Pêche de l'Amicale des Pêcheurs de la Vanne Rouge","Villette, Yvelines",48.921,1.687],["Site de Pêche de Lavaud-Gelade","Saint-Marc-à-Loubaud, Creuse",45.846,1.967],["Site de pêche de Saint-Marc-le-Maureix","Saint-Martin-Sainte-Catherine, Creuse",45.94,1.513],["Site de pêche, Barrage des Combes","Felletin, Creuse",45.913,2.164],["Site de pêche, Lac de la Landie","Égliseneuve-d'Entraigues, Puy-de-Dôme",45.422,2.766],["Société de pêche de Baussenq","Saint-Martin-de-Crau, Bouches-du-Rhône",43.601,4.883],["Zone de pêche","Sargé-sur-Braye, Loir-et-Cher",47.926,0.846],["zone de pêche no kill","Grenoble, Isère",45.194,5.725],["École de Pêche de Chateaulin","Châteaulin, Finistère",48.197,-4.092],["École de Pêche de Châteauneuf","Châteauneuf-du-Faou, Finistère",48.181,-3.807],["Étang APP Obermodern","Schalkendorf, Bas-Rhin",48.842,7.565],["Étang Bataille","Chavroches, Allier",46.353,3.59],["Étang Bienvenu","Tailly, Côte-d'Or",46.959,4.814],["Étang Chaffaud","Villars-les-Dombes, Ain",46.009,5.032],["Étang Charamonte","Valencogne, Isère",45.499,5.548],["Étang Communal","Saint-Jean-de-Sauves, Vienne",46.845,0.085],["Étang Communal du Vieux Moulin","Treteau, Allier",46.368,3.521],["Étang Curtil Chaffin","Commenailles, Jura",46.802,5.449],["Étang César","Étrun, Pas-de-Calais",50.311,2.697],["Étang d'Abesse","Saint-Paul-lès-Dax, Landes",43.753,-1.099],["Étang d'Amaury","Hergnies, Nord",50.462,3.544],["Étang de Baerenthal","Baerenthal, Moselle",48.982,7.506],["Étang de Beaune","Beaune, Côte-d'Or",47.031,4.828],["Étang de Bois Vigneau","Monthou-sur-Cher, Loir-et-Cher",47.355,1.254],["Étang de Boler","Breistroff-la-Grande, Moselle",49.446,6.228],["Étang de Bombardon","Saint-Saturnin, Cher",46.516,2.277],["Étang de Buhl","Buhl, Haut-Rhin",47.925,7.183],["Étang de Desnes","Larnaud, Jura",46.699,5.476],["Étang de Farschviller","Farschviller, Moselle",49.088,6.885],["Étang de l'abbaye","Longueil-Sainte-Marie, Oise",49.333,2.718],["Étang de l'Estey, la ZAC","Dax, Landes",43.716,-1.048],["Étang de la Courbe","Saint-Paul-lès-Dax, Landes",43.743,-1.068],["Étang de la Daubie","Boulazac Isle Manoire, Dordogne",45.133,0.812],["Étang de la Dodaine","Thivencelle, Nord",50.442,3.643],["Étang de la Drague","Le Val-d'Ajol, Vosges",47.922,6.476],["Étang de la Gagère","Saint-Sauveur, Meurthe-et-Moselle",48.542,6.982],["Étang de la Gare","Brou, Eure-et-Loir",48.216,1.158],["Étang de la Gare d'Eau","Bruay-sur-l'Escaut, Nord",50.403,3.556],["Étang de la Ginouze","Aimargues, Gard",43.703,4.214],["Étang de la Gruyère","Navilly, Saône-et-Loire",46.907,5.137],["Étang de la Juchère","Villars-Santenoge, Haute-Marne",47.747,4.988],["Étang de la Petite-Pêche","La Grigonnais, Loire-Atlantique",47.524,-1.665],["Étang de la Pinsonnière","Saint-Laurent-sur-Sèvre, Vendée",46.958,-0.899],["Étang de la Planche","Doyet, Allier",46.333,2.786],["Étang de Louvarel","Champagnat, Saône-et-Loire",46.495,5.322],["Étang de Matelat","Préveranges, Cher",46.439,2.246],["Étang de Milourd","Anor, Nord",49.976,4.102],["Étang de Montfort","Crolles, Isère",45.289,5.899],["Étang de Morthèze","Couddes, Loir-et-Cher",47.347,1.405],["Étang de Mépillat","Saint-Nizier-le-Bouchoux, Ain",46.449,5.186],["Étang de Peche","Wasselonne, Bas-Rhin",48.633,7.431],["Étang de Prénat","Saligny-sur-Roudon, Allier",46.447,3.764],["Étang de Péchinay","Clermont-Créans, Sarthe",47.703,-0.031],["Étang de pêche - La carpe Marquettoise","Wambrechies, Nord",50.674,3.044],["Étang de pêche de l'Hommée","Thors, Charente-Maritime",45.825,-0.328],["Étang de pêche de Menasse","Saint-Pierre-du-Mont, Landes",43.881,-0.53],["Étang de Pêche de Meynes","Meynes, Gard",43.875,4.532],["Étang de Pêche Michel Hamet","Brou, Eure-et-Loir",48.21,1.139],["Étang de pêche pédagogique","Saint-Quentin-sur-Isère, Isère",45.289,5.575],["Étang de Sainte-Foy","Sainte-Foy, Landes",43.938,-0.334],["Étang de Sween Pleck","Hazebrouck, Nord",50.727,2.553],["Étang de Veneizière","Les Noës, Loire",46.047,3.848],["Étang de Vermelles","Vermelles, Pas-de-Calais",50.497,2.743],["Étang des Bercettes","Neuvilly-en-Argonne, Meuse",49.153,5.037],["Étang des Bruyères","Mézidon Vallée d'Auge, Calvados",49.08,-0.087],["Étang des colverts","Ciré-d'Aunis, Charente-Maritime",46.034,-0.928],["Étang des Durrenbachmatten","Saint-Hippolyte, Haut-Rhin",48.235,7.352],["Étang des Echets","Le Syndicat, Vosges",48.013,6.711],["Étang des Faures","Sadroc, Corrèze",45.283,1.555],["Étang des Gravières","Dax, Landes",43.683,-1.038],["Étang des Jaudières","Saint-Maurice-de-Satonnay, Saône-et-Loire",46.416,4.794],["Étang des Monteaux","Bray-Saint-Aignan, Loiret",47.83,2.363],["Étang des Oies Sauvages","Saint-Hilaire-sous-Romilly, Aube",48.521,3.658],["Étang des Paluds","Orange, Vaucluse",44.125,4.834],["Étang des Pilles","Val-Revermont, Ain",46.291,5.353],["Étang des Pinots","Dompierre-sur-Besbre, Allier",46.505,3.707],["Étang des Serres","Bailleul, Nord",50.731,2.738],["Étang des Valottes","Chenôves, Saône-et-Loire",46.668,4.708],["Étang du Bois de Boulogne","Dax, Landes",43.711,-1.071],["Étang du Bois de Célie","Émerainville, Seine-et-Marne",48.821,2.611],["Étang du Colvert","Bavent, Calvados",49.225,-0.168],["Étang du Cougnet","Gilley, Doubs",47.065,6.506],["Étang du Devès","Ternay, Rhône",45.604,4.805],["Étang du Disard","Andancette, Drôme",45.24,4.81],["Étang du Gros Caillou","Pornic, Loire-Atlantique",47.154,-2.07],["Étang du Gué de l'Omme","Nouaillé-Maupertuis, Vienne",46.508,0.405],["Étang du Jouteau","Mont-Saint-Jean, Sarthe",48.222,-0.107],["Étang du Lamond","Lacquy, Landes",43.954,-0.286],["Étang du Maras","Nouan-le-Fuzelier, Loir-et-Cher",47.557,2.007],["Étang du Moulin","Montaiguët-en-Forez, Allier",46.278,3.809],["Étang du parc Fortier","Saint-Saulve, Nord",50.374,3.55],["Étang du Puits","Argent-sur-Sauldre, Cher",47.591,2.382],["Étang du Turc","Ondres, Landes",43.565,-1.457],["Étang du Vieux Cher","Faverolles-sur-Cher, Loir-et-Cher",47.339,1.184],["Étang du Vivier","Valencogne, Isère",45.503,5.561],["Étang Fraignot-et-Vesvrotte","Fraignot-et-Vesvrotte, Côte-d'Or",47.663,4.93],["Étang le Mouet","Saint-Viâtre, Loir-et-Cher",47.468,1.95],["Étang Les Douves","Saint-Waast, Nord",50.312,3.75],["Étang Marion","Champagnole, Jura",46.744,5.902],["Étang Marius","Hergnies, Nord",50.468,3.534],["Étang Merlin","Châteaumeillant, Cher",46.567,2.188],["Étang Migeoux","Saint-Pourçain-sur-Besbre, Allier",46.467,3.607],["Étang Municipal","Saint-Jean-de-la-Motte, Sarthe",47.745,0.05],["Étang Praden","Beaucaire, Gard",43.789,4.575],["Étang privé du Marais des Pachottes","Simandres, Rhône",45.616,4.877],["Étang Seigneur","Champrougier, Jura",46.879,5.513],["Étang Sun Valley","Éguzon-Chantôme, Indre",46.445,1.583],["Étangs de Bagnols","Bagnols, Rhône",45.911,4.607],["Étangs de la Gîte","Santes, Nord",50.575,2.963],["Étangs de Quincy","Quincy, Cher",47.138,2.157],["Étangs de Troussatière","Tullins, Isère",45.277,5.465],["Étangs Denis et Ronfay","Saint-Voir, Allier",46.408,3.51],["Étangs des 3 Fontaines","Saint-Jans-Cappel, Nord",50.776,2.724],["Étangs des Cailleaux","Moulhard, Eure-et-Loir",48.218,0.981],["Étangs des Moines","Fourmies, Nord",50.006,4.064],["Étangs du Bois Hardy","Saint-Martin-de-Blagny, Calvados",49.266,-0.93]];
+const LAKES = LAKES_UK.map(l=>l.concat("UK")).concat(LAKES_FR.map(l=>l.concat("FR")));
+const $ = id => document.getElementById(id);
+const dirs = ['N','NE','E','SE','S','SW','W','NW'];
+const compass = {N:'south',NE:'south-west',E:'west',SE:'north-west',S:'north',SW:'north-east',W:'east',NW:'south-east'};
+let cur = null, data = null;
+try { cur = JSON.parse(localStorage.getItem('carpbaro') || 'null'); } catch(e) {}
+
+function verdictFor(p, d3) {
+  if (d3 <= -0.8) return ['go', 'Glass is falling. Get on the bottom, bait properly, fish the windward bank.'];
+  if (d3 >= 0.8)  return ['wait', 'Glass is rising. Fish will sit high: single baits, margins, floaters.'];
+  if (p >= 1023)  return ['wait', 'High and steady. Fish up in the water; light baiting, patience till it moves.'];
+  if (p <= 1016)  return ['go', 'Low and settled. Prime feeding pressure. Fish through the night.'];
+  return ['go', 'Middling and steady. Worth fishing; dawn and dusk are the windows.'];
+}
+function rigFor(p, d3, wt, wind, cloud) {
+  if (wt < 8)  return ['Small bottom bait or 10mm pop-up', 'Cold water: tiny amounts of bait, single hookbaits, deeper water.'];
+  if (p >= 1022 && d3 > -0.5) return [cloud < 50 ? 'Floater or zig, 2 to 4 ft under the surface' : 'Zig or 3 ft link, mid-water', 'High and steady: fish are up in the layers, not on the deck.'];
+  if (d3 <= -0.8 || p <= 1016) return [wind > 15 ? 'Bottom bait over a good spread, windward bank' : 'Bottom bait or wafter, modest baiting', 'Falling or low glass: they are down and feeding.'];
+  return ['Wafter or snowman on a bottom rig', 'Middling conditions: fish the deck, top up at dusk.'];
+}
+function moonPhase(d) {
+  const syn = 29.530588853, ref = Date.UTC(2000,0,6,18,14);
+  const age = ((d - ref) / 864e5) % syn;
+  const a = age < 0 ? age + syn : age;
+  const names = ['New moon','Waxing crescent','First quarter','Waxing gibbous','Full moon','Waning gibbous','Last quarter','Waning crescent'];
+  return names[Math.floor((a / syn) * 8 + 0.5) % 8];
+}
+function hhmm(t){ return new Date(t).toTimeString().slice(0,5); }
+function draw(times, vals, nowIdx) {
+  const W=380,H=150,padL=34,padB=22,padT=10;
+  const min=Math.floor(Math.min(...vals))-1, max=Math.ceil(Math.max(...vals))+1;
+  const x=i=>padL+(i/(vals.length-1))*(W-padL-6), y=v=>padT+(1-(v-min)/(max-min))*(H-padT-padB);
+  let s='', step=(max-min>8?4:2);
+  for (let g=min; g<=max; g+=step) s+=`<line x1="${padL}" x2="${W-6}" y1="${y(g)}" y2="${y(g)}" stroke="#243029"/><text x="${padL-6}" y="${y(g)+4}" fill="#8c948c" font-size="11" text-anchor="end">${g}</text>`;
+  s+=`<path d="${vals.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ')}" fill="none" stroke="#4f9cc2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+  s+=`<line x1="${x(nowIdx)}" x2="${x(nowIdx)}" y1="${padT}" y2="${H-padB}" stroke="#e6a33a" stroke-dasharray="3 4"/><circle cx="${x(nowIdx)}" cy="${y(vals[nowIdx])}" r="5" fill="#e6a33a" stroke="#10160f" stroke-width="2"/>`;
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  times.forEach((t,i)=>{const dt=new Date(t),h=dt.getHours(); if(h%6===0) s+=`<text x="${x(i)}" y="${H-6}" fill="#8c948c" font-size="11" text-anchor="middle">${h===0?days[dt.getDay()]:h+':00'}</text>`;});
+  s+=`<text x="${x(nowIdx)}" y="${padT-1}" fill="#e6a33a" font-size="11" text-anchor="middle">now</text>`;
+  $('chart').innerHTML=s;
+}
+function drawRose(deg, spd) {
+  const to = (deg + 180) % 360, r = to * Math.PI / 180;
+  const cx=60, cy=60, R=48;
+  const ex = cx + Math.sin(r)*R*0.8, ey = cy - Math.cos(r)*R*0.8;
+  const sx = cx - Math.sin(r)*R*0.8, sy = cy + Math.cos(r)*R*0.8;
+  const a0 = r - Math.PI/4, a1 = r + Math.PI/4;
+  const arc = `M ${cx+Math.sin(a0)*R} ${cy-Math.cos(a0)*R} A ${R} ${R} 0 0 1 ${cx+Math.sin(a1)*R} ${cy-Math.cos(a1)*R}`;
+  $('rose').innerHTML = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="#151f14" stroke="#243029"/>
+    <path d="${arc}" fill="none" stroke="#7fb069" stroke-width="7" stroke-linecap="round"/>
+    <line x1="${sx}" y1="${sy}" x2="${ex}" y2="${ey}" stroke="#4f9cc2" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M ${ex} ${ey} l ${-8*Math.sin(r)-5*Math.cos(r)} ${8*Math.cos(r)-5*Math.sin(r)} M ${ex} ${ey} l ${-8*Math.sin(r)+5*Math.cos(r)} ${8*Math.cos(r)+5*Math.sin(r)}" stroke="#4f9cc2" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+    <text x="60" y="15" fill="#8c948c" font-size="10" text-anchor="middle">N</text>
+    <text x="60" y="66" fill="#e9e4d6" font-size="13" text-anchor="middle">${Math.round(spd)}</text>`;
+}
+function plan() {
+  if (!data) return;
+  const h = data.hourly, daily = data.daily;
+  const a = $('d1').value, b = $('d2').value;
+  if (!a || !b) { $('blocks').innerHTML = '<div class="blk"><span class="when"></span><span>Pick arrival and departure dates.</span></div>'; return; }
+  const start = new Date(a + 'T12:00'), end = new Date(b + 'T12:00');
+  const sun = {}; daily.time.forEach((d,i)=>sun[d]={r:new Date(daily.sunrise[i]),s:new Date(daily.sunset[i])});
+  const blocks = [];
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) {
+    const key = d.toISOString().slice(0,10); if (!sun[key]) continue;
+    const next = new Date(d); next.setDate(next.getDate()+1); const nkey = next.toISOString().slice(0,10);
+    if (d > start || true) blocks.push({label: key, from: sun[key].r, to: sun[key].s, name:'Day', dayKey:key});
+    if (sun[nkey] && next <= end) blocks.push({label: key, from: sun[key].s, to: sun[nkey].r, name:'Night', dayKey:key});
+  }
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = '';
+  blocks.forEach(bk => {
+    const idx = h.time.map((t,i)=>[new Date(t),i]).filter(([t])=>t>=bk.from && t<=bk.to).map(([,i])=>i);
+    if (idx.length < 2) return;
+    const p0 = h.pressure_msl[idx[0]], p1 = h.pressure_msl[idx[idx.length-1]];
+    const dp = p1 - p0;
+    const avg = k => idx.reduce((s,i)=>s+h[k][i],0)/idx.length;
+    const cloud = avg('cloud_cover'), wind = avg('wind_speed_10m'), rain = idx.reduce((s,i)=>s+h.precipitation[i],0);
+    let score = 0, why = [];
+    if (dp <= -3) { score += 3; why.push('glass falling ' + dp.toFixed(0)); } else if (dp <= -1) { score += 2; why.push('glass easing'); } else if (dp >= 2) { score -= 2; why.push('glass rising'); }
+    if (p1 <= 1015) { score += 1; why.push('low pressure'); } else if (p1 >= 1024) { score -= 2; why.push('high pressure'); }
+    if (cloud >= 70) { score += 1; why.push('overcast'); } else if (cloud <= 30 && bk.name==='Day') { score -= 1; why.push('bright'); }
+    if (wind >= 15) { score += 1; why.push('good wind'); } else if (wind < 6) { score -= 1; why.push('flat calm'); }
+    if (rain > 0.5 && rain < 8) { score += 1; why.push('some rain'); } else if (rain >= 8) { why.push('heavy rain'); }
+    if (bk.name === 'Night') score += 1;
+    const tag = score >= 4 ? ['#7fb069','Fish hard'] : score >= 2 ? ['#4f9cc2','Fish'] : score >= 0 ? ['#e6a33a','Dawn and dusk'] : ['#5a5e59','Rest'];
+    const dt = new Date(bk.dayKey+'T12:00');
+    html += `<div class="blk"><span class="tag" style="background:${tag[0]}"></span><span class="when">${days[dt.getDay()]} ${bk.name.toLowerCase()}</span><span>${tag[1]}<span class="why">${why.join(', ') || 'nothing much moving'}</span></span></div>`;
+  });
+  $('blocks').innerHTML = html || '<div class="blk"><span class="when"></span><span>Forecast only runs 7 days ahead.</span></div>';
+}
+async function load() {
+  if (!cur) return;
+  $('err').textContent='';
+  $('place').innerHTML = cur.name + '<br><small>' + (cur.sub||'') + '</small>';
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${cur.lat}&longitude=${cur.lon}&current=pressure_msl,temperature_2m,wind_speed_10m,wind_direction_10m,cloud_cover&hourly=pressure_msl,temperature_2m,wind_speed_10m,wind_direction_10m,cloud_cover,precipitation&daily=sunrise,sunset&past_days=3&forecast_days=7&timezone=auto`;
+  try {
+    const d = await (await fetch(url,{cache:'no-store'})).json(); data = d;
+    const c=d.current, h=d.hourly;
+    let idx=h.time.indexOf(c.time.slice(0,13)+':00'); if(idx<0) idx=72;
+    const d3=c.pressure_msl-h.pressure_msl[Math.max(0,idx-3)];
+    $('p').textContent=c.pressure_msl.toFixed(1);
+    $('trend').className='trend '+(d3<=-0.5?'falling':d3>=0.5?'rising':'steady');
+    $('arrow').textContent=d3<=-0.5?'↓':d3>=0.5?'↑':'→';
+    $('trendtext').textContent=(d3<=-0.5?'Falling':d3>=0.5?'Rising':'Steady')+' · '+(d3>=0?'+':'')+d3.toFixed(1)+' hPa over 3 h';
+    const [cls,msg]=verdictFor(c.pressure_msl,d3); $('verdict').className='verdict '+cls; $('verdict').textContent=msg;
+    const wt = h.temperature_2m.slice(Math.max(0,idx-72), idx+1).reduce((s,v)=>s+v,0)/Math.min(73,idx+1);
+    const [rig,rwhy]=rigFor(c.pressure_msl,d3,wt,c.wind_speed_10m,c.cloud_cover);
+    $('rig').innerHTML='<b>'+rig+'</b><br>'+rwhy;
+    $('temp').textContent=Math.round(c.temperature_2m)+'°C';
+    $('wtemp').textContent=Math.round(wt)+'°C';
+    $('cloud').textContent=Math.round(c.cloud_cover)+'%';
+    const rain12 = h.precipitation.slice(idx, idx+12).reduce((s,v)=>s+v,0);
+    $('rain').textContent = rain12 < 0.2 ? 'Dry' : rain12.toFixed(1)+' mm';
+    const today = c.time.slice(0,10), di = d.daily.time.indexOf(today);
+    $('sun').textContent = di>=0 ? hhmm(d.daily.sunrise[di])+' / '+hhmm(d.daily.sunset[di]) : '—';
+    $('moon').textContent = moonPhase(new Date());
+    const dir = dirs[Math.round(c.wind_direction_10m/45)%8];
+    drawRose(c.wind_direction_10m, c.wind_speed_10m);
+    $('windtext').innerHTML = c.wind_speed_10m < 5 ? 'Flat calm. No wind to fish to; go on fish you can see.' : `Blowing from the <b>${dir}</b> at ${Math.round(c.wind_speed_10m)} km/h.<br>Set up on the <b>${compass[dir]}</b> bank, where it's hitting.`;
+    draw(h.time.slice(idx-12, idx+37), h.pressure_msl.slice(idx-12, idx+37), 12);
+    if (!$('d1').value) { $('d1').value = today; const e=new Date(); e.setDate(e.getDate()+2); $('d2').value = e.toISOString().slice(0,10); }
+    plan();
+    $('stamp').textContent='Live · '+new Date().toTimeString().slice(0,5);
+  } catch(e) { $('err').textContent="Couldn't reach the weather service. Check signal and refresh."; }
+}
+function choose(sel) {
+  cur=sel; try{localStorage.setItem('carpbaro',JSON.stringify(sel));}catch(e){}
+  $('list').style.display='none'; $('q').value=''; $('q').blur(); load();
+}
+let geoTimer=null;
+$('q').addEventListener('input', e => {
+  const v=e.target.value.trim().toLowerCase(); const L=$('list');
+  if (v.length<2) { L.style.display='none'; return; }
+  let hits=LAKES.filter(l=>(l[0]+' '+l[1]).toLowerCase().includes(v)).slice(0,8).map(l=>({name:l[0],sub:l[1],lat:l[2],lon:l[3]}));
+  const render=()=>{ L.innerHTML=hits.map((h,i)=>`<div data-i="${i}">${h.name}<small>${h.sub}</small></div>`).join('')||'<div><small>No match yet, keep typing</small></div>'; L.style.display='block'; L.querySelectorAll('div[data-i]').forEach(el=>el.onclick=()=>choose(hits[+el.dataset.i])); };
+  render();
+  clearTimeout(geoTimer);
+  geoTimer=setTimeout(async()=>{
+    try {
+      const g=await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(v)}&count=5&language=en&format=json`)).json();
+      (g.results||[]).filter(r=>['GB','FR','IE'].includes(r.country_code)).forEach(r=>hits.push({name:r.name,sub:'Near '+[r.admin2||r.admin1,r.country].filter(Boolean).join(', '),lat:r.latitude,lon:r.longitude}));
+      hits=hits.slice(0,10); render();
+    } catch(e){}
+  },400);
+});
+$('geo').addEventListener('click',()=>{
+  if(!navigator.geolocation){ $('err').textContent='Location not available on this browser.'; return; }
+  navigator.geolocation.getCurrentPosition(pos=>choose({name:'My location',sub:'',lat:+pos.coords.latitude.toFixed(3),lon:+pos.coords.longitude.toFixed(3)}),()=>{ $('err').textContent='Location was blocked. Search by town instead.'; });
+});
+$('d1').addEventListener('change',plan); $('d2').addEventListener('change',plan);
+$('btn').addEventListener('click',()=>load());
+(function(){
+  const county = l => (l[1].split(',').pop() || 'Other').trim() || 'Other';
+  const B = $('browse');
+  const sortRow = '<div class="sortrow"><button type="button" data-s="az" class="on">A to Z by region</button><button type="button" data-s="fall">Falling glass first</button></div>';
+  let html=sortRow;
+  const lists = (typeof LAKES_UK!=='undefined') ? [['UK','United Kingdom',LAKES_UK],['FR','France',LAKES_FR]] : [['UK','',LAKES]];
+  lists.forEach(([code,label,list]) => {
+    const groups = {};
+    list.forEach(l => { (groups[county(l)] = groups[county(l)] || []).push(l); });
+    if (label) html += '<h3 style="font-size:15px;color:#e9e4d6;background:#243029">'+label+'</h3>';
+    html += Object.keys(groups).sort().map(g => '<h3>'+g+'</h3>' + groups[g].sort((a,b)=>a[0].localeCompare(b[0])).map(l => `<div data-l="${l[0].replace(/"/g,'&quot;')}" data-c="${code}" data-k="${l[2]+','+l[3]}">${l[0]}<small>${l[1]}</small></div>`).join('')).join('');
+  });
+  const baseHtml = html; B.innerHTML = html;
+  function bind(){
+    B.querySelectorAll('div[data-l]').forEach(el => el.onclick = () => { const list = el.dataset.c==='FR'?LAKES_FR:(typeof LAKES_UK!=='undefined'?LAKES_UK:LAKES); const l = list.find(x=>x[0]===el.dataset.l); if (l) { B.classList.remove('open'); $('browsebtn').textContent='Browse all waters'; choose({name:l[0],sub:l[1],lat:l[2],lon:l[3]}); } });
+    B.querySelectorAll('.sortrow button').forEach(b=>b.onclick=()=>sortFalling(b.dataset.s==='fall'));
+  }
+  bind();
+
+  let pLoaded=false, pData={};
+  function lakeId(l){ return l[2]+','+l[3]; }
+  async function loadPressures(){
+    if (pLoaded) return; pLoaded=true;
+    const all=[].concat(LAKES_UK,LAKES_FR); const seen={}; const uniq=all.filter(l=>{const k=lakeId(l); if(seen[k])return false; seen[k]=1; return true;});
+    for (let i=0;i<uniq.length;i+=50){
+      const chunk=uniq.slice(i,i+50);
+      const u=`https://api.open-meteo.com/v1/forecast?latitude=${chunk.map(l=>l[2]).join(',')}&longitude=${chunk.map(l=>l[3]).join(',')}&current=pressure_msl&hourly=pressure_msl&past_hours=3&forecast_hours=1&timezone=auto`;
+      try {
+        const r=await (await fetch(u)).json(); const arr=Array.isArray(r)?r:[r];
+        arr.forEach((d,j)=>{ const l=chunk[j]; if(!l||!d.current) return; const hp=d.hourly.pressure_msl; const d3=d.current.pressure_msl-hp[0]; pData[lakeId(l)]={p:d.current.pressure_msl,d3}; });
+        paintPressures();
+      } catch(e){}
+    }
+  }
+  function paintPressures(){
+    B.querySelectorAll('div[data-l]').forEach(el=>{ const k=el.dataset.k; const v=pData[k]; if(!v) return; let s=el.querySelector('.lp'); if(!s){ s=document.createElement('span'); s.className='lp'; el.prepend(s);} s.textContent=v.p.toFixed(0)+' '+(v.d3<=-0.5?'↓':v.d3>=0.5?'↑':'→'); s.className='lp '+(v.d3<=-0.5?'f':v.d3>=0.5?'r':''); });
+  }
+  function sortFalling(on){
+    B.querySelectorAll('.sortrow button').forEach(b=>b.classList.toggle('on', (b.dataset.s==='fall')===on));
+    const items=[...B.querySelectorAll('div[data-l]')];
+    if (!on){ B.innerHTML=baseHtml; bind(); paintPressures(); return; }
+    items.sort((a,b)=>{ const va=pData[a.dataset.k]||{d3:9}, vb=pData[b.dataset.k]||{d3:9}; return va.d3-vb.d3; });
+    B.innerHTML=sortRow; items.forEach(x=>B.appendChild(x)); bind();
+  }
+  $('browsebtn').addEventListener('click', () => { const o = B.classList.toggle('open'); $('browsebtn').textContent = o ? 'Close list' : 'Browse all waters'; if (o) loadPressures(); });
+})();
+
+document.addEventListener('click',e=>{ if(!e.target.closest('.pick')) $('list').style.display='none'; });
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
+
+// ---------- v6: advice, nudges, bait, catch log, pattern ----------
+function fmtT(d){ return d.toTimeString().slice(0,5); }
+function lakeKey(){ return cur ? (cur.name+'|'+cur.lat+'|'+cur.lon) : ''; }
+function nowIdx(h){ const c=data.current; let i=h.time.indexOf(c.time.slice(0,13)+':00'); return i<0?72:i; }
+function windows(){
+  if (!data) return [];
+  const h=data.hourly, i0=nowIdx(h), out=[];
+  for (let i=i0; i<Math.min(h.time.length-1,i0+36); i++) {
+    const dp3 = h.pressure_msl[Math.min(h.time.length-1,i+3)] - h.pressure_msl[i];
+    const t=new Date(h.time[i]), hr=t.getHours();
+    let score=0;
+    if (dp3<=-1.5) score+=3; else if (dp3<=-0.7) score+=2; else if (dp3>=1) score-=2;
+    if (h.pressure_msl[i]<=1015) score+=1; else if (h.pressure_msl[i]>=1024) score-=1;
+    if (h.cloud_cover[i]>=70) score+=1;
+    if (h.wind_speed_10m[i]>=15) score+=1; else if (h.wind_speed_10m[i]<4) score-=1;
+    if (hr>=2 && hr<=5) score+=1;
+    const sr = data.daily.sunrise.map(x=>new Date(x)).find(x=>Math.abs(x-t)<5400000);
+    const ss = data.daily.sunset.map(x=>new Date(x)).find(x=>Math.abs(x-t)<5400000);
+    if (sr||ss) score+=2;
+    out.push({t, score, p:h.pressure_msl[i], dp3, wind:h.wind_speed_10m[i], dir:dirs[Math.round(h.wind_direction_10m[i]/45)%8], cloud:h.cloud_cover[i]});
+  }
+  return out;
+}
+function advise(){
+  if (!data) { $('advice').textContent='Pick a water first.'; $('advice').style.display='block'; return; }
+  const c=data.current, h=data.hourly, i0=nowIdx(h);
+  const d3=c.pressure_msl-h.pressure_msl[Math.max(0,i0-3)];
+  const next6=h.pressure_msl[Math.min(h.time.length-1,i0+6)]-c.pressure_msl;
+  const w=windows(); const best=[...w].sort((a,b)=>b.score-a.score)[0];
+  const hr=new Date().getHours();
+  const lines=[];
+  if (d3<=-0.8) lines.push(`The glass is falling (${d3.toFixed(1)} in 3 h). Fish are dropping down: bottom baits, a proper spread of freebies, and the ${compass[dirs[Math.round(c.wind_direction_10m/45)%8]]} bank if there's any wind.`);
+  else if (d3>=0.8) lines.push(`The glass is rising (+${d3.toFixed(1)} in 3 h). Expect them to sit high and go fussy: single bright baits, margins, floaters if it's bright.`);
+  else if (c.pressure_msl>=1023) lines.push(`High and steady at ${c.pressure_msl.toFixed(0)}. Don't grind it out on the deck. Fish for them where they are: zigs, floaters or a long link, small single baits, no bait carpet.`);
+  else if (c.pressure_msl<=1016) lines.push(`Low and settled at ${c.pressure_msl.toFixed(0)}. This is feeding pressure. Bottom baits, bait with confidence, fish through.`);
+  else lines.push(`Middling at ${c.pressure_msl.toFixed(0)} and not moving much. Worth fishing, but the bites will cluster round dawn and dusk. Wafter or snowman on the deck.`);
+  if (next6<=-1.5) lines.push(`It drops another ${Math.abs(next6).toFixed(1)} over the next six hours, so the switch is coming. Get bait in now, before it lands, not after.`);
+  else if (next6>=1.5) lines.push(`It climbs ${next6.toFixed(1)} over the next six hours. If you've had a bite recently, it may go quiet; make the most of the next hour.`);
+  if (c.wind_speed_10m<4) lines.push(`Flat calm, so no wind to fish to. Keep noise down, go on showing fish, and don't over-bait.`);
+  else if (c.wind_speed_10m>=15) lines.push(`Good wind at ${Math.round(c.wind_speed_10m)} km/h from the ${dirs[Math.round(c.wind_direction_10m/45)%8]}. Fish the bank it's hitting; food and warm water pile up there.`);
+  if (hr>=22 || hr<5) lines.push(`Night: margins and shallows come alive. A rod tight to the edge in a foot or two of water often outfishes the open water.`);
+  if (best) lines.push(`Best window in the next 36 hours: around ${fmtT(best.t)} ${best.t.toDateString().slice(0,3)} (glass ${best.p.toFixed(0)}, ${best.dp3<=-0.7?'falling':best.dp3>=0.7?'rising':'steady'}, ${best.cloud>=70?'overcast':'clear'}, ${Math.round(best.wind)} km/h ${best.dir}). Be fishing, fresh baits on, rods untouched.`);
+  $('advice').textContent=lines.join('\n\n'); $('advice').style.display='block';
+}
+let nudgeList=[];
+function buildNudges(){
+  nudgeList=[]; if (!data) { $('nudges').innerHTML=''; return; }
+  const w=windows(); const now=new Date();
+  const tops=[...w].sort((a,b)=>b.score-a.score).filter(x=>x.t>now);
+  const picked=[]; tops.forEach(x=>{ if (picked.length<2 && !picked.some(p=>Math.abs(p.t-x.t)<5*3600000)) picked.push(x); });
+  picked.sort((a,b)=>a.t-b.t).forEach(x=>{
+    const bait=new Date(x.t-4*3600000);
+    if (bait>now) nudgeList.push({t:bait, msg:'Bait up now: the window at '+fmtT(x.t)+' needs bait settled'});
+    const fresh=new Date(x.t-45*60000);
+    if (fresh>now) nudgeList.push({t:fresh, msg:'Fresh baits on, rods out, then leave them'});
+    nudgeList.push({t:x.t, msg:'Peak window: glass '+x.p.toFixed(0)+', '+(x.dp3<=-0.7?'falling':x.dp3>=0.7?'rising':'steady')+', '+Math.round(x.wind)+' km/h '+x.dir});
+  });
+  data.daily.sunrise.forEach(s=>{ const t=new Date(new Date(s)-40*60000); if (t>now && t-now<36*3600000) nudgeList.push({t, msg:'First light in 40 min: be up, baits fresh'}); });
+  nudgeList.sort((a,b)=>a.t-b.t); nudgeList=nudgeList.slice(0,8);
+  $('nudges').innerHTML=nudgeList.map(n=>`<div class="nudge"><span class="t">${n.t.toDateString().slice(0,3)} ${fmtT(n.t)}</span><span>${n.msg}</span></div>`).join('') || '<div class="nudge"><span class="t"></span><span>No clear windows in the next 36 hours.</span></div>';
+}
+let alarmTimers=[];
+function setAlarms(){
+  alarmTimers.forEach(clearTimeout); alarmTimers=[];
+  const go=()=>{ nudgeList.forEach(n=>{ const ms=n.t-new Date(); if (ms>0 && ms<48*3600000) alarmTimers.push(setTimeout(()=>{ try{ new Notification('Carp barometer',{body:n.msg}); }catch(e){} try{ navigator.vibrate&&navigator.vibrate([300,100,300]); }catch(e){} alert(n.msg); }, ms)); }); $('err').textContent=alarmTimers.length+' alarms set. Keep this page open on your phone; they fire from here, not from a server.'; };
+  if ('Notification' in window && Notification.permission!=='granted') Notification.requestPermission().then(go); else go();
+}
+function baitCalc(){
+  const n=+$('bnights').value||1, r=+$('brods').value||1, st=$('bstyle').value;
+  if (!data) { $('bait').textContent='Pick a water first.'; return; }
+  const c=data.current, h=data.hourly, i0=nowIdx(h);
+  const wt = h.temperature_2m.slice(Math.max(0,i0-72), i0+1).reduce((s,v)=>s+v,0)/Math.min(73,i0+1);
+  const fall = h.pressure_msl[Math.min(h.time.length-1,i0+12)]-c.pressure_msl;
+  let perRodNight = wt<8 ? 0.15 : wt<13 ? 0.35 : wt<18 ? 0.6 : 0.9;   // kg boilie per rod per night
+  if (fall<=-2) perRodNight*=1.3; else if (c.pressure_msl>=1023 && fall>-1) perRodNight*=0.5;
+  const boil = perRodNight*r*n, part = st==='particle'?boil*2.5: st==='mix'?boil*1.2:0, boilK = st==='particle'?boil*0.3:boil;
+  $('bait').textContent = `For ${r} rod${r>1?'s':''} over ${n} night${n>1?'s':''} in ${Math.round(wt)}°C water:\n`+
+    `${boilK.toFixed(1)} kg boilies` + (part?` and ${part.toFixed(1)} kg particle`:'') + `.\n` +
+    (c.pressure_msl>=1023 && fall>-1 ? 'High pressure: that is a light amount on purpose. Little and often, single hookbaits until it moves.' : fall<=-2 ? 'Falling glass: front-load it. Two thirds in on the first evening, top up after each fish.' : 'Spread it over a car-bonnet area per rod rather than one pile; top up at dusk.');
+}
+function loadCatches(){ try { return JSON.parse(localStorage.getItem('carpbaro_log')||'[]'); } catch(e){ return []; } }
+function saveCatches(l){ try { localStorage.setItem('carpbaro_log',JSON.stringify(l)); } catch(e){} }
+function renderCatches(){
+  const all=loadCatches(), k=lakeKey(), mine=all.filter(x=>x.lake===k);
+  $('catches').innerHTML = mine.slice().reverse().map(x=>`<div class="catch"><span><b>${x.w?x.w+' lb':'Fish'}</b> · ${new Date(x.t).toDateString().slice(0,10)} ${fmtT(new Date(x.t))}<small>${x.p} hPa ${x.trend} · ${x.wind} km/h ${x.dir} · ${x.cloud}% cloud · ${x.moon}${x.note?' · '+x.note:''}</small></span><button class="del" data-id="${x.id}" type="button">remove</button></div>`).join('') || '<div class="catch"><span style="color:#8c948c">Nothing logged on this water yet.</span></div>';
+  $('catches').querySelectorAll('.del').forEach(b=>b.onclick=()=>{ saveCatches(loadCatches().filter(x=>x.id!==b.dataset.id)); renderCatches(); pattern(); });
+}
+function logCatch(){
+  if (!data) { $('err').textContent='Pick a water first.'; return; }
+  const c=data.current, h=data.hourly, i0=nowIdx(h), d3=c.pressure_msl-h.pressure_msl[Math.max(0,i0-3)];
+  const e={ id:String(Date.now()), lake:lakeKey(), name:cur.name, t:new Date().toISOString(), w:+$('cweight').value||0, note:$('cnote').value.trim(), p:c.pressure_msl.toFixed(1), trend:d3<=-0.5?'falling':d3>=0.5?'rising':'steady', wind:Math.round(c.wind_speed_10m), dir:dirs[Math.round(c.wind_direction_10m/45)%8], cloud:Math.round(c.cloud_cover), temp:Math.round(c.temperature_2m), moon:moonPhase(new Date()) };
+  const all=loadCatches(); all.push(e); saveCatches(all);
+  $('cweight').value=''; $('cnote').value=''; renderCatches(); pattern();
+}
+function exportLog(){
+  const rows=loadCatches().map(x=>[x.name,x.t,x.w,x.p,x.trend,x.wind+' '+x.dir,x.cloud+'%',x.temp+'C',x.moon,x.note].join(', '));
+  const txt=['water, time, lb, hPa, trend, wind, cloud, air, moon, notes'].concat(rows).join('\n');
+  try { navigator.clipboard.writeText(txt); $('err').textContent='Log copied. Paste it into Notes or a message.'; } catch(e) { prompt('Copy your log:', txt); }
+}
+function pattern(){
+  const mine=loadCatches().filter(x=>x.lake===lakeKey());
+  if (mine.length<3) { $('pattern').textContent=mine.length? 'Two more fish and the pattern will start to show.' : 'Log a few fish here and the pattern builds itself.'; return; }
+  const cnt=o=>Object.entries(o).sort((a,b)=>b[1]-a[1])[0];
+  const by=(k)=>mine.reduce((o,x)=>{o[x[k]]=(o[x[k]]||0)+1;return o;},{});
+  const hrs=mine.reduce((o,x)=>{const h=new Date(x.t).getHours(); const b=h<5?'small hours (0-5)':h<9?'dawn (5-9)':h<17?'day (9-17)':h<21?'dusk (17-21)':'evening (21-24)'; o[b]=(o[b]||0)+1; return o;},{});
+  const avgP=(mine.reduce((s,x)=>s+ +x.p,0)/mine.length).toFixed(0);
+  const big=mine.slice().sort((a,b)=>b.w-a.w)[0];
+  const [tr,trn]=cnt(by('trend')), [dr,drn]=cnt(by('dir')), [hb,hbn]=cnt(hrs);
+  $('pattern').textContent = `${mine.length} fish logged on ${cur.name}.\n`+
+    `Most came on a ${tr} glass (${trn} of ${mine.length}), average ${avgP} hPa.\n`+
+    `Best wind: ${dr} (${drn} fish). Best time: ${hb} (${hbn} fish).\n`+
+    (big&&big.w? `Biggest: ${big.w} lb on a ${big.trend} glass at ${big.p} hPa, ${big.wind} km/h ${big.dir}.` : '');
+}
+$('advbtn').addEventListener('click',advise);
+$('alarmbtn').addEventListener('click',setAlarms);
+['bnights','brods','bstyle'].forEach(id=>$(id).addEventListener('input',baitCalc));
+$('cadd').addEventListener('click',logCatch);
+$('cexport').addEventListener('click',exportLog);
+const _load=load;
+load=async function(){ await _load(); if (data) { buildNudges(); baitCalc(); renderCatches(); pattern(); $('advice').style.display='none'; } };
+setInterval(()=>load(),15*60*1000);
+load();
+})();
+</script>

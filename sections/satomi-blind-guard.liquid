@@ -1,0 +1,44 @@
+{% comment %}
+  SATOMI NISHIKIGOI · BLIND AUCTION GUARD (product pages)
+  Theme section file (sections/satomi-blind-guard.liquid) on the Default product template.
+  If this product is in the "Blind Auction" collection, its price and buy buttons are hidden
+  and a box points people to the bid page instead. Every other product is left alone.
+{% endcomment %}
+{%- assign ba_handle = 'blind-auction' -%}
+{%- assign inba = false -%}
+{%- for c in product.collections -%}{%- if c.handle == ba_handle -%}{%- assign inba = true -%}{%- break -%}{%- endif -%}{%- endfor -%}
+{%- if inba -%}
+<style>
+  .product__info-container .price, .product__info-container product-form, .product__info-container .product-form,
+  .product__info-container .product-form__buttons, .product__info-container .shopify-payment-button,
+  .product__info-container .product-form__quantity, .product__info-container quantity-input,
+  .product__info-container [id^="Quantity-Form"], .product__info-container .product__tax,
+  .product__info-container shopify-payment-terms, .product__info-container .installment, .product__info-container [id^="product-form-installment"]{display:none !important}
+  .sn-baban{display:block !important;margin:14px 0 18px;padding:16px 18px;background:#0b0b0b;border:1px solid rgba(245,243,239,.14);border-left:3px solid #f91e11;border-radius:3px;
+    font-family:'EB Garamond',Georgia,serif;font-size:18px;line-height:1.5;color:#a3a09b}
+  .sn-baban b{display:block;font-family:'Cinzel',Georgia,serif;font-weight:600;letter-spacing:.06em;color:#f5f3ef;font-size:16px;margin-bottom:4px}
+  .sn-baban b span{font-family:'Noto Serif JP',serif;color:#f91e11;margin-left:6px}
+  .sn-baban a{display:inline-block;margin-top:10px;padding:12px 18px;border-radius:3px;background:#d70f0f;color:#fff;text-decoration:none;
+    font-family:'Cinzel',Georgia,serif;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+</style>
+<div class="sn-baban" id="snBaBan">
+  <b>In this month's Blind Auction<span>入札</span></b>
+  This koi isn't for sale at a fixed price right now. Send me your sealed bid before 8pm on the last day of the month.
+  <br><a href="/pages/blind-auction">Make a sealed bid</a>
+</div>
+<script>
+(function(){
+  var ban = document.getElementById('snBaBan'); if (!ban) return;
+  var sec = ban.closest('.shopify-section'); if (sec) sec.style.padding = '0';
+  var info = document.querySelector('.product__info-container');
+  if (info){ var t = info.querySelector('.product__title'); if (t && t.nextSibling) t.parentNode.insertBefore(ban, t.nextSibling); else info.prepend(ban); }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Satomi: Auction guard",
+  "settings": []
+}
+{% endschema %}

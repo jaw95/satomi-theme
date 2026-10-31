@@ -1,0 +1,450 @@
+{% comment %}
+  SATOMI NISHIKIGOI — KOI ROULETTE WHEEL PAGE
+  Theme section file (sections/satomi-wheel.liquid), used by the "roulette" product template.
+
+  Each Wheel is one product:
+    - Options: 1 ... 19 (or Spot 1 ... Spot 19) at that Wheel's price, plus the last one at £0.00 (the free spot). Stock of 1 on each.
+    - Untick "This is a physical product" so no delivery is charged when people take a spot.
+    - Photos and description = the jackpot koi.
+    - Two boxes on the product (Metafields):
+        Roulette question   e.g. What is the name for a koi in its second year?
+        Roulette answers    every answer you'll accept, separated with ;   e.g. nisai; ni sai
+  Answers are checked on the page. The answers themselves are never shown in the page code.
+
+  FIRST SPOT LOCKS THE JACKPOT (optional, per Wheel):
+    - Put the jackpot koi in the shop as its own normal product, stock 1.
+    - On the Wheel product, fill "Jackpot in shop" with that koi product.
+    - On the koi product, fill "Jackpot for wheel" with this Wheel.
+    Until the first spot sells, the Wheel page says the koi is also in the shop.
+    Once a spot sells, it says the jackpot is locked, and the koi's page stops selling it.
+    If the koi sells in the shop before any spot, the Wheel pauses until you pick a new jackpot.
+
+  JACKPOT WORTH: on the Wheel product, type the jackpot koi's value in whole pounds in the
+  "Jackpot value" box (e.g. 395). Left empty, it uses the price of the "Jackpot in shop" koi.
+
+  SUPPORTERS' HEAD START (optional, per Wheel): fill the Wheel's "Everyone can buy from" box (koi.public_from).
+  Until then, logged-in Satomi Supporters can take PAID spots; everyone else sees "Supporters first".
+  The FREE spot stays shut for everyone (supporters included) until that time, so it opens to all at once.
+  Supporters' 25% off one spot: the code SUPPORTER-<WHEEL HANDLE> (e.g. SUPPORTER-WHEEL-01) is put on
+  automatically when a logged-in supporter takes a paid spot.
+{% endcomment %}
+{%- assign tc_link = '/pages/satomi-nishikigoi-wheel-spin-terms-conditions' -%}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign twitch_link = 'https://www.twitch.tv/satominishikigoi' -%}
+{%- comment -%} Names on taken spots come from each spot's "Taken by" box (filled in by Shopify Flow).
+  Only ever the first name (anything after a comma is ignored). {%- endcomment -%}
+{%- assign show_town = false -%}
+
+{%- assign q = product.metafields.custom.roulette_question.value | default: '' | strip -%}
+{%- assign answers_raw = product.metafields.custom.roulette_answers.value | default: '' -%}
+{%- assign paid_price = 0 -%}
+{%- assign spots_taken = 0 -%}
+{%- for v in product.variants -%}
+  {%- if v.price > 0 and paid_price == 0 -%}{%- assign paid_price = v.price -%}{%- endif -%}
+  {%- unless v.available -%}{%- assign spots_taken = spots_taken | plus: 1 -%}{%- endunless -%}
+{%- endfor -%}
+{%- assign who_list = '' -%}{%- assign who_count = 0 -%}
+{%- for v in product.variants -%}
+  {%- unless v.available -%}
+    {%- assign who = v.metafields.custom.taken_by.value | default: '' | strip -%}
+    {%- if who != '' -%}
+      {%- unless show_town -%}{%- assign who = who | split: ',' | first | strip -%}{%- endunless -%}
+      {%- assign who_count = who_count | plus: 1 -%}
+      {%- capture who_list -%}{{ who_list }}{% if who_count > 1 %} · {% endif %}<span>{{ who | escape }}</span>{%- endcapture -%}
+    {%- endif -%}
+  {%- endunless -%}
+{%- endfor -%}
+{%- assign spots_left = product.variants.size | minus: spots_taken -%}
+
+{%- assign jp_field = product.metafields.custom.jackpot_in_shop -%}
+{%- assign jp = jp_field.value -%}
+{%- assign jp_state = 'none' -%}
+{%- assign jp_worth = '' -%}
+{%- assign jv = product.metafields.custom.jackpot_value.value -%}
+{%- if jv != blank and jv > 0 -%}{%- assign jp_worth = jv | times: 100 | money_without_trailing_zeros -%}
+{%- elsif jp != blank and jp.price > 0 -%}{%- assign jp_worth = jp.price | money_without_trailing_zeros -%}{%- endif -%}
+{%- assign is_sup = false -%}
+{%- if customer and customer.tags contains 'supporter' -%}{%- assign is_sup = true -%}{%- endif -%}
+{%- assign sup_code = 'SUPPORTER-' | append: product.handle | upcase -%}
+{%- assign pf = product.metafields.koi.public_from.value -%}
+{%- assign early = false -%}{%- assign pf_s = 0 -%}
+{%- if pf != blank -%}
+  {%- assign pf_s = pf | date: '%s' | plus: 0 -%}
+  {%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+  {%- if pf_s > now_s -%}{%- assign early = true -%}{%- endif -%}
+{%- endif -%}
+{%- assign early_lock = false -%}
+{%- if early and is_sup == false -%}{%- assign early_lock = true -%}{%- endif -%}
+{%- if jp_field != blank -%}
+  {%- if spots_taken > 0 -%}{%- assign jp_state = 'locked' -%}
+  {%- elsif jp != blank and jp.available -%}{%- assign jp_state = 'shop' -%}
+  {%- else -%}{%- assign jp_state = 'paused' -%}
+  {%- endif -%}
+{%- endif -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+  .sn-wheel{--w:#f5f3ef; --g:#a3a09b; --dim:#6e6b67; --r:#d70f0f; --glow:#f91e11; --edge:rgba(245,243,239,.14);
+    background:#000; color:var(--w); font-family:'EB Garamond', Georgia, serif; padding:40px 16px 72px}
+  .sn-wheel *{box-sizing:border-box}
+  .sn-wheel [hidden]{display:none !important}
+  .sn-w-in{max-width:1100px; margin:0 auto}
+  .sn-w-eyebrow{font-family:'Cinzel',serif; font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:var(--r); margin:0 0 10px}
+  .sn-wheel h1{font-family:'Cinzel',serif; font-weight:600; letter-spacing:.05em; font-size:clamp(28px,5vw,44px); line-height:1.15; margin:0 0 28px}
+  .sn-w-grid{display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:start}
+  @media (max-width:860px){ .sn-w-grid{grid-template-columns:1fr} }
+  .sn-w-grid > *{min-width:0}
+  @media (max-width:480px){
+    .sn-stats{gap:6px} .sn-wheel .sn-stats.has-jp{flex-wrap:wrap} .sn-wheel .has-jp .sn-stat{flex:1 1 40%} .sn-stat{padding:12px 4px; min-width:0} .sn-stat b{font-size:19px; white-space:nowrap} .sn-stat span{font-size:9px; letter-spacing:.14em}
+    .sn-board{gap:6px} .sn-slot b{font-size:17px} .sn-slot span{font-size:11px}
+    .sn-q-text{font-size:19px}
+  }
+
+  .sn-jack{background:#0b0b0b; border:1px solid var(--edge); border-top:2px solid var(--r); border-radius:4px; overflow:hidden}
+  .sn-jack img{display:block; width:100%; height:auto; aspect-ratio:3/4; object-fit:cover; background:#111}
+  .sn-jack-body{padding:20px}
+  .sn-jack-tag{font-family:'Cinzel',serif; font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--glow); margin:0 0 8px}
+  .sn-jack-desc{font-size:18px; line-height:1.6; color:var(--g)}
+  .sn-jack-desc p{margin:0 0 10px}
+
+  .sn-lock{margin:16px 0 0; padding:14px 16px; border-radius:4px; border:1px solid var(--edge); background:#000}
+  .sn-lock b{display:block; font-family:'Cinzel',serif; font-weight:600; font-size:14px; letter-spacing:.12em; text-transform:uppercase; color:var(--w); margin:0 0 4px}
+  .sn-lock p{font-size:16px; line-height:1.5; color:var(--g); margin:0}
+  .sn-lock a{display:inline-block; margin-top:10px; font-family:'Cinzel',serif; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--w); text-decoration:none; border:1px solid rgba(245,243,239,.4); border-radius:3px; padding:9px 12px}
+  .sn-lock a:hover{border-color:var(--r)}
+  .sn-lock.is-locked{border-color:rgba(215,15,15,.6); background:rgba(215,15,15,.08)}
+  .sn-paused{text-align:center; background:#0b0b0b; border:1px solid var(--edge); border-top:2px solid var(--glow); border-radius:4px; padding:22px; margin:0 0 16px}
+  .sn-paused h2{font-family:'Cinzel',serif; font-weight:600; font-size:22px; margin:0 0 8px}
+  .sn-paused p{color:var(--g); font-size:17px; margin:0 0 14px}
+
+  .sn-stats{display:flex; gap:10px; margin:0 0 18px}
+  .sn-stat{flex:1; background:#0b0b0b; border:1px solid var(--edge); border-radius:4px; padding:14px 10px; text-align:center}
+  .sn-stat b{display:block; font-family:'Cinzel',serif; font-size:28px; font-weight:600}
+  .sn-stat span{font-family:'Cinzel',serif; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--g)}
+  .sn-stat-jp{border-color:rgba(215,15,15,.6); background:rgba(215,15,15,.1)}
+  .sn-stat-jp b{color:#fff; text-shadow:0 0 16px rgba(249,30,17,.45)}
+  .sn-bar{height:8px; border-radius:99px; background:rgba(245,243,239,.1); overflow:hidden; margin:0 0 22px}
+  .sn-bar i{display:block; height:100%; background:linear-gradient(90deg,#8e0a0a,var(--glow)); box-shadow:0 0 10px rgba(249,30,17,.6); transition:width .6s}
+
+  .sn-board{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:0 0 10px}
+  .sn-slot{aspect-ratio:1; border-radius:4px; border:1px solid var(--edge); background:#0b0b0b; color:var(--g);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:inherit; font-size:12px; cursor:pointer; padding:0; transition:transform .12s}
+  .sn-slot b{font-family:'Cinzel',serif; font-size:20px; color:var(--w)}
+  .sn-slot:disabled{cursor:default}
+  .sn-slot.taken{background:rgba(215,15,15,.22); border-color:rgba(215,15,15,.55)}
+  .sn-slot.free{border:1px dashed var(--w)}
+  .sn-slot.free.taken{border-style:solid}
+  .sn-slot.pick{outline:2px solid var(--glow); box-shadow:0 0 16px rgba(249,30,17,.5); transform:scale(1.04)}
+  .sn-board.locked .sn-slot:not(.taken){opacity:.45}
+  .sn-slot span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%}
+  .sn-slot.named span{color:#fff}
+  .sn-nudge{display:flex; align-items:center; gap:10px; margin:-10px 0 20px; padding:11px 14px; border:1px solid rgba(249,30,17,.6); border-radius:4px;
+    background:rgba(215,15,15,.12); font-family:'Cinzel',serif; font-weight:600; font-size:14px; letter-spacing:.08em; color:#fff}
+  .sn-nudge::before{content:''; width:9px; height:9px; border-radius:50%; background:var(--glow); box-shadow:0 0 10px var(--glow); animation:sn-pulse 1.4s ease-in-out infinite; flex:0 0 auto}
+  @keyframes sn-pulse{50%{opacity:.25}}
+  @media (prefers-reduced-motion:reduce){.sn-nudge::before{animation:none}}
+  .sn-who{font-size:16px; line-height:1.6; color:var(--g); margin:-10px 0 24px}
+  .sn-who b{display:block; font-family:'Cinzel',serif; font-weight:600; font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--glow); margin:0 0 2px}
+  .sn-who span{color:var(--w)}
+  .sn-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:14px; color:var(--g); margin:0 0 24px}
+  .sn-legend i{display:inline-block; width:11px; height:11px; border-radius:2px; margin-right:6px; vertical-align:-1px}
+
+  .sn-q{background:#0b0b0b; border:1px solid var(--edge); border-top:2px solid var(--r); border-radius:4px; padding:20px; margin:0 0 16px}
+  .sn-q h2{font-family:'Cinzel',serif; font-weight:600; font-size:16px; letter-spacing:.1em; text-transform:uppercase; margin:0 0 10px}
+  .sn-q-text{font-size:21px; line-height:1.4; margin:0 0 14px}
+  .sn-q-row{display:flex; gap:8px}
+  .sn-q-row input{flex:1; min-width:0; padding:13px 14px; border-radius:3px; font-size:17px; font-family:inherit; border:1px solid rgba(245,243,239,.25); background:#000; color:var(--w)}
+  .sn-q-row input:focus{outline:none; border-color:var(--r)}
+  .sn-q-note{font-size:15px; color:var(--g); margin:10px 0 0}
+  .sn-msg{font-size:17px; margin:12px 0 0}
+  .sn-msg.ok{color:#9bd49b} .sn-msg.no{color:#ff8a80}
+
+  .sn-btn{display:block; width:100%; padding:15px 18px; border-radius:3px; border:0; cursor:pointer; text-align:center; text-decoration:none;
+    font-family:'Cinzel',serif; font-weight:600; font-size:14px; letter-spacing:.14em; text-transform:uppercase; background:var(--r); color:#fff; box-shadow:0 0 18px rgba(215,15,15,.35)}
+  .sn-btn:hover{background:var(--glow)}
+  .sn-btn:disabled{background:#2a2a2a; color:var(--dim); box-shadow:none; cursor:not-allowed}
+  .sn-btn.line{background:transparent; border:1px solid rgba(245,243,239,.4); color:var(--w); box-shadow:none; margin-top:10px}
+  .sn-btn.line:hover{border-color:var(--r)}
+  .sn-q-row .sn-btn{width:auto; flex:0 0 auto}
+
+  .sn-full{text-align:center; background:#0b0b0b; border:1px solid var(--edge); border-top:2px solid var(--glow); border-radius:4px; padding:22px; margin:0 0 16px}
+  .sn-full h2{font-family:'Cinzel',serif; font-weight:600; font-size:22px; margin:0 0 8px}
+  .sn-full p{color:var(--g); font-size:17px; margin:0 0 14px}
+
+  .sn-how{margin:44px auto 0; max-width:760px}
+  .sn-how h2{font-family:'Cinzel',serif; font-weight:600; font-size:22px; letter-spacing:.05em; text-align:center; margin:0 0 16px}
+  .sn-how ol{font-size:18px; line-height:1.6; color:var(--g); padding-left:22px; margin:0 0 14px}
+  .sn-how ol b{color:var(--w); font-weight:500}
+  .sn-how p{text-align:center; font-size:15px; color:var(--dim); margin:0}
+  .sn-how a{color:var(--w)}
+  .sn-early{margin:0 0 16px; padding:16px 18px; border:1px solid rgba(249,30,17,.6); border-left:3px solid var(--glow); border-radius:4px;
+    background:radial-gradient(ellipse 80% 120% at 0 50%, rgba(215,15,15,.2), transparent 70%), #0b0b0b}
+  .sn-early b{display:flex; align-items:center; gap:10px; font-family:'Cinzel',serif; font-weight:600; font-size:15px; letter-spacing:.1em; text-transform:uppercase; color:#fff; margin:0 0 6px}
+  .sn-early b i{font-style:normal; font-family:'Noto Serif JP',serif; color:var(--glow); font-size:18px; letter-spacing:0}
+  .sn-early p{font-size:17px; line-height:1.5; color:var(--g); margin:0}
+  .sn-early p strong{color:var(--w); font-weight:500}
+  .sn-early a{display:inline-block; margin-top:12px; font-family:'Cinzel',serif; font-size:12px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:#fff; text-decoration:none; background:var(--r); border-radius:3px; padding:10px 14px}
+  .sn-slot.held{opacity:.55; border-style:dotted; cursor:not-allowed}
+  .sn-slot.held span{font-size:10px; letter-spacing:.04em}
+  .sn-wheel.early-lock #snQ, .sn-wheel.early-lock #snForm{display:none !important}
+</style>
+
+<section class="sn-wheel{% if early_lock %} early-lock{% endif %}" id="snWheel" data-until="{% if early %}{{ pf_s }}{% endif %}" data-sup-code="{% if is_sup %}{{ sup_code }}{% endif %}"
+  data-handle="{{ product.handle }}" data-key="sn-wheel-{{ product.id }}"
+  data-hashes="{%- if answers_raw != blank -%}{%- assign alist = answers_raw | split: ';' -%}{%- for a in alist -%}{%- assign n = a | strip | downcase | remove: ' ' | remove: '-' | remove: '.' | remove: "'" | remove: ',' -%}{%- if n != blank -%}{{ n | sha256 }},{%- endif -%}{%- endfor -%}{%- endif -%}">
+  <div class="sn-w-in">
+    <p class="sn-w-eyebrow">Koi Roulette</p>
+    <h1>{{ product.title }}</h1>
+
+    <div class="sn-w-grid">
+      <div class="sn-jack">
+        {%- if product.featured_image -%}
+          <img src="{{ product.featured_image | image_url: width: 900 }}" alt="{{ product.featured_image.alt | default: product.title | escape }}" loading="eager">
+        {%- endif -%}
+        <div class="sn-jack-body">
+          <p class="sn-jack-tag">The jackpot koi{% if jp_worth != '' %} · worth {{ jp_worth }}{% endif %}</p>
+          <div class="sn-jack-desc">{{ product.description }}</div>
+          {%- if jp_state == 'shop' -%}
+            <div class="sn-lock" id="snLock" data-state="shop">
+              <b>Also in the shop · {{ jp.price | money_without_trailing_zeros }}</b>
+              <p id="snLockText">You can buy this koi outright right now. The moment the first spot sells, it's locked to this Wheel and comes out of the shop.</p>
+              <a href="{{ jp.url }}" id="snLockLink">See it in the shop</a>
+            </div>
+          {%- elsif jp_state == 'locked' -%}
+            <div class="sn-lock is-locked" id="snLock" data-state="locked">
+              <b>🔒 Jackpot locked</b>
+              <p>The first spot's gone, so this koi is locked to the Wheel. Nobody can buy it out from under you.</p>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div>
+        <div class="sn-stats{% if jp_worth != '' %} has-jp{% endif %}">
+          {%- if jp_worth != '' -%}<div class="sn-stat sn-stat-jp"><b>{{ jp_worth }}</b><span>Jackpot worth</span></div>{%- endif -%}
+          <div class="sn-stat"><b>{{ paid_price | money_without_trailing_zeros }}</b><span>Per spot</span></div>
+          <div class="sn-stat"><b id="snLeft">{{ product.variants.size | minus: spots_taken }}</b><span>Spots left</span></div>
+          <div class="sn-stat"><b>1 in 20</b><span>Jackpot odds</span></div>
+        </div>
+        <div class="sn-bar"><i id="snBar" style="width:{{ spots_taken | times: 100 | divided_by: product.variants.size }}%"></i></div>
+        <p class="sn-nudge" id="snNudge"{% unless spots_left > 0 and spots_left < 4 and jp_state != 'paused' %} hidden{% endunless %}>{% if spots_left == 1 %}Last spot left. When it goes, the spin's on.{% else %}Only {{ spots_left }} spots left. When they go, the spin's on.{% endif %}</p>
+
+        {%- if jp_state == 'paused' -%}
+        <div class="sn-paused">
+          <h2>This Wheel's paused</h2>
+          <p>The jackpot koi sold in the shop before any spots went. I'm picking a new jackpot. Keep an eye on the WhatsApp group.</p>
+          <a class="sn-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+        </div>
+        {%- else -%}
+        {%- if early -%}
+        {%- assign when = pf | date: '%A %-d %B, %-I:%M%P' -%}
+        <div class="sn-early">
+          {%- if is_sup -%}
+            <b><i>里</i>Your Supporter head start</b>
+            <p>The paid spots are yours to pick until <strong>{{ when }}</strong>, then the board opens to everyone. Your 25% comes off one spot by itself. The free spot opens to everyone at that same time, supporters included.</p>
+          {%- else -%}
+            <b><i>里</i>Supporters first</b>
+            <p>Satomi Supporters get first pick of the paid spots. The board opens to everyone on <strong>{{ when }}</strong>, and the free spot opens to everyone at that same moment.</p>
+            <a href="{{ routes.account_login_url }}">Supporter? Log in</a>
+          {%- endif -%}
+        </div>
+        {%- endif -%}
+        <div class="sn-q" id="snQ">
+          <h2>Answer to enter</h2>
+          {%- if q != '' and answers_raw != '' -%}
+            <p class="sn-q-text">{{ q }}</p>
+            <div class="sn-q-row" id="snQRow">
+              <input type="text" id="snAns" placeholder="Type your answer" autocomplete="off" autocapitalize="off" spellcheck="false">
+              <button type="button" class="sn-btn" id="snCheck">Check</button>
+            </div>
+            <p class="sn-q-note" id="snQNote">One go per device for this Wheel. Get it right to unlock the board.</p>
+            <p class="sn-msg" id="snMsg" hidden></p>
+          {%- else -%}
+            <p class="sn-q-text">The question for this Wheel will appear here when it opens.</p>
+          {%- endif -%}
+        </div>
+
+        <div class="sn-board locked" id="snBoard">
+          {%- for v in product.variants -%}
+            {%- assign is_free = false -%}{%- if v.price == 0 -%}{%- assign is_free = true -%}{%- endif -%}
+            {%- assign who = '' -%}
+            {%- unless v.available -%}{%- assign who = v.metafields.custom.taken_by.value | default: '' | split: ',' | first | strip -%}{%- endunless -%}
+            {%- assign held = false -%}
+            {%- if early and v.available -%}{%- if is_free or is_sup == false -%}{%- assign held = true -%}{%- endif -%}{%- endif -%}
+            <button type="button" class="sn-slot{% if is_free %} free{% endif %}{% unless v.available %} taken{% endunless %}{% if who != '' %} named{% endif %}{% if held %} held{% endif %}"
+              data-id="{{ v.id }}" data-free="{{ is_free }}" data-label="Spot {{ forloop.index }}" {% unless v.available %}disabled{% endunless %}{% if held %}disabled{% endif %}{% if who != '' %} title="Spot {{ forloop.index }}: {{ who | escape }}"{% endif %}>
+              <b>{% if is_free %}Free{% else %}{{ forloop.index }}{% endif %}</b>
+              <span>{% if held %}{% if is_free %}Opens {{ pf | date: '%a %-I%P' }}{% else %}Supporters{% endif %}{% elsif v.available %}Open{% elsif who != '' %}{{ who | escape }}{% else %}Taken{% endif %}</span>
+            </button>
+          {%- endfor -%}
+        </div>
+        <div class="sn-legend">
+          <span><i style="background:rgba(215,15,15,.5)"></i>Taken</span>
+          <span><i style="background:#1a1a1a;border:1px solid rgba(245,243,239,.3)"></i>Open</span>
+          <span><i style="border:1px dashed #f5f3ef"></i>Free spot</span>
+        </div>
+        {%- if who_count > 0 -%}
+        <p class="sn-who"><b>In so far</b>{{ who_list }}</p>
+        {%- endif -%}
+
+        <div class="sn-full" id="snFull" hidden>
+          <h2>The board's full</h2>
+          <p>The spin date goes out in the WhatsApp group and here. Watch it live on Twitch.</p>
+          <a class="sn-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+          <a class="sn-btn line" href="{{ twitch_link }}" target="_blank" rel="noopener">Twitch</a>
+        </div>
+
+        <form method="post" action="/cart/add" id="snForm">
+          <input type="hidden" name="id" id="snVid" value="">
+          <input type="hidden" name="quantity" value="1">
+          <input type="hidden" name="properties[Qualifying answer]" id="snProp" value="">
+          <input type="hidden" name="return_to" value="/checkout">
+          <button type="submit" class="sn-btn" id="snBuy" disabled>Answer the question first</button>
+        </form>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="sn-how">
+      <h2>How it works</h2>
+      <ol>
+        <li><b>Answer the koi question.</b> One go per device. Get it right and the board unlocks.</li>
+        <li><b>Pick a spot.</b> 19 paid spots, plus one free spot for the first correct answer to claim it.{% if pf != blank %} Satomi Supporters get first pick of the paid spots for a short head start; the free spot always opens to everyone at the same time.{% endif %}</li>
+        <li><b>When all 20 are taken,</b> I spin the wheel live on Twitch, usually the next Friday or Sunday.</li>
+        <li><b>Every spot wins a koi.</b> One lands the jackpot, and the rest win a koi worth at least the spot price.</li>
+        <li><b>The first spot locks the jackpot.</b> Until then the jackpot koi may also be in the shop. Once anyone has a spot, it can't be sold.</li>
+      </ol>
+      <p>18+, UK only. Full <a href="{{ tc_link }}">terms &amp; conditions</a>.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('snWheel'); if (!root) return;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+
+  var key = root.getAttribute('data-key');
+  var hashes = (root.getAttribute('data-hashes') || '').split(',').filter(Boolean);
+  var board = document.getElementById('snBoard');
+  if (!board) return; // Wheel paused
+  var buy = document.getElementById('snBuy'), vid = document.getElementById('snVid'), prop = document.getElementById('snProp');
+  var msg = document.getElementById('snMsg'), qRow = document.getElementById('snQRow'), note = document.getElementById('snQNote');
+  var picked = null, unlocked = false, wrong = false;
+
+  function store(k, v){ try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch(e){ return null; } }
+  function norm(s){ return (s || '').toLowerCase().replace(/[ \-.',]/g, ''); }
+  async function sha(s){
+    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+  }
+  function say(text, ok){ if (!msg) return; msg.hidden = false; msg.textContent = text; msg.className = 'sn-msg ' + (ok ? 'ok' : 'no'); }
+
+  function setUnlocked(answer){
+    unlocked = true; prop.value = answer;
+    board.classList.remove('locked');
+    if (qRow) qRow.hidden = true; if (note) note.hidden = true;
+    say('Correct. Pick an open spot on the board.', true);
+    buy.textContent = 'Pick a spot';
+  }
+  function setLocked(){
+    wrong = true;
+    if (qRow) qRow.hidden = true; if (note) note.hidden = true;
+    say("Sorry, that's not right. You can have another go on the next Wheel.", false);
+    buy.textContent = 'Not this time';
+  }
+
+  // Remembered result on this device
+  var saved = store(key);
+  if (saved === 'wrong') setLocked();
+  else if (saved && saved.indexOf('right:') === 0) setUnlocked(saved.slice(6));
+
+  var check = document.getElementById('snCheck'), input = document.getElementById('snAns');
+  async function doCheck(){
+    var raw = (input.value || '').trim(); if (!raw) { input.focus(); return; }
+    if (!window.crypto || !crypto.subtle){ say('Please use an up-to-date browser to answer.', false); return; }
+    var h = await sha(norm(raw));
+    if (hashes.indexOf(h) > -1){ store(key, 'right:' + raw); setUnlocked(raw); }
+    else { store(key, 'wrong'); setLocked(); }
+  }
+  if (check) check.addEventListener('click', doCheck);
+  if (input) input.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ e.preventDefault(); doCheck(); } });
+
+  // Picking a spot
+  board.addEventListener('click', function(e){
+    var s = e.target.closest('.sn-slot'); if (!s || s.disabled) return;
+    if (wrong) return;
+    if (!unlocked){ say('Answer the question first to unlock the board.', false); return; }
+    board.querySelectorAll('.pick').forEach(function(x){ x.classList.remove('pick'); });
+    s.classList.add('pick'); picked = s; vid.value = s.getAttribute('data-id');
+    var free = s.getAttribute('data-free') === 'true';
+    buy.disabled = false;
+    buy.textContent = free ? 'Claim the free spot' : 'Take ' + s.getAttribute('data-label').toLowerCase();
+  });
+
+  // Live updates every 30 seconds
+  function refresh(){
+    fetch('/products/' + root.getAttribute('data-handle') + '.js').then(function(r){ return r.json(); }).then(function(p){
+      var taken = 0;
+      p.variants.forEach(function(v){
+        var s = board.querySelector('[data-id="' + v.id + '"]'); if (!s) return;
+        if (!v.available){
+          taken++;
+          if (!s.classList.contains('taken')){ s.classList.add('taken'); s.disabled = true; s.querySelector('span').textContent = 'Taken'; }
+          if (picked === s){ picked = null; vid.value = ''; buy.disabled = true; buy.textContent = 'That spot just went. Pick another'; s.classList.remove('pick'); }
+        }
+      });
+      apply(taken, p.variants.length);
+    }).catch(function(){});
+  }
+  function apply(taken, total){
+    document.getElementById('snLeft').textContent = total - taken;
+    document.getElementById('snBar').style.width = Math.round(taken * 100 / total) + '%';
+    var lock = document.getElementById('snLock');
+    if (lock && taken > 0 && lock.getAttribute('data-state') === 'shop'){
+      lock.setAttribute('data-state','locked'); lock.classList.add('is-locked');
+      lock.innerHTML = '<b>🔒 Jackpot locked</b><p>The first spot\'s gone, so this koi is locked to the Wheel. Nobody can buy it out from under you.</p>';
+    }
+    var left = total - taken, nudge = document.getElementById('snNudge');
+    if (nudge){
+      nudge.hidden = !(left > 0 && left <= 3);
+      nudge.textContent = left === 1 ? 'Last spot left. When it goes, the spin\'s on.' : 'Only ' + left + ' spots left. When they go, the spin\'s on.';
+    }
+    var full = taken >= total;
+    document.getElementById('snFull').hidden = !full;
+    document.getElementById('snQ').hidden = full;
+    document.getElementById('snForm').hidden = full;
+  }
+  // Supporters' head start: when it ends, reload so the board opens to everyone
+  var until = +(root.getAttribute('data-until') || 0) * 1000;
+  if (until){ var wait = until - Date.now(); if (wait > 0 && wait < 864e5 * 7) setTimeout(function(){ location.reload(); }, wait + 1500); }
+
+  // Supporters: put their 25% (one spot per Wheel) on before going to checkout
+  var supCode = root.getAttribute('data-sup-code'), form = document.getElementById('snForm'), sending = false;
+  if (supCode && form){
+    form.addEventListener('submit', function(e){
+      if (sending || !picked || picked.getAttribute('data-free') === 'true') return;
+      e.preventDefault(); sending = true; buy.disabled = true; buy.textContent = 'One moment…';
+      fetch('/discount/' + encodeURIComponent(supCode), { credentials:'same-origin' })
+        .catch(function(){})
+        .then(function(){ HTMLFormElement.prototype.submit.call(form); });
+    });
+  }
+
+  var t0 = board.querySelectorAll('.sn-slot.taken').length, n0 = board.querySelectorAll('.sn-slot').length;
+  apply(t0, n0);
+  setInterval(refresh, 30000);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Wheel page",
+  "settings": [],
+  "enabled_on": { "templates": ["product"] }
+}
+{% endschema %}

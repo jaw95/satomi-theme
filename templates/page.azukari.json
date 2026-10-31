@@ -1,0 +1,34 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "body": {
+      "type": "satomi-azukari",
+      "settings": {
+        "whatsapp": "447575737037",
+        "step1_text": "I pick young koi at the breeders I work with directly. If they think the koi is good enough, it stays with them to grow on for a year, normally in a mud pond, for an extra fee.",
+        "step2_text": "Through the summer they grow on in the breeders' mud ponds. Big water, natural food and expert hands. Nothing in the UK grows koi like it.",
+        "step3_text": "In autumn the ponds are harvested. Every koi gets photographed and measured again, and you can see the results right here."
+      }
+    }
+  },
+  "order": [
+    "main",
+    "body"
+  ]
+}

@@ -1,0 +1,215 @@
+{% comment %}
+  SATOMI NISHIKIGOI · EVENTS (Koi Days at Satomi + koi shows Josh is at)
+  Theme section file (sections/satomi-events.liquid), used by the "events" page template.
+
+  Every event is a "Satomi event" entry: Shopify admin → Content → Metaobjects → Satomi event → Add entry.
+  Fill in the name, type, date, and anything else you know. It appears here straight away,
+  sorted by date. Once the date has gone it moves into "Past events" by itself.
+  Never put a home address in "Where". Koi Day addresses go out in the WhatsApp group instead.
+{% endcomment %}
+{%- assign whatsapp_link = 'https://chat.whatsapp.com/LxB67oWJEB52pTrPfyBY14' -%}
+{%- assign today = 'now' | date: '%Y-%m-%d' -%}
+
+{%- comment %} sort every event by its last day so ongoing ones stay "upcoming" {% endcomment -%}
+{%- assign keys = '' -%}
+{%- for e in shop.metaobjects.satomi_event.values -%}
+  {%- assign sd = e.start_date.value | date: '%Y-%m-%d' -%}
+  {%- assign keys = keys | append: sd | append: '~' | append: forloop.index0 | append: ',' -%}
+{%- endfor -%}
+{%- assign keys = keys | split: ',' | sort -%}
+{%- assign all = shop.metaobjects.satomi_event.values -%}
+{%- assign n_up = 0 -%}{%- assign n_past = 0 -%}
+{%- for k in keys -%}
+  {%- if k == blank -%}{%- continue -%}{%- endif -%}
+  {%- assign i = k | split: '~' | last | plus: 0 -%}
+  {%- for x in all -%}{%- if forloop.index0 == i -%}{%- assign e = x -%}{%- break -%}{%- endif -%}{%- endfor -%}
+  {%- assign last = e.end_date.value | default: e.start_date.value | date: '%Y-%m-%d' -%}
+  {%- if last >= today -%}{%- assign n_up = n_up | plus: 1 -%}{%- else -%}{%- assign n_past = n_past | plus: 1 -%}{%- endif -%}
+{%- endfor -%}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Noto+Serif+JP:wght@600&display=swap" rel="stylesheet">
+<style>
+  .ev{--w:#f5f3ef;--g:#a3a09b;--r:#d70f0f;--glow:#f91e11;--teal:#4fb3a9;--edge:rgba(245,243,239,.14);
+    background:#000;color:var(--w);font-family:'EB Garamond',Georgia,serif;padding:56px 16px 72px;box-sizing:border-box}
+  .ev *{box-sizing:border-box}
+  .ev [hidden]{display:none !important}
+  .ev-in{max-width:860px;margin:0 auto}
+  .ev-kick{font-family:'Cinzel',serif;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--r);text-align:center;margin:0 0 12px}
+  .ev-kick b{font-family:'Noto Serif JP',serif;font-weight:600;letter-spacing:.1em;margin-left:6px}
+  .ev h1{font-family:'Cinzel',serif;font-weight:600;letter-spacing:.05em;font-size:clamp(28px,5.4vw,46px);line-height:1.15;text-align:center;margin:0 0 14px}
+  .ev-lede{font-size:20px;line-height:1.55;color:var(--g);text-align:center;max-width:32em;margin:0 auto 30px}
+
+  .ev-key{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 30px}
+  .ev-keybox{background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;padding:16px 16px 14px;border-top:2px solid var(--r)}
+  .ev-keybox.show{border-top-color:var(--teal)}
+  .ev-keybox b{display:block;font-family:'Cinzel',serif;font-weight:600;font-size:17px;margin-bottom:6px}
+  .ev-keybox p{margin:0;font-size:17px;line-height:1.5;color:var(--g)}
+
+  .ev-filter{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 0 26px}
+  .ev-filter button{all:unset;cursor:pointer;font-family:'Cinzel',serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;padding:9px 14px;border-radius:99px;border:1px solid var(--edge);color:var(--g)}
+  .ev-filter button[aria-pressed="true"]{border-color:var(--glow);color:#fff;background:rgba(215,15,15,.15)}
+
+  .ev-month{font-family:'Cinzel',serif;font-weight:600;font-size:15px;letter-spacing:.22em;text-transform:uppercase;color:var(--g);margin:28px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--edge)}
+  .ev-item{display:grid;grid-template-columns:78px 1fr;gap:16px;background:#0b0b0b;border:1px solid var(--edge);border-radius:4px;padding:16px;margin:0 0 12px}
+  .ev-date{text-align:center;border-radius:4px;padding:10px 4px;background:#000;border:1px solid var(--edge);border-top:3px solid var(--r);align-self:start}
+  .ev-item.show .ev-date{border-top-color:var(--teal)}
+  .ev-date span{display:block;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--g)}
+  .ev-date b{display:block;font-family:'Cinzel',serif;font-weight:700;font-size:32px;line-height:1.1;color:#fff}
+  .ev-date em{display:block;font-style:normal;font-size:13px;color:var(--g);margin-top:2px}
+  .ev-tag{display:inline-block;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:4px 8px;border-radius:3px;border:1px solid rgba(215,15,15,.6);color:#fff;margin:0 6px 8px 0}
+  .ev-item.show .ev-tag.type{border-color:rgba(79,179,169,.7)}
+  .ev-tag.soon{background:var(--r);border-color:var(--r)}
+  .ev-tag.off{border-color:var(--g);color:var(--g)}
+  .ev-item h3{font-family:'Cinzel',serif;font-weight:600;font-size:22px;letter-spacing:.02em;margin:0 0 6px;color:var(--w)}
+  .ev-item.cancelled h3{text-decoration:line-through;color:var(--g)}
+  .ev-meta{margin:0 0 6px;font-size:18px;color:var(--w)}
+  .ev-meta i{font-style:normal;color:var(--g)}
+  .ev-details{font-size:17px;line-height:1.55;color:var(--g);margin:6px 0 0}
+  .ev-acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .ev-acts a,.ev-acts button{all:unset;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:9px 12px;border-radius:3px;border:1px solid var(--edge);color:#fff}
+  .ev-acts a.main{background:var(--r);border-color:var(--r)}
+  .ev-acts a:hover,.ev-acts button:hover{border-color:var(--glow)}
+
+  .ev-empty{text-align:center;background:#0b0b0b;border:1px solid var(--edge);border-top:2px solid var(--r);border-radius:4px;padding:34px 18px;font-size:19px;line-height:1.5;color:var(--g)}
+  .ev-empty p{margin:0 auto;max-width:30em}
+  .ev-btn{display:inline-block;margin-top:16px;padding:15px 24px;border-radius:3px;text-decoration:none;background:var(--r);color:#fff;font-family:'Cinzel',serif;font-weight:600;font-size:14px;letter-spacing:.14em;text-transform:uppercase}
+  .ev-none{display:none;text-align:center;color:var(--g);font-size:18px;margin:10px 0}
+  .ev-past{margin-top:40px}
+  .ev-past summary{cursor:pointer;font-family:'Cinzel',serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--g);text-align:center;list-style:none;padding:12px;border:1px solid var(--edge);border-radius:4px}
+  .ev-past summary::-webkit-details-marker{display:none}
+  .ev-past .ev-item{opacity:.6}
+  .ev-foot{text-align:center;margin:44px auto 0;max-width:34em;font-size:18px;line-height:1.55;color:var(--g)}
+  @media (max-width:600px){ .ev-key{grid-template-columns:1fr} .ev-item{grid-template-columns:64px 1fr;gap:12px;padding:14px} .ev-date b{font-size:26px} .ev-item h3{font-size:20px} }
+</style>
+
+
+
+<section class="ev" id="snEvents">
+  <div class="ev-in">
+    <p class="ev-kick">Events <b>催し</b></p>
+    <h1>{{ section.settings.heading | default: 'Satomi Events' }}</h1>
+    <p class="ev-lede">{{ section.settings.lede | default: "Koi Days here at Satomi, and the koi shows where you'll find me with a stand. Come and say hello. Koi always look better in person." }}</p>
+
+    <div class="ev-key">
+      <div class="ev-keybox"><b>Koi Days at Satomi</b><p>Open days at the new facility. Walk round the ponds, see every fish in person, grab a burger and talk koi. The address goes out in the WhatsApp group before each one.</p></div>
+      <div class="ev-keybox show"><b>Koi shows</b><p>The shows I'm going to as a vendor. Come and find the stand, have a look at what I've brought and have a chat.</p></div>
+    </div>
+
+    {%- if n_up > 0 -%}
+      <div class="ev-filter" role="group" aria-label="Show">
+        <button type="button" data-f="all" aria-pressed="true">Everything</button>
+        <button type="button" data-f="day" aria-pressed="false">Koi Days</button>
+        <button type="button" data-f="show" aria-pressed="false">Koi shows</button>
+      </div>
+      <div id="evList">
+        {%- assign cur = '' -%}
+        {%- for k in keys -%}
+          {%- if k == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign i = k | split: '~' | last | plus: 0 -%}
+          {%- for x in all -%}{%- if forloop.index0 == i -%}{%- assign e = x -%}{%- break -%}{%- endif -%}{%- endfor -%}
+          {%- assign last = e.end_date.value | default: e.start_date.value | date: '%Y-%m-%d' -%}
+          {%- if last >= today -%}
+            {%- assign m = e.start_date.value | date: '%B %Y' -%}
+            {%- if m != cur -%}<h2 class="ev-month" data-month>{{ m }}</h2>{%- assign cur = m -%}{%- endif -%}
+            {%- render 'satomi-event-card', e: e, past: false -%}
+          {%- endif -%}
+        {%- endfor -%}
+        <p class="ev-none" id="evNone">Nothing of that sort booked yet. Check back soon.</p>
+      </div>
+    {%- else -%}
+      <div class="ev-empty">
+        <p>No dates booked yet. The first Koi Days start when the new facility opens in March 2027, and I'll add the shows as they're confirmed. The WhatsApp group always hears first.</p>
+        <a class="ev-btn" href="{{ whatsapp_link }}" target="_blank" rel="noopener">Join the WhatsApp group</a>
+      </div>
+    {%- endif -%}
+
+    {%- if n_past > 0 -%}
+      <details class="ev-past">
+        <summary>Past events ({{ n_past }})</summary>
+        {%- for k in keys reversed -%}
+          {%- if k == blank -%}{%- continue -%}{%- endif -%}
+          {%- assign i = k | split: '~' | last | plus: 0 -%}
+          {%- for x in all -%}{%- if forloop.index0 == i -%}{%- assign e = x -%}{%- break -%}{%- endif -%}{%- endfor -%}
+          {%- assign last = e.end_date.value | default: e.start_date.value | date: '%Y-%m-%d' -%}
+          {%- if last < today -%}{%- render 'satomi-event-card', e: e, past: true -%}{%- endif -%}
+        {%- endfor -%}
+      </details>
+    {%- endif -%}
+
+    <p class="ev-foot">Running a club meeting or a show and want me there? Ask me in the WhatsApp group.</p>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root = document.getElementById('snEvents'); if (!root || root.__done) return; root.__done = true;
+  if (root.parentElement) root.parentElement.style.padding = '0';
+  var band = root.closest('.gradient'); if (band) band.style.background = '#000';
+
+  // "Soon" badge for anything in the next 14 days (checked in the visitor's browser, so it's always current)
+  var now = new Date(); var todayS = now.toISOString().slice(0,10);
+  var soon = new Date(now.getTime() + 14*864e5).toISOString().slice(0,10);
+  root.querySelectorAll('#evList .ev-item').forEach(function(a){
+    var s = a.getAttribute('data-start'), e = a.getAttribute('data-end');
+    if (e < todayS) { a.hidden = true; return; }
+    var b = a.querySelector('.ev-tag.soon'); if (b && s <= soon) { b.hidden = false; b.textContent = s <= todayS ? 'On now' : 'Soon'; }
+  });
+
+  // filter
+  var btns = root.querySelectorAll('.ev-filter button');
+  function apply(f){
+    var shown = 0;
+    root.querySelectorAll('#evList .ev-item').forEach(function(a){
+      var ok = (f === 'all' || a.getAttribute('data-kind') === f) && a.getAttribute('data-end') >= todayS;
+      a.style.display = ok ? '' : 'none'; if (ok) shown++;
+    });
+    root.querySelectorAll('#evList .ev-month').forEach(function(h){
+      var n = h.nextElementSibling, any = false;
+      while (n && !n.matches('.ev-month') && n.id !== 'evNone'){ if (n.style.display !== 'none' && !n.hidden) any = true; n = n.nextElementSibling; }
+      h.style.display = any ? '' : 'none';
+    });
+    var none = document.getElementById('evNone'); if (none) none.style.display = shown ? 'none' : 'block';
+  }
+  btns.forEach(function(b){ b.addEventListener('click', function(){
+    btns.forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    apply(b.getAttribute('data-f'));
+  }); });
+  if (btns.length) apply('all');
+
+  // add to calendar (.ics file, works with iPhone, Google and Outlook)
+  function d(s){ return s.replace(/-/g,''); }
+  function next(s){ var t = new Date(s + 'T12:00:00Z'); t.setUTCDate(t.getUTCDate() + 1); return t.toISOString().slice(0,10); }
+  function esc(s){ return (s || '').replace(/([,;\\])/g,'\\$1'); }
+  root.querySelectorAll('.ev-ics').forEach(function(b){
+    b.addEventListener('click', function(){
+      var a = b.closest('.ev-item');
+      var title = a.getAttribute('data-title'), place = a.getAttribute('data-place'), times = a.getAttribute('data-times'), link = a.getAttribute('data-link');
+      var kind = a.getAttribute('data-kind');
+      if (!place && kind === 'day') place = 'Satomi Nishikigoi (address in the WhatsApp group)';
+      var desc = (times ? 'Times: ' + times + '\\n' : '') + (link ? link + '\\n' : '') + 'satominishikigoi.com/pages/events';
+      var ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Satomi Nishikigoi//Events//EN','BEGIN:VEVENT',
+        'UID:' + d(a.getAttribute('data-start')) + '-' + title.replace(/\W+/g,'').slice(0,20) + '@satominishikigoi.com',
+        'DTSTAMP:' + new Date().toISOString().replace(/[-:]/g,'').slice(0,15) + 'Z',
+        'DTSTART;VALUE=DATE:' + d(a.getAttribute('data-start')),
+        'DTEND;VALUE=DATE:' + d(next(a.getAttribute('data-end'))),
+        'SUMMARY:' + esc(title), 'LOCATION:' + esc(place), 'DESCRIPTION:' + esc(desc).replace(/\\\\n/g,'\\n'),
+        'END:VEVENT','END:VCALENDAR'].join('\r\n');
+      var url = URL.createObjectURL(new Blob([ics], { type:'text/calendar' }));
+      var l = document.createElement('a'); l.href = url; l.download = title.replace(/[^\w ]+/g,'').trim().replace(/ +/g,'-') + '.ics';
+      document.body.appendChild(l); l.click(); l.remove(); setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+    });
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Satomi: Events",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Satomi Events" },
+    { "type": "textarea", "id": "lede", "label": "Intro text", "default": "Koi Days here at Satomi, and the koi shows where you'll find me with a stand. Come and say hello. Koi always look better in person." }
+  ]
+}
+{% endschema %}
